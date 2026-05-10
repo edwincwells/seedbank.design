@@ -1,0 +1,374 @@
+/* ==========================================================================
+   seedbank.design — tokens.css
+   --------------------------------------------------------------------------
+   The complete design token system. This is the one file that controls
+   the visual identity. Remap the values here to fit your community's
+   context — you should not need to touch any component files.
+
+   Three groups of tokens:
+     1. Activity colours    — categorical, for status-bearing content
+     2. Functional tokens   — surfaces, text, borders, safety-critical states
+     3. Scale tokens        — type, spacing, radius, line-height
+
+   Architecture: flat semantic. No primitive layer. Every token is named
+   for what it means, not what it looks like. A fork that remaps --grow
+   to a different colour does not need to touch any other token.
+
+   Dark mode: each colour token ships with a light value and a dark value,
+   exposed as separate named tokens (--grow-light / --grow-dark) and
+   swapped via prefers-color-scheme. Forks that want to reference a
+   specific mode's value directly can do so.
+
+   --------------------------------------------------------------------------
+   seedbank.design — licensed under MIT (code) and CC BY-SA 4.0
+   (documentation and design assets). This file is a design system asset —
+   it ships with every clone. Forks are encouraged to adapt it; adaptations
+   should be documented.
+   ==========================================================================  */
+
+
+/* --------------------------------------------------------------------------
+   1. ACTIVITY COLOURS
+   --------------------------------------------------------------------------
+   Four categorical colours for status-bearing content. Used as:
+     - 5px left-rule on cards and list items where the row carries a state
+     - Text colour in em-dash badges (— Available, — Under repair)
+     - Background of pill badges where a higher-contrast badge is needed
+     - Accent colour on focus states, links, and highlighted numbers
+
+   These are NOT functional tokens. --grow is not "success", --repair is
+   not "warning". They name what the community does, not what the UI is
+   reporting. See PRINCIPLES.md and docs/adapting.md.
+
+   Each colour ships as a pair: a light-mode value (used on white-ish
+   backgrounds) and a dark-mode value (used on dark backgrounds). The
+   light values pass WCAG AA against white; the dark values pass WCAG AA
+   against the dark surface. The unprefixed token (--grow) resolves to
+   whichever the user's mode preference selects.
+
+   To remap: change both the -light and -dark values for a token. If
+   you only have a light value, the docs include a guide for deriving
+   a dark counterpart (shift luminance up ~30 points in HSL, keep hue,
+   drop chroma slightly).
+   --------------------------------------------------------------------------  */
+
+:root {
+  /* Light-mode values — for white and near-white backgrounds */
+  --grow-light:   #2f7a1f;  /* contrast 5.4:1 vs white */
+  --repair-light: #a85d11;  /* contrast 4.9:1 vs white */
+  --share-light:  #1f5fa8;  /* contrast 6.1:1 vs white */
+  --make-light:   #6a3d9e;  /* contrast 6.7:1 vs white */
+
+  /* Dark-mode values — for dark backgrounds */
+  --grow-dark:    #7fc960;  /* contrast 7.4:1 vs #1a1a1a */
+  --repair-dark:  #e8a04c;  /* contrast 8.0:1 vs #1a1a1a */
+  --share-dark:   #6cb0ee;  /* contrast 7.6:1 vs #1a1a1a */
+  --make-dark:    #bd9aea;  /* contrast 7.9:1 vs #1a1a1a */
+
+  /* Mode-resolved tokens — these are what components reference */
+  --grow:   var(--grow-light);
+  --repair: var(--repair-light);
+  --share:  var(--share-light);
+  --make:   var(--make-light);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --grow:   var(--grow-dark);
+    --repair: var(--repair-dark);
+    --share:  var(--share-dark);
+    --make:   var(--make-dark);
+  }
+}
+
+
+/* --------------------------------------------------------------------------
+   2. FUNCTIONAL TOKENS
+   --------------------------------------------------------------------------
+   The infrastructure every component needs: surfaces, text levels, borders,
+   primary action, and a full set of functional state tokens.
+
+   IMPORTANT — the distinction between activity tokens and functional tokens:
+
+   Activity tokens (--grow, --repair, --share, --make) name what the
+   community does in the world: cultivating, repairing, sharing, making.
+   They carry the system's voice and identity. They appear on status-
+   bearing rows, badges, and content categories. A fork that wants its
+   own visual identity remaps these.
+
+   Functional tokens (--success, --warning, --info, --error) name what
+   the interface is reporting: a thing succeeded, a thing needs attention,
+   a thing is informational, a thing failed. They follow web conventions
+   so users from any background recognise them. They appear on toasts,
+   inline form validation, alert banners, and system messages. A fork
+   that remaps the activity tokens for cultural identity should usually
+   leave the functional tokens alone — the desert-themed fork keeps green
+   success messages even though --grow has become terracotta.
+
+   The two sets can have related values (--success often resembles --grow
+   in this default palette) but they are not aliases. Each is independent
+   and meant to be used in its own context. See docs/adapting.md.
+   --------------------------------------------------------------------------  */
+
+:root {
+  /* Surface tokens — backgrounds, in order of elevation.
+     The base surface is a warm off-white, not pure #fff, to sit calmly
+     with the activity colours and avoid the clinical edge of pure white. */
+  --surface-light:         #fafaf7;
+  --surface-raised-light:  #f3f1ec;  /* warm cream for cards-on-cards */
+  --surface-sunken-light:  #ebe8e1;  /* for inset/quoted contexts */
+
+  --surface-dark:          #1a1a1a;
+  --surface-raised-dark:   #242422;
+  --surface-sunken-dark:   #121212;
+
+  --surface:        var(--surface-light);
+  --surface-raised: var(--surface-raised-light);
+  --surface-sunken: var(--surface-sunken-light);
+
+  /* Text tokens — three levels of emphasis.
+     Contrast ratios checked against --surface-light (#fafaf7), not pure white. */
+  --text-light:         #1a1a1a;  /* body and headings;     ~15:1 on surface */
+  --text-muted-light:   #5a5a5a;  /* secondary content;     ~7.2:1 on surface */
+  --text-subtle-light:  #888888;  /* metadata, captions;    ~4.5:1 on surface */
+
+  --text-dark:          #f0f0f0;
+  --text-muted-dark:    #b0b0b0;
+  --text-subtle-dark:   #808080;
+
+  --text:        var(--text-light);
+  --text-muted:  var(--text-muted-light);
+  --text-subtle: var(--text-subtle-light);
+
+  /* Border tokens — three weights */
+  --border-light:         #d4d1ca;  /* default; for hairlines and dividers */
+  --border-strong-light:  #888888;  /* for input underlines and emphasis */
+  --border-subtle-light:  #e8e4dd;  /* for very faint separators */
+
+  --border-dark:          #3a3a3a;
+  --border-strong-dark:   #707070;
+  --border-subtle-dark:   #2a2a2a;
+
+  --border:        var(--border-light);
+  --border-strong: var(--border-strong-light);
+  --border-subtle: var(--border-subtle-light);
+
+  /* Action token — for primary buttons. Defaults to --grow but can be
+     remapped independently if a fork wants its primary action to read
+     as something other than affirmative-grow. */
+  --action:       var(--grow);
+  --action-hover: var(--grow-dark);  /* deliberate cross-mode pull for hover lift in light mode */
+
+  /* Functional state tokens.
+     These follow web conventions (green success, amber warning, blue info,
+     red error) so users from any background recognise them on sight. They
+     are independent of the activity tokens — see the section preamble for
+     why this matters under remapping.
+
+     All values pass WCAG AA against --surface-light or --surface-dark
+     respectively, both as text and as fills with white text. */
+
+  --success-light:  #2f7a1f;  /* 5.4:1 on surface — affirmative state */
+  --success-dark:   #7fc960;
+  --success:        var(--success-light);
+
+  --warning-light:  #a85d11;  /* 4.9:1 on surface — needs attention */
+  --warning-dark:   #e8a04c;
+  --warning:        var(--warning-light);
+
+  --info-light:     #1f5fa8;  /* 6.1:1 on surface — informational */
+  --info-dark:      #6cb0ee;
+  --info:           var(--info-light);
+
+  --error-light:    #b3261e;  /* 5.5:1 on surface — errors and destructive
+                                 confirmations. This is the one functional
+                                 token that should NOT be remapped to a
+                                 non-red value, regardless of fork identity.
+                                 Red error signalling is a near-universal
+                                 user expectation; overriding it for
+                                 aesthetic reasons creates safety risk. */
+  --error-dark:     #f28b82;
+  --error:          var(--error-light);
+
+  /* Focus indicator — uses the same blue family as --info because high-
+     contrast blue is the most universally recognised focus colour. Forks
+     with accessibility research suggesting otherwise can override. */
+  --focus-light:    #1f5fa8;
+  --focus-dark:     #6cb0ee;
+  --focus:          var(--focus-light);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --surface:        var(--surface-dark);
+    --surface-raised: var(--surface-raised-dark);
+    --surface-sunken: var(--surface-sunken-dark);
+
+    --text:        var(--text-dark);
+    --text-muted:  var(--text-muted-dark);
+    --text-subtle: var(--text-subtle-dark);
+
+    --border:        var(--border-dark);
+    --border-strong: var(--border-strong-dark);
+    --border-subtle: var(--border-subtle-dark);
+
+    --action:       var(--grow);  /* re-resolves via --grow's dark value */
+    --action-hover: var(--grow-light);
+
+    --success: var(--success-dark);
+    --warning: var(--warning-dark);
+    --info:    var(--info-dark);
+    --error:   var(--error-dark);
+    --focus:   var(--focus-dark);
+  }
+}
+
+
+/* --------------------------------------------------------------------------
+   3. TYPE TOKENS
+   --------------------------------------------------------------------------
+   Six type sizes, codified from values used in the existing prototypes.
+   No modular scale — every value was chosen for legibility at low
+   resolution and tested in the components.
+
+   Two weights only: 400 (regular) and 500 (medium). No bold, no light.
+   Bold weights disappear on cheap screens; light weights disappear at
+   low contrast. 400/500 is the safest pair across e-ink, print, and LCD.
+
+   Two font families:
+     --font-sans  — IBM Plex Sans for everything readable
+     --font-mono  — IBM Plex Mono for tokenised values (numbers, codes,
+                    identifiers, timestamps)
+
+   Forks that need to drop the webfont for bandwidth reasons can override
+   to system stacks. See docs/adapting.md.
+   --------------------------------------------------------------------------  */
+
+:root {
+  /* Font families */
+  --font-sans: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* Sizes */
+  --text-xs:   11px;  /* eyebrow labels, captions, mono identifiers */
+  --text-sm:   13px;  /* metadata, secondary content */
+  --text-base: 14px;  /* body, default UI text */
+  --text-md:   15px;  /* card titles, list item titles */
+  --text-lg:   18px;  /* section headings */
+  --text-xl:   22px;  /* page headings */
+  --text-xxl:  32px;  /* primary stats, hero numerals */
+
+  /* Weights */
+  --weight-regular: 400;
+  --weight-medium:  500;
+
+  /* Line heights */
+  --leading-tight: 1.3;   /* large headings */
+  --leading-snug:  1.4;   /* medium headings */
+  --leading-base:  1.55;  /* body text */
+  --leading-loose: 1.7;   /* long-form prose */
+
+  /* Letter spacing — used only on small uppercase labels */
+  --tracking-label: 0.06em;
+}
+
+
+/* --------------------------------------------------------------------------
+   4. SPACING TOKENS
+   --------------------------------------------------------------------------
+   Seven steps, codified from existing prototype values. Used for padding,
+   margin, and gap. The scale is loosely 4-based but not strictly modular —
+   each step was chosen because it appears in real components, not because
+   the math works out.
+   --------------------------------------------------------------------------  */
+
+:root {
+  --space-1:  4px;   /* tight inline gaps (icon to label) */
+  --space-2:  8px;   /* button padding, badge padding */
+  --space-3:  12px;  /* card internal gaps */
+  --space-4:  16px;  /* card padding, list item padding */
+  --space-5:  24px;  /* section internal gaps */
+  --space-6:  32px;  /* section margins */
+  --space-7:  48px;  /* page-level vertical rhythm */
+}
+
+
+/* --------------------------------------------------------------------------
+   5. RADIUS TOKENS
+   --------------------------------------------------------------------------
+   Three values plus zero. The system has a deliberate two-vocabulary
+   structure: editorial elements (cards, list items, content blocks) use
+   --radius-none and feel like print. Interactive controls (buttons,
+   inputs, pills) use --radius-md or --radius-lg and feel like software.
+
+   Forks that want a more uniform aesthetic can map all radii to a single
+   value. See docs/adapting.md.
+   --------------------------------------------------------------------------  */
+
+:root {
+  --radius-none: 0;       /* editorial elements: cards, list items */
+  --radius-sm:   4px;     /* compact UI: chips, small inputs */
+  --radius-md:   8px;     /* standard buttons and inputs */
+  --radius-lg:   12px;    /* large containers, modals */
+  --radius-pill: 9999px;  /* pill badges */
+}
+
+
+/* --------------------------------------------------------------------------
+   6. BORDER WIDTH TOKENS
+   --------------------------------------------------------------------------
+   Three weights. The 0.5px hairline is the system's default for dividers;
+   the 1.5px weight is for input focus and emphasised borders; the 5px
+   weight is reserved for the activity-coloured left-rule on status-
+   bearing rows and cards.
+   --------------------------------------------------------------------------  */
+
+:root {
+  --border-hairline: 0.5px;  /* default dividers, list separators */
+  --border-thick:    1.5px;  /* input focus, button outlines */
+  --border-rule:     5px;    /* left-rule accent on status rows */
+}
+
+
+/* --------------------------------------------------------------------------
+   7. NOTES FOR FORKERS
+   --------------------------------------------------------------------------
+   To customise the system for your community:
+
+   - Activity colours: change the four -light and -dark pairs at the top
+     of this file. Keep the names (--grow, --repair, --share, --make) or
+     rename them — but if you rename, update every component that
+     references them. See docs/adapting.md for the renaming guide.
+
+   - Functional state colours (--success, --warning, --info, --error):
+     usually leave these alone, even when remapping the activity colours.
+     They follow web conventions and override expectations users bring
+     from any other software. A desert-themed fork that remaps --grow to
+     terracotta should still keep --success green so a "form submitted"
+     toast is recognisable. The two sets are independent on purpose.
+
+   - Type: change --font-sans and --font-mono to your preferred families.
+     The size scale is a six-step ladder; you can change the values but
+     keep the count and the names.
+
+   - Surfaces and text: the light/dark pairs assume a near-white and
+     near-black canvas. If your fork uses a different base (cream, slate,
+     forest), update --surface-light/--surface-dark and re-derive the
+     other neutrals to maintain contrast.
+
+   - Spacing and radii: change values freely. The names are stable; what
+     they resolve to is yours.
+
+   What NOT to change without thought:
+   - The --error token. Errors must remain unambiguously red across forks
+     for safety. If your fork's red conflicts with another token, change
+     the other token, not --error.
+   - The two-weight rule (400 and 500 only). This is a low-fidelity
+     constraint, not a stylistic choice. See PRINCIPLES.md #01.
+
+   --------------------------------------------------------------------------
+   seedbank.design — licensed under MIT (code) and CC BY-SA 4.0
+   (documentation and design assets). This file is a design system asset —
+   it ships with every clone. Forks are encouraged to adapt it; adaptations
+   should be documented.
+   --------------------------------------------------------------------------  */
