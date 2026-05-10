@@ -20,12 +20,16 @@ You don't need a design team. You don't need developers. You need a starting poi
 seedbank.design/
 ├── README.md              ← you are here
 ├── PRINCIPLES.md          ← the design principles, shipped as an asset
+├── TESTING.md             ← per-component acceptance bar
 ├── MADE_WITH.md           ← voluntary registry of projects built with this
 ├── LICENSE                ← MIT (code) + CC BY-SA 4.0 (docs/assets)
 ├── tokens/
 │   └── tokens.css         ← the full design token system
 ├── components/
-│   ├── primitives/        ← buttons, badges, cards, type scale, inputs
+│   ├── foundations/       ← focus ring, prose, links, dividers, lists
+│   ├── controls/          ← buttons, inputs, selects, checkboxes, radios
+│   ├── display/           ← badges, tables, code
+│   ├── patterns/          ← cards, activity badges, form fields
 │   └── ecological/        ← energy budgets, carbon ranges, provenance chains
 └── docs/                  ← usage and adaptation guide
 ```
