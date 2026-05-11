@@ -1,0 +1,192 @@
+/* ==========================================================================
+   seedbank.design — prose.css
+   --------------------------------------------------------------------------
+   The typographic baseline for every text element in the system. Settled
+   once here so every component inheriting text styling does so consistently.
+
+   This is a foundation — it applies globally via element selectors. Include
+   prose.css once in your fork and every heading, paragraph, and inline
+   element receives the system styling. No classes needed.
+
+   Heading scale mapping:
+     h1   32px (--text-xxl)   page title, rarely used
+     h2   22px (--text-xl)    major section
+     h3   18px (--text-lg)    sub-section
+     h4   15px (--text-md)    component title within a section
+     h5   14px (--text-base)  rare; usually means restructure
+     h6   11px (--text-xs)    uppercase eyebrow label
+
+   The h6 = uppercase eyebrow decision is deliberate. The system uses small
+   uppercase section labels heavily; they are semantically headings even
+   though they don't look like conventional ones. Giving h6 the eyebrow
+   treatment provides a clean semantic answer instead of requiring a
+   non-heading element styled separately.
+
+   --------------------------------------------------------------------------
+   seedbank.design — licensed under MIT (code) and CC BY-SA 4.0
+   (documentation and design assets). This file is a design system asset —
+   it ships with every clone. Forks are encouraged to adapt it; adaptations
+   should be documented.
+   ========================================================================== */
+
+
+/* --------------------------------------------------------------------------
+   1. HEADINGS
+   --------------------------------------------------------------------------
+   Six levels. Weight is always 500 (--weight-medium). The system has no
+   bold weight — see PRINCIPLES.md #01 on two-weight constraint.
+
+   Colour is always --text. Headings do not use muted or subtle text colours
+   except for h6 (the eyebrow), which uses --text-subtle.
+   --------------------------------------------------------------------------  */
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-weight: var(--weight-medium);
+  /* The system has no bold; override the user-agent's default heading weight */
+}
+
+h1 {
+  font-size: var(--text-xxl);
+  line-height: var(--leading-tight);
+  margin: var(--space-7) 0 var(--space-4);
+}
+
+h2 {
+  font-size: var(--text-xl);
+  line-height: var(--leading-tight);
+  margin: var(--space-6) 0 var(--space-3);
+}
+
+h3 {
+  font-size: var(--text-lg);
+  line-height: var(--leading-snug);
+  margin: var(--space-5) 0 var(--space-2);
+}
+
+h4 {
+  font-size: var(--text-md);
+  line-height: var(--leading-snug);
+  margin: var(--space-4) 0 var(--space-2);
+}
+
+h5 {
+  font-size: var(--text-base);
+  line-height: var(--leading-base);
+  margin: var(--space-4) 0 var(--space-2);
+}
+
+/* h6 is the uppercase eyebrow label. Tighter leading, letter-spacing for
+   the uppercase, and a subtler colour. This is the only heading that
+   visually departs from "smaller version of the level above". */
+h6 {
+  font-size: var(--text-xs);
+  line-height: var(--leading-snug);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--text-subtle);
+  margin: var(--space-4) 0 var(--space-2);
+}
+
+/* First heading in a container has no top margin — avoids stacking margin
+   on a page-top or card-top heading. */
+h1:first-child,
+h2:first-child,
+h3:first-child,
+h4:first-child,
+h5:first-child,
+h6:first-child {
+  margin-top: 0;
+}
+
+
+/* --------------------------------------------------------------------------
+   2. PARAGRAPHS
+   --------------------------------------------------------------------------
+   Default body text. 14px regular weight, default text colour, base leading.
+
+   max-width: 65ch is a prescriptive readability constraint. Lines longer
+   than ~75 characters hurt reading speed and comprehension. Forks that need
+   full-width paragraphs (e.g. inside a wide card or table cell) should
+   override locally:
+
+     .my-component p { max-width: none; }
+   --------------------------------------------------------------------------  */
+
+p {
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-base);
+  margin: 0 0 var(--space-3);
+  max-width: 65ch;
+}
+
+/* Last paragraph in a container has no bottom margin — avoids extra space
+   below a card's final paragraph. */
+p:last-child {
+  margin-bottom: 0;
+}
+
+
+/* --------------------------------------------------------------------------
+   3. LONG-FORM PROSE
+   --------------------------------------------------------------------------
+   Per PRINCIPLES.md, long-form reading gets looser line height. Opt in by
+   wrapping a region in <article> or applying the .prose-long class. The
+   article element is preferred — it's semantic and free.
+   --------------------------------------------------------------------------  */
+
+article p,
+.prose-long p {
+  line-height: var(--leading-loose);
+}
+
+
+/* --------------------------------------------------------------------------
+   4. INLINE EMPHASIS
+   --------------------------------------------------------------------------
+   strong uses --weight-medium (500), not bold. The system has no bold weight.
+   em uses italic. small uses the smaller --text-sm size.
+
+   All three inherit colour and weight from context except where explicitly
+   overridden — so <strong> inside an h6 stays the subtle colour, <em>
+   inside a button stays the button colour, etc.
+   --------------------------------------------------------------------------  */
+
+strong {
+  font-weight: var(--weight-medium);
+}
+
+em {
+  font-style: italic;
+}
+
+small {
+  font-size: var(--text-sm);
+}
+
+
+/* --------------------------------------------------------------------------
+   5. PRINT RULES
+   --------------------------------------------------------------------------
+   Per PRINCIPLES.md #01, the system is tested in print mode. These rules
+   prevent the most common print-rendering failures for prose: orphaned
+   lines, headings separated from their content, and split paragraphs.
+
+   Link URL expansion is deferred to foundations/links.
+   --------------------------------------------------------------------------  */
+
+@media print {
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+
+  p {
+    orphans: 3;
+    widows: 3;
+  }
+}

@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>prose — seedbank.design</title>
+  <link rel="stylesheet" href="../../../tokens/tokens.css">
+  <link rel="stylesheet" href="../focus-ring/focus-ring.css">
+  <link rel="stylesheet" href="./prose.css">
+  <style>
+    /* Reference-page-only styles. Not part of the foundation.
+       Used to lay out the demonstration; not inherited by forks. */
+    body {
+      background: var(--surface);
+      margin: 0;
+      padding: var(--space-6) var(--space-5);
+      max-width: 720px;
+    }
+    .row {
+      padding: var(--space-4) 0;
+      border-bottom: var(--border-hairline) solid var(--border);
+    }
+    .row:last-child {
+      border-bottom: none;
+    }
+    .meta {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      color: var(--text-subtle);
+      margin-bottom: var(--space-2);
+    }
+    .section-rule {
+      border: none;
+      border-top: var(--border-hairline) solid var(--border);
+      margin: var(--space-7) 0 var(--space-5);
+    }
+  </style>
+</head>
+<body>
+
+  <h1>prose</h1>
+  <p>The typographic baseline for every text element in the system. This page demonstrates each element styled by <code>prose.css</code>, plus a real prose example showing how the elements work together.</p>
+
+  <hr class="section-rule">
+
+  <!-- Heading scale -->
+  <div class="row">
+    <p class="meta">h1 · 32px / 500 / tight leading</p>
+    <h1>Heading level one</h1>
+  </div>
+
+  <div class="row">
+    <p class="meta">h2 · 22px / 500 / tight leading</p>
+    <h2>Heading level two</h2>
+  </div>
+
+  <div class="row">
+    <p class="meta">h3 · 18px / 500 / snug leading</p>
+    <h3>Heading level three</h3>
+  </div>
+
+  <div class="row">
+    <p class="meta">h4 · 15px / 500 / snug leading</p>
+    <h4>Heading level four</h4>
+  </div>
+
+  <div class="row">
+    <p class="meta">h5 · 14px / 500 / base leading</p>
+    <h5>Heading level five</h5>
+  </div>
+
+  <div class="row">
+    <p class="meta">h6 · 11px / 500 / uppercase / subtle colour</p>
+    <h6>Heading level six</h6>
+  </div>
+
+  <hr class="section-rule">
+
+  <!-- Paragraph and inline elements -->
+  <div class="row">
+    <p class="meta">p · 14px / 400 / base leading / max-width 65ch</p>
+    <p>This is a default paragraph. It uses the regular weight and the base line height. The maximum width is constrained to 65 characters so that long lines do not hurt readability. If a paragraph reaches this width, it will wrap rather than stretch to fill its container.</p>
+    <p>This is a second paragraph. The space between paragraphs comes from the bottom margin of the first one. The top of a paragraph block has no extra space above it, and the last paragraph in a container has no bottom margin.</p>
+  </div>
+
+  <div class="row">
+    <p class="meta">inline emphasis</p>
+    <p>This paragraph contains <strong>strong emphasis</strong> using the medium weight, and <em>emphatic italic</em> for tonal stress. Inline <small>small text</small> is one step smaller than body. None of these use a bold weight — the system has only regular and medium.</p>
+  </div>
+
+  <hr class="section-rule">
+
+  <!-- Long-form prose -->
+  <div class="row">
+    <p class="meta">article · paragraphs get loose leading</p>
+    <article>
+      <p>This paragraph is inside an <code>&lt;article&gt;</code> element. Paragraphs inside articles get looser line height (1.7 instead of 1.55) because they are intended for sustained reading rather than UI consumption.</p>
+      <p>The opt-in is semantic. Wrap a region of long-form prose in <code>&lt;article&gt;</code> and the leading adjusts automatically. No class needed. This is the foundation's preferred pattern, but a <code>.prose-long</code> class is also available for cases where <code>&lt;article&gt;</code> is not appropriate.</p>
+    </article>
+  </div>
+
+  <hr class="section-rule">
+
+  <!-- Real prose example showing it all working together -->
+  <div class="row">
+    <p class="meta">composition — all elements in real use</p>
+
+    <article>
+      <h2>Designing for the edges</h2>
+      <p>Most design systems optimise for the centre: fast connections, capable devices, design-literate users. seedbank.design optimises for the edges — the rural broadband connection, the cheap Android phone, the e-ink reader, the printout pinned to a community board.</p>
+
+      <h3>What that means in practice</h3>
+      <p>It means <strong>graceful degradation is the brief</strong>, not an afterthought. A component that depends on CSS to communicate meaning has failed. A button that's only a button when the icon font loads has failed. A status indicator that relies on colour alone has failed.</p>
+
+      <p>It also means resisting the temptation to add visual complexity that doesn't survive being clone-and-adapted by a community in conditions you can't foresee.</p>
+
+      <h4>Concrete implications</h4>
+      <p>Every component is tested against three criteria: <em>renders correctly without CSS loaded</em>, <em>works at 200% zoom</em>, and <em>works on a 320px viewport</em>. These aren't ceilings — they're floors. Other concerns (keyboard navigation, screen reader behaviour, print rendering, dark mode) matter too, but the three above are the standing checklist every component faces.</p>
+
+      <h6>A note on print</h6>
+      <p>The system is tested in print mode because <small>communities frequently print what they organise around</small> — meeting agendas, repair guides, mutual aid forms, event notices. A design system that doesn't survive contact with a printer is not serving these communities.</p>
+    </article>
+  </div>
+
+</body>
+</html>
