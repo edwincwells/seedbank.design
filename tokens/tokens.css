@@ -317,15 +317,17 @@
 /* --------------------------------------------------------------------------
    6. BORDER WIDTH TOKENS
    --------------------------------------------------------------------------
-   Three weights. The 0.5px hairline is the system's default for dividers;
-   the 1.5px weight is for input focus and emphasised borders; the 5px
-   weight is reserved for the activity-coloured left-rule on status-
-   bearing rows and cards.
+   Four weights. The 0.5px hairline is the system's default for dividers;
+   the 1.5px weight is for emphasised borders and input underlines; the
+   2px weight is reserved for the global focus ring (see
+   components/foundations/focus-ring); the 5px weight is reserved for the
+   activity-coloured left-rule on status-bearing rows and cards.
    --------------------------------------------------------------------------  */
 
 :root {
   --border-hairline: 0.5px;  /* default dividers, list separators */
-  --border-thick:    1.5px;  /* input focus, button outlines */
+  --border-thick:    1.5px;  /* emphasised borders, input underlines */
+  --border-focus:    2px;    /* global focus ring outline */
   --border-rule:     5px;    /* left-rule accent on status rows */
 }
 
