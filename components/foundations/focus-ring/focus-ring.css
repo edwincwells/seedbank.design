@@ -1,0 +1,76 @@
+/* ==========================================================================
+   seedbank.design — focus-ring.css
+   --------------------------------------------------------------------------
+   The focus indicator applied to every interactive element. Settled once
+   here so every component inherits a consistent focus appearance.
+
+   Strategy:
+   - outline (not box-shadow) — respects forced-colors mode and high-contrast
+     system settings without additional fallbacks
+   - :focus-visible — only shows the ring when the browser heuristically
+     determines it should (keyboard navigation, not mouse click)
+   - :focus { outline: none } — suppresses the user-agent default cleanly,
+     paired with :focus-visible so the ring still appears for keyboard users
+
+   Tokens used:
+     --focus         colour (light/dark resolved by mode)
+     --border-focus  width (2px — added in tokens.css section 6)
+
+   Forks: to change the focus appearance globally, remap --focus or
+   --border-focus in tokens.css. To override for a specific element type,
+   write a more specific selector — but consider whether the override
+   reduces accessibility before doing so.
+
+   --------------------------------------------------------------------------
+   seedbank.design — licensed under MIT (code) and CC BY-SA 4.0
+   (documentation and design assets). This file is a design system asset —
+   it ships with every clone. Forks are encouraged to adapt it; adaptations
+   should be documented.
+   ========================================================================== */
+
+/* Suppress the user-agent default focus ring so :focus-visible can take
+   over cleanly. Applied to the same selector set as the focus-visible rule
+   below — keep these two selector lists in sync if you edit either. */
+button:focus,
+[role="button"]:focus,
+a:focus,
+input:focus,
+select:focus,
+textarea:focus,
+summary:focus,
+[tabindex]:not([tabindex="-1"]):focus {
+  outline: none;
+}
+
+/* The focus ring itself. Applied only when the browser determines the
+   focus should be visually indicated — typically keyboard navigation,
+   not mouse click. */
+button:focus-visible,
+[role="button"]:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+summary:focus-visible,
+[tabindex]:not([tabindex="-1"]):focus-visible {
+  outline: var(--border-focus) solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* Forced-colors mode (Windows High Contrast, similar accessibility modes)
+   uses system colours instead of authored colours. The outline property
+   already respects this, but we explicitly use the system Highlight
+   colour to ensure the ring is always visible regardless of authored
+   --focus value. */
+@media (forced-colors: active) {
+  button:focus-visible,
+  [role="button"]:focus-visible,
+  a:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible,
+  summary:focus-visible,
+  [tabindex]:not([tabindex="-1"]):focus-visible {
+    outline-color: Highlight;
+  }
+}
