@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>focus-ring — seedbank.design</title>
+  <link rel="stylesheet" href="../../../tokens/tokens.css">
+  <link rel="stylesheet" href="./focus-ring.css">
+  <style>
+    /* Reference-page-only styles. Not part of the foundation.
+       Used to lay out the demonstration; not inherited by forks. */
+    body {
+      font-family: var(--font-sans);
+      color: var(--text);
+      background: var(--surface);
+      margin: 0;
+      padding: var(--space-6) var(--space-5);
+      max-width: 720px;
+      line-height: var(--leading-base);
+    }
+    h1 {
+      font-size: var(--text-xl);
+      font-weight: var(--weight-medium);
+      margin: 0 0 var(--space-2);
+    }
+    p {
+      font-size: var(--text-base);
+      color: var(--text-muted);
+      margin: 0 0 var(--space-5);
+      max-width: 60ch;
+    }
+    h2 {
+      font-size: var(--text-xs);
+      font-weight: var(--weight-medium);
+      text-transform: uppercase;
+      letter-spacing: var(--tracking-label);
+      color: var(--text-subtle);
+      margin: var(--space-6) 0 var(--space-3);
+    }
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-3);
+      align-items: center;
+      margin-bottom: var(--space-4);
+    }
+    /* Bare versions of interactive elements — no component styling.
+       The focus ring should appear on each when keyboard-focused. */
+    .demo-button {
+      font: inherit;
+      padding: var(--space-2) var(--space-4);
+      background: var(--surface-raised);
+      color: var(--text);
+      border: var(--border-hairline) solid var(--border);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+    }
+    .demo-link {
+      color: var(--share);
+    }
+    .demo-input {
+      font: inherit;
+      padding: var(--space-2) var(--space-3);
+      background: var(--surface);
+      color: var(--text);
+      border: var(--border-hairline) solid var(--border);
+      border-radius: var(--radius-md);
+    }
+    .demo-checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+    .demo-tabbable {
+      display: inline-block;
+      padding: var(--space-2) var(--space-3);
+      background: var(--surface-raised);
+      border: var(--border-hairline) solid var(--border);
+      border-radius: var(--radius-md);
+      color: var(--text);
+    }
+    .instructions {
+      font-size: var(--text-sm);
+      color: var(--text-subtle);
+      padding: var(--space-3) var(--space-4);
+      background: var(--surface-sunken);
+      border-radius: var(--radius-md);
+      margin-bottom: var(--space-5);
+    }
+    .instructions kbd {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      padding: 2px 6px;
+      background: var(--surface);
+      border: var(--border-hairline) solid var(--border);
+      border-radius: var(--radius-sm);
+    }
+  </style>
+</head>
+<body>
+  <h1>focus-ring</h1>
+  <p>The focus indicator applied to every interactive element. Inherited globally — components do not need to opt in.</p>
+
+  <div class="instructions">
+    Press <kbd>Tab</kbd> to move focus through the elements below. The ring should appear on each focusable element. Click with a mouse — the ring should <em>not</em> appear on click alone.
+  </div>
+
+  <h2>Buttons</h2>
+  <div class="row">
+    <button class="demo-button" type="button">Native button</button>
+    <button class="demo-button" type="button" disabled>Disabled button</button>
+    <span class="demo-button" role="button" tabindex="0">role=button span</span>
+  </div>
+
+  <h2>Links</h2>
+  <div class="row">
+    <a class="demo-link" href="#focus-ring">Inline link</a>
+    <a class="demo-link" href="#focus-ring">Another link</a>
+  </div>
+
+  <h2>Form inputs</h2>
+  <div class="row">
+    <input class="demo-input" type="text" placeholder="Text input">
+    <input class="demo-input" type="email" placeholder="Email input">
+  </div>
+  <div class="row">
+    <select class="demo-input">
+      <option>Select option A</option>
+      <option>Select option B</option>
+    </select>
+    <textarea class="demo-input" rows="2" placeholder="Textarea"></textarea>
+  </div>
+  <div class="row">
+    <label class="demo-checkbox-row">
+      <input type="checkbox"> Checkbox
+    </label>
+    <label class="demo-checkbox-row">
+      <input type="radio" name="demo-radio"> Radio one
+    </label>
+    <label class="demo-checkbox-row">
+      <input type="radio" name="demo-radio"> Radio two
+    </label>
+  </div>
+
+  <h2>Other tabbable elements</h2>
+  <div class="row">
+    <span class="demo-tabbable" tabindex="0">tabindex=0 span</span>
+    <details>
+      <summary class="demo-tabbable">Summary (expandable)</summary>
+      <p style="margin-top: var(--space-2)">Details content. The summary element is focusable.</p>
+    </details>
+  </div>
+
+  <h2>Should not receive focus ring</h2>
+  <div class="row">
+    <span class="demo-tabbable" tabindex="-1">tabindex=-1 (programmatic only)</span>
+    <span class="demo-tabbable">Plain span (not focusable)</span>
+  </div>
+</body>
+</html>
