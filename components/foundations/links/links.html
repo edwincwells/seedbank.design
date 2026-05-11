@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>links — seedbank.design</title>
+  <link rel="stylesheet" href="../../../tokens/tokens.css">
+  <link rel="stylesheet" href="../focus-ring/focus-ring.css">
+  <link rel="stylesheet" href="../prose/prose.css">
+  <link rel="stylesheet" href="./links.css">
+  <style>
+    /* Reference-page-only styles. Not part of the foundation.
+       Used to lay out the demonstration; not inherited by forks. */
+    body {
+      background: var(--surface);
+      margin: 0;
+      padding: var(--space-6) var(--space-5);
+      max-width: 720px;
+    }
+    .row {
+      padding: var(--space-4) 0;
+      border-bottom: var(--border-hairline) solid var(--border);
+    }
+    .row:last-child {
+      border-bottom: none;
+    }
+    .meta {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      color: var(--text-subtle);
+      margin-bottom: var(--space-2);
+    }
+    .section-rule {
+      border: none;
+      border-top: var(--border-hairline) solid var(--border);
+      margin: var(--space-7) 0 var(--space-5);
+    }
+    /* A surface for demonstrating links on a raised background.
+       Confirms the colour tokens hold up off the base surface. */
+    .raised {
+      background: var(--surface-raised);
+      padding: var(--space-4);
+      border-radius: var(--radius-md);
+    }
+  </style>
+</head>
+<body>
+
+  <h1>links</h1>
+  <p>Inline link styling. Every <code>&lt;a href&gt;</code> in body prose, lists, tables, and component content uses this styling by default — no classes needed.</p>
+
+  <hr class="section-rule">
+
+  <!-- Default link -->
+  <div class="row">
+    <p class="meta">a[href] · default state</p>
+    <p>The seedbank.design project lives at <a href="https://github.com/edwincwells/seedbank.design">github.com/edwincwells/seedbank.design</a> as a template repository. Links inside body prose are underlined, coloured with <code>--link</code>, and inherit the surrounding text's size and weight.</p>
+  </div>
+
+  <!-- Hover note -->
+  <div class="row">
+    <p class="meta">a[href]:hover · thicker underline</p>
+    <p>On hover, the <a href="#hover-target">underline thickens from 1px to 2px</a>. Colour does not change — the affordance is weight, not chroma. Hover over the link above to see the effect.</p>
+  </div>
+
+  <!-- Visited link -->
+  <div class="row">
+    <p class="meta">a[href]:visited · hue-shifted indigo</p>
+    <p>A visited link will render in <code>--link-visited</code>, a desaturated indigo that signals "you've been here" without pulling toward <code>--make</code> (system purple). Try this link to a well-known page: <a href="https://example.com/">example.com</a>. After visiting once and returning, the colour will have shifted.</p>
+    <p><small>Note: <code>:visited</code> styling is restricted by browsers for privacy. Only colour changes will be visible; thickness or other properties applied to <code>:visited</code> are ignored by design.</small></p>
+  </div>
+
+  <!-- Focus -->
+  <div class="row">
+    <p class="meta">a[href]:focus-visible · focus ring from foundations/focus-ring</p>
+    <p>Tab to <a href="#focus-target">this link</a> to see the focus ring. Focus styling is shared with every other focusable element in the system — links do not override it. The ring sits outside the text, so it works regardless of underline or colour.</p>
+  </div>
+
+  <hr class="section-rule">
+
+  <!-- External -->
+  <div class="row">
+    <p class="meta">a[rel~="external"] · trailing ↗ glyph</p>
+    <p>External links are marked explicitly: <a href="https://en.wikipedia.org/wiki/Mutual_aid_(organization_theory)" rel="external">mutual aid on Wikipedia</a>. The <code>rel="external"</code> attribute triggers the trailing arrow — auto-detection on protocol is not used.</p>
+    <p>The glyph also works when <code>rel</code> contains multiple values: <a href="https://en.wikipedia.org/wiki/Seed_bank" rel="external noopener">seed banks on Wikipedia</a> has <code>rel="external noopener"</code> and still renders the arrow.</p>
+  </div>
+
+  <hr class="section-rule">
+
+  <!-- Inside other elements -->
+  <div class="row">
+    <p class="meta">a[href] inside other prose elements</p>
+    <p>Links inherit context where they can. Inside <strong>strong text, <a href="#in-strong">links keep the medium weight</a></strong>. Inside <em>emphasis, <a href="#in-em">links keep the italic</a></em>. Inside <small>smaller text, <a href="#in-small">links keep the smaller size</a></small>. Colour is the only thing the link asserts.</p>
+
+    <h3>Links in headings</h3>
+    <p><a href="#heading-target">A link in a heading</a> uses the heading's size and weight. The underline and colour still apply — there's no carve-out for headings.</p>
+  </div>
+
+  <!-- On raised surface -->
+  <div class="row">
+    <p class="meta">a[href] on --surface-raised</p>
+    <div class="raised">
+      <p>Inside a raised card, links still use <code>--link</code>. The colour token was chosen to pass contrast on both <code>--surface</code> and <code>--surface-raised</code>, so no override is needed. Here is <a href="https://github.com/edwincwells/seedbank.design">a link on a raised surface</a> to verify.</p>
+    </div>
+  </div>
+
+  <hr class="section-rule">
+
+  <!-- Unhrefd anchor -->
+  <div class="row">
+    <p class="meta">&lt;a&gt; without href · not styled as a link</p>
+    <p>An <a>anchor with no href</a> is not a link and does not receive link styling. The selector scopes everything to <code>a[href]</code> so placeholders and target anchors stay neutral.</p>
+  </div>
+
+  <hr class="section-rule">
+
+  <!-- Long-form context -->
+  <div class="row">
+    <p class="meta">composition · links in long-form prose</p>
+
+    <article>
+      <h2>How forking works</h2>
+      <p>Click <strong>Use this template</strong> at the top of the <a href="https://github.com/edwincwells/seedbank.design" rel="external">seedbank.design repository</a> on GitHub. GitHub will create an independent repository in your account — no link back to upstream, no obligations, no approval process for your changes.</p>
+
+      <p>The token system is the foundation. Every visual property is a CSS custom property with a value-based name (see <a href="#tokens">tokens.css</a> in the repo). Remap them without touching component files.</p>
+
+      <h3>If you need help</h3>
+      <p>The adaptation guide in <a href="#docs">docs/</a> covers common patterns. For more on the philosophy, the <a href="https://en.wikipedia.org/wiki/Solarpunk" rel="external">solarpunk Wikipedia entry</a> is a reasonable starting point, though the movement's aesthetic is not codified and seedbank.design is broader in scope.</p>
+    </article>
+  </div>
+
+</body>
+</html>

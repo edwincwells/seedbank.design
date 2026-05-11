@@ -223,6 +223,55 @@
   }
 }
 
+/* --------------------------------------------------------------------------
+   2b. CONTENT SEMANTIC TOKENS
+   --------------------------------------------------------------------------
+   Tokens for content semantics — meanings carried by the content itself,
+   not by the interface's reporting state. Currently links; future entries
+   might include quotation, citation, or other content-level signals if
+   they earn a first-class place.
+
+   The distinction from functional tokens (section 2): functional tokens
+   describe what the system is reporting (success, warning, info, error).
+   Content semantic tokens describe what the content itself is (a link, a
+   quotation). They sit on the same axis as activity tokens (--grow,
+   --repair, --share, --make) — naming meaning, not state — but operate
+   on content elements rather than status-bearing rows.
+
+   In the default palette, --link resolves to the same blue family as
+   --info and --focus. This is a practical consequence of "high-contrast
+   blue is the most universally recognised". The tokens remap
+   independently; a fork can recolour links without touching --info, and
+   vice versa.
+
+   On --link-visited: hue-shifted toward indigo rather than same-hue-darker.
+   The shift carries the "you've been here" signal that users bring from
+   every other website without pulling toward --make (system purple) — the
+   desaturation keeps the categorical signal clean. Forks that want to
+   suppress visited styling for consistency or privacy reasons can map
+   --link-visited to var(--link).
+   --------------------------------------------------------------------------  */
+
+:root {
+  /* Light-mode values — for white and near-white backgrounds */
+  --link-light:         #1f5fa8;  /* same blue as --info default; ~6.1:1 on surface */
+  --link-visited-light: #4a3d8a;  /* desaturated indigo; ~5.8:1 on surface */
+
+  /* Dark-mode values — for dark backgrounds */
+  --link-dark:          #6cb0ee;
+  --link-visited-dark:  #b0a0e0;
+
+  /* Mode-resolved tokens */
+  --link:         var(--link-light);
+  --link-visited: var(--link-visited-light);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --link:         var(--link-dark);
+    --link-visited: var(--link-visited-dark);
+  }
+}
 
 /* --------------------------------------------------------------------------
    3. TYPE TOKENS
