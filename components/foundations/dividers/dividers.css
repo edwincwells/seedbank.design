@@ -1,0 +1,70 @@
+/* ==========================================================================
+   seedbank.design — dividers.css
+   --------------------------------------------------------------------------
+   The styling for thematic section breaks. Applies globally via the <hr>
+   element selector — no class needed. One divider, no variants. Forks can
+   add variants if real use cases surface the need.
+
+   <hr> is a semantic element. It carries an implicit role="separator" and
+   is announced by screen readers. Use it for thematic breaks between
+   sections of content, not for decoration or visual rhythm. Purely
+   decorative lines should be a <div> with aria-hidden, not an <hr>.
+
+   The default uses the system's hairline border (0.5px) and the activity
+   colour neutral --border token, matching the editorial vocabulary of the
+   system. The asymmetric margin (more above than below) reads as "this
+   section ends, a new one begins" rather than as a midpoint.
+
+   --------------------------------------------------------------------------
+   seedbank.design — licensed under MIT (code) and CC BY-SA 4.0
+   (documentation and design assets). This file is a design system asset —
+   it ships with every clone. Forks are encouraged to adapt it; adaptations
+   should be documented.
+   ========================================================================== */
+
+
+/* --------------------------------------------------------------------------
+   1. THE DIVIDER
+   --------------------------------------------------------------------------
+   Default <hr> styling. Full container width, hairline weight, neutral
+   border colour, asymmetric vertical margin.
+
+   The user-agent default for <hr> renders a chiselled grey line via
+   border-top and border-bottom. We replace it with a single hairline
+   border-top, no inset shadow, and explicit colour from the token system.
+   --------------------------------------------------------------------------  */
+
+hr {
+  /* Reset user-agent defaults — inset borders, default colour, default margins */
+  border: none;
+  height: 0;
+
+  /* Apply system styling */
+  border-top: var(--border-hairline) solid var(--border);
+
+  /* Asymmetric margin: more space above than below. Reads as a section
+     ending and a new (larger) section beginning, not as a balanced midpoint.
+     If a fork wants symmetric spacing, override hr { margin: ... } locally. */
+  margin: var(--space-7) 0 var(--space-5);
+}
+
+
+/* --------------------------------------------------------------------------
+   2. PRINT RULES
+   --------------------------------------------------------------------------
+   Two concerns in print: an <hr> at the very top of a page is an orphan
+   (the section it ended printed on the previous page, and the new section
+   may not start until further down); and the line must remain visible.
+
+   page-break-before: avoid keeps the divider with the content above it.
+   The border colour is kept as-is — browsers handle print colour rendering;
+   the hairline will print as a fine grey line, which is the intended
+   appearance.
+   --------------------------------------------------------------------------  */
+
+@media print {
+  hr {
+    page-break-before: avoid;
+    break-before: avoid;
+  }
+}

@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>dividers — seedbank.design</title>
+  <link rel="stylesheet" href="../../../tokens/tokens.css">
+  <link rel="stylesheet" href="../prose/prose.css">
+  <link rel="stylesheet" href="./dividers.css">
+  <style>
+    /* Reference-page-only styles. Not part of the foundation.
+       Used to lay out the demonstration; not inherited by forks. */
+    body {
+      background: var(--surface);
+      margin: 0;
+      padding: var(--space-6) var(--space-5);
+      max-width: 720px;
+    }
+    .meta {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      color: var(--text-subtle);
+      margin-bottom: var(--space-2);
+    }
+    .demo-region {
+      /* A bordered container that lets the reader see exactly where the
+         <hr>'s margins begin and end. Reference-page-only. */
+      border: var(--border-hairline) dashed var(--border-subtle);
+      padding: 0 var(--space-4);
+      margin-bottom: var(--space-6);
+    }
+    .wrong {
+      /* Marker for "don't do this" examples. Reference-page-only. */
+      border-left: var(--border-rule) solid var(--error);
+      padding: var(--space-3) var(--space-4);
+      margin-bottom: var(--space-5);
+      background: var(--surface-sunken);
+    }
+    .wrong p:first-child {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      color: var(--text-subtle);
+      text-transform: uppercase;
+      letter-spacing: var(--tracking-label);
+      margin-bottom: var(--space-2);
+    }
+  </style>
+</head>
+<body>
+
+  <h1>dividers</h1>
+  <p>Thematic section breaks. One element, no variants. Hairline weight, neutral colour, asymmetric vertical margin — more space above than below, so a divider reads as a section ending and a new section starting.</p>
+
+  <hr>
+
+  <!-- Default between two prose blocks -->
+  <p class="meta">default — between two prose blocks (dashed boundary shows the &lt;hr&gt;'s margin)</p>
+  <div class="demo-region">
+    <p>This paragraph belongs to the section above the divider. The space below it is the divider's top margin, which is larger than its bottom margin.</p>
+
+    <hr>
+
+    <p>This paragraph belongs to the section below the divider. The smaller space above it is the divider's bottom margin. The asymmetry is intentional — the divider reads as a transition into a new section, not as a balanced midpoint.</p>
+  </div>
+
+  <!-- Between two headed sections (the most common real use) -->
+  <p class="meta">between two headed sections — the most common real use</p>
+  <div class="demo-region">
+    <h2>First section</h2>
+    <p>A short paragraph standing in for a longer block of content. The heading above already creates a sense of section start; the divider below reinforces the end.</p>
+
+    <hr>
+
+    <h2>Second section</h2>
+    <p>The h2's top margin combines with the divider's bottom margin to produce the gap above this heading. In practice this rarely needs adjusting — the rhythm reads correctly out of the box.</p>
+  </div>
+
+  <!-- Wrong uses -->
+  <p class="meta">when not to use a divider</p>
+
+  <div class="wrong">
+    <p>Avoid — purely decorative</p>
+    <p>Don't use <code>&lt;hr&gt;</code> as a visual flourish or for rhythm without semantic meaning. A purely decorative line should be a <code>&lt;div&gt;</code> with <code>aria-hidden="true"</code> and a <code>border-top</code>. Screen readers will announce every <code>&lt;hr&gt;</code> as a separator.</p>
+  </div>
+
+  <div class="wrong">
+    <p>Avoid — between adjacent list items</p>
+    <p>Don't use <code>&lt;hr&gt;</code> to separate list items. That's a list concern — the <code>foundations/lists</code> stylesheet handles it via <code>border-bottom</code> on <code>&lt;li&gt;</code>.</p>
+  </div>
+
+  <div class="wrong">
+    <p>Avoid — where whitespace would do</p>
+    <p>Don't use <code>&lt;hr&gt;</code> where a heading's own margins already create the break. A divider plus a heading is often one element too many — let the heading do the work.</p>
+  </div>
+
+</body>
+</html>
