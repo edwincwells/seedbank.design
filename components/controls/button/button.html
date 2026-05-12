@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>button — seedbank.design</title>
+  <link rel="stylesheet" href="../../../tokens/tokens.css">
+  <link rel="stylesheet" href="../../foundations/prose/prose.css">
+  <link rel="stylesheet" href="../../foundations/dividers/dividers.css">
+  <link rel="stylesheet" href="../../foundations/lists/lists.css">
+  <link rel="stylesheet" href="../../foundations/focus-ring/focus-ring.css">
+  <link rel="stylesheet" href="./button.css">
+  <style>
+    /* Reference-page-only styles. Not part of the component. */
+    body {
+      background: var(--surface);
+      margin: 0;
+      padding: var(--space-6) var(--space-5);
+      max-width: 720px;
+    }
+    .meta {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      color: var(--text-subtle);
+      margin-bottom: var(--space-2);
+    }
+    .demo-region {
+      border: var(--border-hairline) dashed var(--border-subtle);
+      padding: var(--space-3) var(--space-4);
+      margin-bottom: var(--space-6);
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-3);
+      align-items: center;
+    }
+    .demo-region--stacked {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .wrong {
+      border-left: var(--border-rule) solid var(--error);
+      padding: var(--space-3) var(--space-4);
+      margin-bottom: var(--space-5);
+      background: var(--surface-sunken);
+    }
+    .wrong > p:first-child {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      color: var(--text-subtle);
+      text-transform: uppercase;
+      letter-spacing: var(--tracking-label);
+      margin-bottom: var(--space-2);
+    }
+    /* The reference page's own form demonstration — uses native form
+       behaviour to actually show the gotcha working correctly. */
+    .demo-form {
+      display: flex;
+      gap: var(--space-2);
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .demo-form input[type="text"] {
+      padding: var(--space-2) var(--space-3);
+      border: var(--border-thick) solid var(--border);
+      border-radius: var(--radius-md);
+      font-family: var(--font-sans);
+      font-size: var(--text-base);
+      background: var(--surface);
+      color: var(--text);
+      min-width: 160px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>button</h1>
+  <p>The primary interactive control of the system. Four variants by emphasis, two sizes, plus loading and disabled states. The default <code>&lt;button&gt;</code> with no class is the primary variant — no class lookup needed for the common case.</p>
+
+  <hr>
+
+  <!-- Variants at default size -->
+  <p class="meta">variants — default size, text label</p>
+  <div class="demo-region">
+    <button>Primary action</button>
+    <button class="btn-secondary">Secondary</button>
+    <button class="btn-ghost">Ghost</button>
+    <button class="btn-destructive">Destructive</button>
+  </div>
+
+  <!-- Variants with icon + label -->
+  <p class="meta">variants — with icon and label (never icon-only)</p>
+  <div class="demo-region">
+    <button>
+      <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+        <path d="M8 2v12M2 8h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      Add item
+    </button>
+    <button class="btn-secondary">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <path d="M3 8l4 4 6-8"/>
+      </svg>
+      Confirm
+    </button>
+    <button class="btn-ghost">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <path d="M12 4L4 12M4 4l8 8"/>
+      </svg>
+      Dismiss
+    </button>
+    <button class="btn-destructive">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <path d="M3 4h10M5 4V3h6v1M6 7v5M10 7v5M4 4l1 10h6l1-10"/>
+      </svg>
+      Delete record
+    </button>
+  </div>
+
+  <!-- Small size -->
+  <p class="meta">variants — small size (.btn-sm)</p>
+  <div class="demo-region">
+    <button class="btn-sm">Primary</button>
+    <button class="btn-secondary btn-sm">Secondary</button>
+    <button class="btn-ghost btn-sm">Ghost</button>
+    <button class="btn-destructive btn-sm">Destructive</button>
+  </div>
+
+  <hr>
+
+  <!-- Disabled state -->
+  <p class="meta">disabled — uses the disabled attribute, not a class</p>
+  <div class="demo-region">
+    <button disabled>Primary</button>
+    <button class="btn-secondary" disabled>Secondary</button>
+    <button class="btn-ghost" disabled>Ghost</button>
+    <button class="btn-destructive" disabled>Destructive</button>
+  </div>
+
+  <!-- Loading state -->
+  <p class="meta">loading — uses aria-busy="true", not a class</p>
+  <div class="demo-region">
+    <button aria-busy="true">Saving…</button>
+    <button class="btn-secondary" aria-busy="true">Loading</button>
+    <button class="btn-ghost" aria-busy="true">Working</button>
+    <button class="btn-destructive" aria-busy="true">Deleting…</button>
+  </div>
+
+  <hr>
+
+  <!-- Block modifier -->
+  <p class="meta">.btn-block — full width, used in mobile forms</p>
+  <div class="demo-region demo-region--stacked">
+    <button class="btn-block">Submit form</button>
+    <button class="btn-secondary btn-block">Cancel</button>
+  </div>
+
+  <!-- Link-as-button -->
+  <p class="meta">&lt;a class="btn"&gt; — for actions that genuinely navigate</p>
+  <div class="demo-region">
+    <a class="btn" href="#">Browse the repo</a>
+    <a class="btn-secondary btn" href="#">Read the docs</a>
+  </div>
+
+  <hr>
+
+  <!-- The form gotcha — done correctly -->
+  <h2>Buttons inside forms — read this</h2>
+  <p>HTML has a quirk worth knowing about. When you put a <code>&lt;button&gt;</code> inside a <code>&lt;form&gt;</code>, the browser assumes its type is <code>submit</code> unless you say otherwise. A button labelled "Show password" or "Add row" will submit the form when clicked — and pressing Enter inside a text input will also click whichever submit button comes first in the markup.</p>
+
+  <p>The fix is to set <code>type="button"</code> explicitly on every button inside a form that isn't meant to submit:</p>
+
+  <p class="meta">correct — explicit types on every button in a form</p>
+  <form class="demo-region demo-form" onsubmit="event.preventDefault(); alert('Submit fired');">
+    <input type="text" placeholder="Email" name="email">
+    <button type="button" class="btn-ghost" onclick="alert('This does not submit')">Show password</button>
+    <button type="submit">Sign in</button>
+  </form>
+
+  <p>Being explicit about <code>type="submit"</code> on the actual submit button isn't required (it's the default) but it makes the intent legible. The <code>type="button"</code> on the "Show password" button is what prevents the bug.</p>
+
+  <hr>
+
+  <!-- Wrong uses -->
+  <p class="meta">when not to use a button</p>
+
+  <div class="wrong">
+    <p>Avoid — icon-only buttons</p>
+    <p>Every button needs a visible text label. An icon alone — even a familiar one like a cog or a trash can — fails when the icon font doesn't load, when the user doesn't recognise the symbol, or when the page is printed. If horizontal space is tight, use a smaller size (<code>.btn-sm</code>) before dropping the label.</p>
+    <p>If your interface genuinely needs an icon-only control for space reasons (a close button in a toolbar), provide an <code>aria-label</code> — but consider whether the affordance is clear enough for non-expert users first.</p>
+  </div>
+
+  <div class="wrong">
+    <p>Avoid — &lt;div&gt; or &lt;span&gt; as a button</p>
+    <p>If it acts like a button, it should be a <code>&lt;button&gt;</code> (or an <code>&lt;a&gt;</code> if the action navigates). Using <code>&lt;div onclick="..."&gt;</code> makes the control invisible to keyboard users and screen readers. The native element handles focus, keyboard activation (Space and Enter), and assistive technology announcement for free.</p>
+  </div>
+
+  <div class="wrong">
+    <p>Avoid — ambiguous labels like "Click here" or "Submit"</p>
+    <p>Labels should name the action: "Save changes", "Sign in", "Add member", "Delete record". A label of "Submit" or "OK" forces the user to read surrounding context to understand what will happen. This is especially important for screen reader users, who often navigate by tabbing through controls — each label needs to make sense on its own.</p>
+  </div>
+
+  <div class="wrong">
+    <p>Avoid — &lt;a class="btn"&gt; for non-navigation actions</p>
+    <p>If the action submits a form, triggers JS, or does anything other than navigate to a new URL, use a <code>&lt;button&gt;</code>. Links and buttons have different keyboard behaviour (Enter activates both; Space only activates buttons) and different screen reader announcements. Styling a link as a button doesn't change its semantics.</p>
+  </div>
+
+</body>
+</html>

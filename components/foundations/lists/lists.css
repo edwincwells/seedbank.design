@@ -1,0 +1,240 @@
+/* ==========================================================================
+   seedbank.design — lists.css
+   --------------------------------------------------------------------------
+   The styling for content lists: unordered, ordered, and definition lists.
+   Applies globally via element selectors — no classes needed. Include
+   lists.css once in your fork and every <ul>, <ol>, and <dl> in your HTML
+   receives the system styling.
+
+   This foundation handles typographic content lists only. UI list patterns
+   — rows with borders, activity left-rules, status cards — are pattern
+   concerns and live elsewhere. Those patterns will typically reset the
+   foundation's styling on the elements they use.
+
+   Key choices:
+     - <ul> uses disc markers (universally recognised, prints reliably)
+     - <ol> uses decimal markers rendered in --font-mono (numbers as
+       identifiers, matching the system's mono-for-metadata convention)
+     - 24px indent via padding-inline-start (logical property, RTL-safe)
+     - 4px gap between items; long-form prose inside <article> gets 8px
+     - Nested lists inherit the same indent and the same marker style;
+       no UA-style cascade of marker styles by depth
+     - <dl> renders stacked: <dt> on its own line, <dd> indented below
+
+   --------------------------------------------------------------------------
+   seedbank.design — licensed under MIT (code) and CC BY-SA 4.0
+   (documentation and design assets). This file is a design system asset —
+   it ships with every clone. Forks are encouraged to adapt it; adaptations
+   should be documented.
+   ========================================================================== */
+
+
+/* --------------------------------------------------------------------------
+   1. UNORDERED AND ORDERED LISTS — SHARED RULES
+   --------------------------------------------------------------------------
+   Indentation, vertical rhythm, and base typography apply to both <ul>
+   and <ol>. Marker-specific styling lives in the sections below.
+
+   padding-inline-start (not padding-left) so the indent flips correctly
+   under RTL languages without overrides.
+   --------------------------------------------------------------------------  */
+
+ul, ol {
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-base);
+
+  margin: 0 0 var(--space-3);
+  padding-inline-start: var(--space-5);  /* 24px — markers hang in this gutter */
+
+  max-width: 65ch;
+}
+
+/* Last list in a container has no bottom margin — matches the prose
+   foundation's :last-child convention. */
+ul:last-child,
+ol:last-child {
+  margin-bottom: 0;
+}
+
+li {
+  margin-bottom: var(--space-1);  /* 4px — one notch of breathing room */
+}
+
+/* Last item in a list has no bottom margin so the list's own bottom margin
+   does the spacing. */
+li:last-child {
+  margin-bottom: 0;
+}
+
+
+/* --------------------------------------------------------------------------
+   2. UNORDERED LISTS — MARKER STYLE
+   --------------------------------------------------------------------------
+   Disc markers. The universally recognised "this is a list" signal.
+   Custom dash markers via ::marker were considered and rejected — see
+   the README for the reasoning.
+   --------------------------------------------------------------------------  */
+
+ul {
+  list-style-type: disc;
+}
+
+
+/* --------------------------------------------------------------------------
+   3. ORDERED LISTS — MARKER STYLE
+   --------------------------------------------------------------------------
+   Decimal markers, rendered in --font-mono. Numbers in lists are
+   identifiers, and the system uses mono for tokenised metadata —
+   timestamps, codes, counts. Applying it to list markers extends that
+   convention to where it most clearly fits.
+
+   ::marker accepts a limited subset of font properties (font-family,
+   font-size, font-weight, font-style, color, content). Browser support
+   for font-family on ::marker is good in modern browsers; older browsers
+   fall back to the inherited family, which is --font-sans — readable
+   either way.
+   --------------------------------------------------------------------------  */
+
+ol {
+  list-style-type: decimal;
+}
+
+ol > li::marker {
+  font-family: var(--font-mono);
+  /* Slight optical adjustment — mono digits read a hair larger than
+     proportional digits at the same size, so step down to --text-sm. */
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+
+
+/* --------------------------------------------------------------------------
+   4. NESTED LISTS
+   --------------------------------------------------------------------------
+   Nested lists step in by another 24px at each level and carry no extra
+   vertical margin (otherwise nesting creates a double-gap above the
+   nested list).
+
+   Marker style does NOT change with nesting — every <ul> level is disc,
+   every <ol> level is decimal. UA defaults cascade through circle/square
+   and lower-alpha/lower-roman, but: (a) those defaults vary between
+   browsers, (b) consistent markers are easier for forks to reason about,
+   and (c) deeply nested lists are usually a content restructure signal,
+   not a marker problem.
+
+   Forks that prefer UA-style nesting cascades can override locally:
+     ul ul { list-style-type: circle; }
+     ol ol { list-style-type: lower-alpha; }
+   --------------------------------------------------------------------------  */
+
+li > ul,
+li > ol {
+  margin-top: var(--space-1);
+  margin-bottom: 0;
+}
+
+
+/* --------------------------------------------------------------------------
+   5. LONG-FORM PROSE LISTS
+   --------------------------------------------------------------------------
+   Per the prose foundation, paragraphs inside <article> or .prose-long get
+   looser line height for sustained reading. Lists in the same contexts
+   get the same loose leading, plus a larger per-item gap so the breathing
+   matches surrounding prose.
+   --------------------------------------------------------------------------  */
+
+article ul,
+article ol,
+.prose-long ul,
+.prose-long ol {
+  line-height: var(--leading-loose);
+}
+
+article li,
+.prose-long li {
+  margin-bottom: var(--space-2);  /* 8px — matches the looser prose rhythm */
+}
+
+article li:last-child,
+.prose-long li:last-child {
+  margin-bottom: 0;
+}
+
+
+/* --------------------------------------------------------------------------
+   6. DEFINITION LISTS
+   --------------------------------------------------------------------------
+   Stacked layout: <dt> on its own line, <dd> indented below.
+
+   <dt> uses --weight-medium to anchor the pair — the term is the label,
+   the definition is the body. <dd> indents by --space-4 (16px) so the
+   relationship reads visually without requiring punctuation or layout
+   gymnastics.
+
+   Adjacent pairs (dd + dt) get a top margin so terms separate cleanly.
+   --------------------------------------------------------------------------  */
+
+dl {
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-base);
+
+  margin: 0 0 var(--space-3);
+  max-width: 65ch;
+}
+
+dl:last-child {
+  margin-bottom: 0;
+}
+
+dt {
+  font-weight: var(--weight-medium);
+  color: var(--text);
+}
+
+dd {
+  /* Reset the user-agent's default ~40px indent to a more editorial 16px. */
+  margin: 0 0 0 var(--space-4);
+  color: var(--text);
+}
+
+/* Separate pairs. The selector targets <dt> elements that follow a <dd> —
+   i.e. the start of every pair after the first. */
+dd + dt {
+  margin-top: var(--space-3);
+}
+
+
+/* --------------------------------------------------------------------------
+   7. PRINT RULES
+   --------------------------------------------------------------------------
+   Two concerns: markers must print in the margin (default behaviour, but
+   worth pinning down), and short list items shouldn't break across pages.
+
+   orphans/widows on <li> prevent single items being stranded at the top
+   or bottom of a printed page. Three lines is the same threshold used
+   for paragraphs in the prose foundation.
+   --------------------------------------------------------------------------  */
+
+@media print {
+  ul, ol {
+    list-style-position: outside;
+  }
+
+  li {
+    page-break-inside: avoid;
+    break-inside: avoid;
+    orphans: 2;
+    widows: 2;
+  }
+
+  dt {
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+}

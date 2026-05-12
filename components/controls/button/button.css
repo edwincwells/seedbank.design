@@ -1,0 +1,382 @@
+/* ==========================================================================
+   seedbank.design — button.css
+   --------------------------------------------------------------------------
+   The button control. Covers <button>, <input type="submit|button|reset">,
+   and <a class="btn"> for the legitimate link-styled-as-button case.
+
+   This is the first interactive control in the system, and it sets the
+   pattern for the two-vocabulary structure: editorial elements use
+   --radius-none and feel like print; interactive controls use --radius-md
+   and feel like software. Buttons are the canonical "software" element —
+   solid fills, rounded corners, hover and active states, focus rings.
+
+   Variants:
+     default (no class)        primary — affirmative action, --action fill
+     .btn-secondary            outlined, neutral
+     .btn-ghost                no border, no fill, hover reveals surface
+     .btn-destructive          outlined red, fills on hover (deliberate
+                               friction — a fully-red button is too easy
+                               to click by accident)
+
+   Sizes:
+     default                   --text-base, comfortable padding
+     .btn-sm                   --text-sm, tight padding for dense UI
+
+   States:
+     :hover                    background lift per variant
+     :active                   filter: brightness for tactile feedback
+     :focus-visible            handled by foundations/focus-ring
+     [disabled]                opacity, cursor, no hover
+     [aria-busy="true"]        loading spinner; non-interactive
+
+   Modifiers:
+     .btn-block                full-width
+
+   See README.md for the form-submission gotcha and the no-icon-only rule.
+
+   --------------------------------------------------------------------------
+   seedbank.design — licensed under MIT (code) and CC BY-SA 4.0
+   (documentation and design assets). This file is a design system asset —
+   it ships with every clone. Forks are encouraged to adapt it; adaptations
+   should be documented.
+   ========================================================================== */
+
+
+/* --------------------------------------------------------------------------
+   1. BASE — APPLIES TO EVERY BUTTON VARIANT
+   --------------------------------------------------------------------------
+   inline-flex so icons and labels sit on a shared baseline with a clean
+   gap. The button is not full-width by default — use .btn-block for that.
+
+   Default appearance is the primary variant. Variant classes override the
+   colour treatment; sizes override the padding and type.
+   --------------------------------------------------------------------------  */
+
+button,
+input[type="submit"],
+input[type="button"],
+input[type="reset"],
+.btn {
+  /* Reset user-agent defaults */
+  appearance: none;
+  -webkit-appearance: none;
+  background: none;
+  border: none;
+  margin: 0;
+
+  /* Layout */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);  /* 8px between icon and label */
+  position: relative;   /* for the loading spinner positioning */
+
+  /* Typography */
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-snug);
+  text-align: center;
+  text-decoration: none;  /* needed for <a class="btn"> */
+
+  /* Sizing — default size. Override with .btn-sm */
+  padding: var(--space-2) var(--space-4);  /* 8px 16px */
+  min-height: 36px;  /* ensures consistent height regardless of label content */
+
+  /* Shape — interactive vocabulary uses --radius-md */
+  border-radius: var(--radius-md);
+  border: var(--border-thick) solid transparent;  /* placeholder; variants set the colour */
+
+  /* Default colour treatment — PRIMARY variant.
+     Variant classes below override these properties. */
+  background: var(--action);
+  color: var(--surface);  /* light text on the dark --action fill */
+  border-color: var(--action);
+
+  cursor: pointer;
+  transition: background-color 0.12s ease, border-color 0.12s ease, filter 0.12s ease;
+}
+
+/* Icons inside buttons size with the label */
+button > svg,
+.btn > svg,
+button > .icon,
+.btn > .icon {
+  width: 1em;
+  height: 1em;
+  flex-shrink: 0;
+}
+
+
+/* --------------------------------------------------------------------------
+   2. HOVER AND ACTIVE — APPLIES BEFORE VARIANTS OVERRIDE
+   --------------------------------------------------------------------------
+   Default (primary) variant uses --action-hover for the lift. Active state
+   uses a brightness filter on all variants — one rule, works everywhere,
+   degrades gracefully on browsers without filter support.
+   --------------------------------------------------------------------------  */
+
+button:hover,
+input[type="submit"]:hover,
+input[type="button"]:hover,
+input[type="reset"]:hover,
+.btn:hover {
+  background: var(--action-hover);
+  border-color: var(--action-hover);
+}
+
+button:active,
+input[type="submit"]:active,
+input[type="button"]:active,
+input[type="reset"]:active,
+.btn:active {
+  filter: brightness(0.92);
+}
+
+
+/* --------------------------------------------------------------------------
+   3. SECONDARY — OUTLINED, NEUTRAL
+   --------------------------------------------------------------------------
+   No fill, --border outline, --text label. The most common non-primary
+   button — pairs with a primary as the "cancel" or alternate action.
+   --------------------------------------------------------------------------  */
+
+.btn-secondary {
+  background: transparent;
+  color: var(--text);
+  border-color: var(--border-strong);
+}
+
+.btn-secondary:hover {
+  background: var(--surface-raised);
+  border-color: var(--border-strong);
+  color: var(--text);
+}
+
+
+/* --------------------------------------------------------------------------
+   4. GHOST — NO BORDER, NO FILL
+   --------------------------------------------------------------------------
+   Used for the lowest-emphasis actions: "Skip", "Maybe later", inline
+   "more" controls. Hover reveals the surface-raised tone so the button
+   still gets visible feedback.
+   --------------------------------------------------------------------------  */
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text);
+  border-color: transparent;
+}
+
+.btn-ghost:hover {
+  background: var(--surface-raised);
+  border-color: transparent;
+  color: var(--text);
+}
+
+
+/* --------------------------------------------------------------------------
+   5. DESTRUCTIVE — OUTLINED RED, FILLS ON HOVER
+   --------------------------------------------------------------------------
+   A deliberate friction model: the default state is an outline, not a
+   fill. The fill appears on hover, giving the user a clear "I'm now armed
+   for a destructive action" moment before clicking. Filled-by-default red
+   buttons get clicked accidentally — outlined-then-filled is safer for
+   delete, remove, and other irreversible actions.
+   --------------------------------------------------------------------------  */
+
+.btn-destructive {
+  background: transparent;
+  color: var(--error);
+  border-color: var(--error);
+}
+
+.btn-destructive:hover {
+  background: var(--error);
+  color: var(--surface);  /* light text on the now-filled red */
+  border-color: var(--error);
+}
+
+
+/* --------------------------------------------------------------------------
+   6. SMALL SIZE
+   --------------------------------------------------------------------------
+   Tighter padding, smaller type, slightly smaller radius. For dense UI —
+   inline actions in a table row, secondary controls in a card header.
+   --------------------------------------------------------------------------  */
+
+.btn-sm {
+  font-size: var(--text-sm);
+  padding: var(--space-1) var(--space-3);  /* 4px 12px */
+  min-height: 28px;
+  border-radius: var(--radius-sm);
+  gap: var(--space-1);  /* 4px between icon and label at this size */
+}
+
+
+/* --------------------------------------------------------------------------
+   7. BLOCK MODIFIER — FULL WIDTH
+   --------------------------------------------------------------------------
+   Common in mobile forms where the submit action should span the form
+   width. Apply alongside any variant: <button class="btn-block">,
+   <button class="btn-secondary btn-block">, etc.
+   --------------------------------------------------------------------------  */
+
+.btn-block {
+  display: flex;
+  width: 100%;
+}
+
+
+/* --------------------------------------------------------------------------
+   8. DISABLED
+   --------------------------------------------------------------------------
+   The standard `disabled` attribute drives styling. NOT a .btn-disabled
+   class — state from attribute, per project convention.
+
+   Disabled buttons are not focusable by default (browser behaviour). Forks
+   needing focusable-disabled for screen reader discoverability should use
+   aria-disabled="true" plus JS click-blocking — that's a fork concern, not
+   a foundation default.
+   --------------------------------------------------------------------------  */
+
+button[disabled],
+input[type="submit"][disabled],
+input[type="button"][disabled],
+input[type="reset"][disabled],
+.btn[disabled],
+.btn[aria-disabled="true"] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  filter: none;  /* override any active-state filter */
+}
+
+/* Disabled buttons must not react to hover. The selector list is verbose
+   because we need to override every variant's hover. */
+button[disabled]:hover,
+input[type="submit"][disabled]:hover,
+input[type="button"][disabled]:hover,
+input[type="reset"][disabled]:hover,
+.btn[disabled]:hover,
+.btn[aria-disabled="true"]:hover {
+  background: var(--action);
+  color: var(--surface);
+  border-color: var(--action);
+}
+
+.btn-secondary[disabled]:hover,
+.btn-secondary[aria-disabled="true"]:hover {
+  background: transparent;
+  color: var(--text);
+  border-color: var(--border-strong);
+}
+
+.btn-ghost[disabled]:hover,
+.btn-ghost[aria-disabled="true"]:hover {
+  background: transparent;
+  color: var(--text);
+  border-color: transparent;
+}
+
+.btn-destructive[disabled]:hover,
+.btn-destructive[aria-disabled="true"]:hover {
+  background: transparent;
+  color: var(--error);
+  border-color: var(--error);
+}
+
+
+/* --------------------------------------------------------------------------
+   9. LOADING STATE
+   --------------------------------------------------------------------------
+   Triggered by aria-busy="true" on the button — state from attribute.
+   The label remains visible (so the action stays clear) and a spinner
+   appears before it. Pointer events are disabled so the button is
+   non-interactive during loading; opacity is the same as disabled so the
+   visual cue matches.
+
+   The spinner is a CSS-only ring: an element with three transparent
+   borders and one coloured border, rotated continuously. No SVG, no JS,
+   no extra markup needed — the spinner is a ::before pseudo-element
+   inserted into the inline-flex container, ahead of the icon and label.
+
+   To use: add aria-busy="true" to the button when the action starts,
+   remove it when finished. Usually a few lines of JS, often handled by
+   the form library you're using.
+   --------------------------------------------------------------------------  */
+
+button[aria-busy="true"],
+input[type="submit"][aria-busy="true"],
+input[type="button"][aria-busy="true"],
+input[type="reset"][aria-busy="true"],
+.btn[aria-busy="true"] {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+button[aria-busy="true"]::before,
+input[type="submit"][aria-busy="true"]::before,
+input[type="button"][aria-busy="true"]::before,
+input[type="reset"][aria-busy="true"]::before,
+.btn[aria-busy="true"]::before {
+  content: "";
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  border-radius: 50%;
+  border: var(--border-thick) solid currentColor;
+  /* Three transparent quadrants, one visible — produces the ring-with-a-gap
+     spinner appearance when rotated. */
+  border-top-color: transparent;
+  border-right-color: transparent;
+  border-bottom-color: transparent;
+  animation: seedbank-btn-spin 0.8s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes seedbank-btn-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Respect users who've opted out of motion. The spinner pauses but
+   remains visible as a partial ring — the label still communicates
+   the loading state. */
+@media (prefers-reduced-motion: reduce) {
+  button[aria-busy="true"]::before,
+  input[type="submit"][aria-busy="true"]::before,
+  input[type="button"][aria-busy="true"]::before,
+  input[type="reset"][aria-busy="true"]::before,
+  .btn[aria-busy="true"]::before {
+    animation: none;
+  }
+}
+
+
+/* --------------------------------------------------------------------------
+   10. PRINT RULES
+   --------------------------------------------------------------------------
+   Buttons in print are static — no hover, no active, no spinner animation.
+   We keep them visible (borders printed) but suppress backgrounds to save
+   ink. Disabled and loading states retain their opacity treatment so the
+   page-as-printed reflects the page-as-rendered.
+   --------------------------------------------------------------------------  */
+
+@media print {
+  button,
+  input[type="submit"],
+  input[type="button"],
+  input[type="reset"],
+  .btn {
+    background: transparent !important;
+    color: var(--text) !important;
+    border-color: var(--text) !important;
+  }
+
+  button[aria-busy="true"]::before,
+  input[type="submit"][aria-busy="true"]::before,
+  input[type="button"][aria-busy="true"]::before,
+  input[type="reset"][aria-busy="true"]::before,
+  .btn[aria-busy="true"]::before {
+    animation: none;
+  }
+}

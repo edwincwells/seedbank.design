@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>lists — seedbank.design</title>
+  <link rel="stylesheet" href="../../../tokens/tokens.css">
+  <link rel="stylesheet" href="../prose/prose.css">
+  <link rel="stylesheet" href="../dividers/dividers.css">
+  <link rel="stylesheet" href="./lists.css">
+  <style>
+    /* Reference-page-only styles. Not part of the foundation. */
+    body {
+      background: var(--surface);
+      margin: 0;
+      padding: var(--space-6) var(--space-5);
+      max-width: 720px;
+    }
+    .meta {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      color: var(--text-subtle);
+      margin-bottom: var(--space-2);
+    }
+    .demo-region {
+      /* A bordered container so the reader can see exactly where the
+         list's padding-inline-start begins. */
+      border: var(--border-hairline) dashed var(--border-subtle);
+      padding: var(--space-3) var(--space-4);
+      margin-bottom: var(--space-6);
+    }
+    .wrong {
+      border-left: var(--border-rule) solid var(--error);
+      padding: var(--space-3) var(--space-4);
+      margin-bottom: var(--space-5);
+      background: var(--surface-sunken);
+    }
+    .wrong > p:first-child {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      color: var(--text-subtle);
+      text-transform: uppercase;
+      letter-spacing: var(--tracking-label);
+      margin-bottom: var(--space-2);
+    }
+  </style>
+</head>
+<body>
+
+  <h1>lists</h1>
+  <p>Content lists — unordered, ordered, and definition. This page demonstrates each list type, nesting behaviour, and how lists render inside long-form prose.</p>
+
+  <hr>
+
+  <!-- Unordered list -->
+  <p class="meta">&lt;ul&gt; — disc markers, 24px indent, 4px gap between items</p>
+  <div class="demo-region">
+    <ul>
+      <li>First item in an unordered list.</li>
+      <li>Second item. The 24px indent is enough room for the marker to hang in the gutter without crowding the text.</li>
+      <li>Third item. Items have a small bottom margin so they breathe without losing the list's density.</li>
+    </ul>
+  </div>
+
+  <!-- Ordered list -->
+  <p class="meta">&lt;ol&gt; — decimal markers rendered in mono, muted colour</p>
+  <div class="demo-region">
+    <ol>
+      <li>First item in an ordered list.</li>
+      <li>Numbers are rendered in <code>--font-mono</code> at <code>--text-sm</code> in <code>--text-muted</code>, matching the system's convention of mono for tokenised metadata.</li>
+      <li>The marker styling uses <code>::marker</code> — supported in modern browsers, with a graceful fallback to sans for older ones.</li>
+    </ol>
+  </div>
+
+  <!-- Nested ul in ul -->
+  <p class="meta">nested &lt;ul&gt; — same marker style at every depth</p>
+  <div class="demo-region">
+    <ul>
+      <li>First item at the top level.</li>
+      <li>
+        Second item, with a nested list:
+        <ul>
+          <li>First nested item. The marker is still a disc, not a UA-default circle.</li>
+          <li>
+            Second nested item, with another level:
+            <ul>
+              <li>Third-level item. Still a disc.</li>
+              <li>Forks that prefer UA-style cascade can override locally — see the README.</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>Third item at the top level.</li>
+    </ul>
+  </div>
+
+  <!-- Mixed nesting -->
+  <p class="meta">nested &lt;ol&gt; inside &lt;ul&gt; — each list controls its own marker</p>
+  <div class="demo-region">
+    <ul>
+      <li>Top-level bullet.</li>
+      <li>
+        Bullet with a numbered sub-list:
+        <ol>
+          <li>First numbered sub-item.</li>
+          <li>Second numbered sub-item. The mono numerals still apply at this depth.</li>
+        </ol>
+      </li>
+      <li>Another top-level bullet.</li>
+    </ul>
+  </div>
+
+  <!-- Definition list -->
+  <p class="meta">&lt;dl&gt; — stacked, term in medium weight, definition indented</p>
+  <div class="demo-region">
+    <dl>
+      <dt>Forkability over consistency</dt>
+      <dd>Divergence is expected. Each deployment is intended to adapt the system to its own context.</dd>
+
+      <dt>Tokens as civic infrastructure</dt>
+      <dd>Semantic variables surfaced explicitly so communities can remap values without touching component logic.</dd>
+
+      <dt>Designed for the edges, not the centre</dt>
+      <dd>The system must work on e-ink, print, low bandwidth, and solar-powered servers — and be comprehensible without design or technical literacy.</dd>
+    </dl>
+  </div>
+
+  <hr>
+
+  <!-- Long-form prose example -->
+  <p class="meta">composition — lists inside &lt;article&gt; with looser leading and larger gaps</p>
+
+  <article>
+    <h2>Concrete implications of the edges principle</h2>
+    <p>Designing for the edges shapes every component decision. The visible consequences fall into a few clear categories:</p>
+
+    <ul>
+      <li>No gradients, no decorative effects, no font weights that disappear on cheap screens. The system uses only regular and medium weights for this reason.</li>
+      <li>Every component is tested in print mode and at low bandwidth before release. The acceptance bar is documented in <code>TESTING.md</code>.</li>
+      <li>Icons always paired with visible labels — never icon-only. Pure-icon controls fail when the icon font doesn't load or the user doesn't recognise the symbol.</li>
+      <li>States are explicit and named, not implied by colour alone. Colour reinforces meaning; it doesn't carry it on its own.</li>
+    </ul>
+
+    <p>Each of these reads as a constraint, but in practice they tend to make components <em>simpler</em>, not more elaborate. The discipline of designing for the edges removes the temptation to add visual complexity that wouldn't survive being clone-and-adapted by a community in conditions we can't foresee.</p>
+
+    <h3>What the three-criterion test catches</h3>
+    <ol>
+      <li>Renders correctly without CSS loaded — catches components that depend on CSS to communicate meaning.</li>
+      <li>Works at 200% zoom — catches fixed-pixel layouts and components that break under reflow.</li>
+      <li>Works on a 320px viewport — catches assumptions about horizontal space.</li>
+    </ol>
+  </article>
+
+  <hr>
+
+  <!-- Wrong uses -->
+  <p class="meta">when not to use a list</p>
+
+  <div class="wrong">
+    <p>Avoid — single-item list</p>
+    <p>A list with one item is not a list. If the content has only one element, write it as a paragraph. Screen readers announce the list and its single item, which is noise.</p>
+  </div>
+
+  <div class="wrong">
+    <p>Avoid — list as layout grid</p>
+    <p>Don't reach for <code>&lt;ul&gt;</code> to lay out cards, navigation items, or grids of content. Use semantic containers — <code>&lt;nav&gt;</code> for navigation, <code>&lt;article&gt;</code> or <code>&lt;section&gt;</code> for content groupings — and grid or flex layout for the visual arrangement. Lists are for content that reads as a list.</p>
+  </div>
+
+  <div class="wrong">
+    <p>Avoid — bordered rows via &lt;li&gt;</p>
+    <p>Status rows, card lists, and other UI patterns that use list-like markup with borders, left-rules, or other treatments belong in the patterns layer. This foundation styles content lists only. Patterns will reset the foundation's styling on the elements they use.</p>
+  </div>
+
+</body>
+</html>
