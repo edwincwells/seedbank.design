@@ -1,0 +1,217 @@
+/* ==========================================================================
+   seedbank.design — checkbox.css
+   --------------------------------------------------------------------------
+   The checkbox control. Replaces the UA checkbox geometry entirely with a
+   custom styled box so the control matches the system's visual vocabulary
+   (rounded corners, --border-thick width, activity-coloured fill).
+
+   The UA checkbox was considered and rejected: it varies across platforms
+   in ways that read as inconsistency next to system-styled buttons and
+   inputs. The CSS `accent-color` property was also considered and rejected:
+   it only tints the checked state, leaving the geometry and unchecked
+   appearance UA-default. A fully custom box gives forks a consistent
+   surface across browsers and platforms.
+
+   Approach:
+     - `appearance: none` resets the UA chrome
+     - The box itself is the input element — no extra markup
+     - The checkmark is an inline SVG used as background-image, scaled to
+       fit, rendered in --surface so it reads against the --action fill
+     - Focus is handled by the focus-ring foundation (outline outside box)
+
+   Visual decisions:
+     - 18px square, --radius-sm corners
+     - --border-thick (1.5px) border in --border-strong
+     - --surface-sunken background when unchecked (consistent with inputs)
+     - --action fill when checked (resolves to --grow by default)
+     - Indeterminate state shows a horizontal dash instead of the tick
+
+   The wrapping <label> pattern (label > input + text) provides the click
+   target for the entire label, not just the box — same approach as
+   text-input.
+
+   --------------------------------------------------------------------------
+   seedbank.design — licensed under MIT (code) and CC BY-SA 4.0
+   (documentation and design assets). This file is a design system asset —
+   it ships with every clone. Forks are encouraged to adapt it; adaptations
+   should be documented.
+   ========================================================================== */
+
+
+/* --------------------------------------------------------------------------
+   1. THE BOX
+   --------------------------------------------------------------------------
+   appearance: none strips the UA checkbox completely. We then draw the box
+   ourselves: 18px square, sunken background, thick neutral border, small
+   radius. The box is the input element itself — no overlay div, no
+   ::before/::after for the geometry. The checkmark goes on as a
+   background-image when :checked.
+
+   inline-block + vertical-align: text-top so the box sits cleanly on the
+   label's text baseline. flex-shrink: 0 because checkboxes are often
+   inside flex containers where they should not be compressed.
+   --------------------------------------------------------------------------  */
+
+input[type="checkbox"] {
+  /* Reset UA chrome */
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  margin: 0;
+  padding: 0;
+
+  /* Layout */
+  display: inline-block;
+  vertical-align: text-top;
+  flex-shrink: 0;
+  position: relative;
+
+  /* Size — slightly larger than UA default for easier targeting on touch */
+  width: 18px;
+  height: 18px;
+
+  /* Shape */
+  border-radius: var(--radius-sm);
+  border: var(--border-thick) solid var(--border-strong);
+  background: var(--surface-sunken);
+
+  /* Transitions on colour properties only — no layout shift between states */
+  transition: background-color 0.12s ease, border-color 0.12s ease;
+
+  cursor: pointer;
+}
+
+/* Hover state — subtle border colour shift to signal interactivity.
+   Stays on the box itself; the label-wide click target gets its own
+   feedback via the cursor pointer. */
+input[type="checkbox"]:hover {
+  border-color: var(--text);
+}
+
+
+/* --------------------------------------------------------------------------
+   2. CHECKED STATE
+   --------------------------------------------------------------------------
+   When checked, the box fills with --action and a white checkmark appears.
+   The checkmark is an inline SVG encoded as a data-URI background-image.
+
+   The SVG path: starts at the lower-left, peaks at the bottom of the
+   stroke, rises to the upper-right. 2px stroke, round line joins for the
+   slightly chunky hand-drawn feel. Coordinates assume a 16x16 viewBox
+   that scales to the box size.
+
+   stroke="%23fafaf7" is --surface-light URL-encoded (#fafaf7). Hardcoding
+   the colour in the SVG is the unavoidable trade-off — CSS variables
+   can't be referenced inside a data-URI background-image. The trade-off:
+   forks that change --surface should also re-encode the SVG colour here.
+   Documented in the README.
+   --------------------------------------------------------------------------  */
+
+input[type="checkbox"]:checked {
+  background-color: var(--action);
+  border-color: var(--action);
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 16 16' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M3 8 L7 12 L13 4' stroke='%23fafaf7' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E");
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+
+/* --------------------------------------------------------------------------
+   3. INDETERMINATE STATE
+   --------------------------------------------------------------------------
+   The :indeterminate pseudo-class matches when the input's `indeterminate`
+   property is set to true via JS — there is no HTML attribute for it.
+   Typical use: a parent checkbox in a tree where some but not all
+   children are checked.
+
+   The styling shows a horizontal dash instead of the tick. Same fill
+   colour as :checked for visual continuity.
+
+   To set:
+     myCheckbox.indeterminate = true;
+
+   The CSS handles the rest. Documented in the README.
+   --------------------------------------------------------------------------  */
+
+input[type="checkbox"]:indeterminate {
+  background-color: var(--action);
+  border-color: var(--action);
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 16 16' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M3 8 L13 8' stroke='%23fafaf7' stroke-width='2' stroke-linecap='round' fill='none'/%3E%3C/svg%3E");
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+
+/* --------------------------------------------------------------------------
+   4. INVALID STATE
+   --------------------------------------------------------------------------
+   Driven by aria-invalid="true". The same timing rules apply as for
+   text-input: only mark a checkbox invalid AFTER validation, never on a
+   pristine field. Most checkboxes are never invalid — the case is required
+   checkboxes (e.g. "I agree to the terms") that get submitted unchecked.
+
+   Border becomes --error; width stays --border-thick. If the box is also
+   checked (rare but possible — a checkbox can be programmatically marked
+   both checked and invalid), the fill stays --action and the border
+   becomes --error. The two signals stack.
+   --------------------------------------------------------------------------  */
+
+input[type="checkbox"][aria-invalid="true"] {
+  border-color: var(--error);
+}
+
+
+/* --------------------------------------------------------------------------
+   5. DISABLED STATE
+   --------------------------------------------------------------------------
+   Standard disabled attribute. Opacity 0.5 matches text-input and button.
+
+   For the wrapping <label>: when its child input is disabled, the label
+   text should look disabled too. The :has() selector handles this in all
+   current browsers (~94% global support). Older browsers fall back to
+   "label looks normal, input looks disabled" — a mild inconsistency,
+   acceptable degradation.
+   --------------------------------------------------------------------------  */
+
+input[type="checkbox"][disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+input[type="checkbox"][disabled]:hover {
+  border-color: var(--border-strong);  /* override the hover state */
+}
+
+label:has(input[type="checkbox"][disabled]) {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+
+/* --------------------------------------------------------------------------
+   6. PRINT RULES
+   --------------------------------------------------------------------------
+   Checkboxes in print are static — no hover, no focus ring. We keep them
+   visible (borders printed) but suppress backgrounds to save ink. The
+   checked-state SVG keeps its colour because the user needs to see what
+   was checked on the printed page.
+   --------------------------------------------------------------------------  */
+
+@media print {
+  input[type="checkbox"] {
+    background-color: transparent !important;
+    border-color: var(--text) !important;
+  }
+
+  input[type="checkbox"]:checked {
+    /* In print, switch the checkmark colour from light to dark so it
+       reads against the now-transparent background. */
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 16 16' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M3 8 L7 12 L13 4' stroke='%231a1a1a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E") !important;
+  }
+
+  input[type="checkbox"]:indeterminate {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 16 16' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M3 8 L13 8' stroke='%231a1a1a' stroke-width='2' stroke-linecap='round' fill='none'/%3E%3C/svg%3E") !important;
+  }
+}

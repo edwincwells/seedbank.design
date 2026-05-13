@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>checkbox — seedbank.design</title>
+  <link rel="stylesheet" href="../../../tokens/tokens.css">
+  <link rel="stylesheet" href="../../foundations/prose/prose.css">
+  <link rel="stylesheet" href="../../foundations/dividers/dividers.css">
+  <link rel="stylesheet" href="../../foundations/lists/lists.css">
+  <link rel="stylesheet" href="../../foundations/focus-ring/focus-ring.css">
+  <link rel="stylesheet" href="./checkbox.css">
+  <style>
+    /* Reference-page-only styles. Not part of the component. */
+    body {
+      background: var(--surface);
+      margin: 0;
+      padding: var(--space-6) var(--space-5);
+      max-width: 720px;
+    }
+    .meta {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      color: var(--text-subtle);
+      margin-bottom: var(--space-2);
+    }
+    .demo-region {
+      border: var(--border-hairline) dashed var(--border-subtle);
+      padding: var(--space-3) var(--space-4);
+      margin-bottom: var(--space-6);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+    .demo-region--inline {
+      flex-direction: row;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: var(--space-4);
+    }
+    /* Stand-in for what form-field will provide.
+       The wrapping <label> with display:flex and gap aligns the box
+       with the text on a shared baseline. */
+    .demo-checkbox {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-2);
+      font-family: var(--font-sans);
+      font-size: var(--text-base);
+      color: var(--text);
+      cursor: pointer;
+      line-height: var(--leading-snug);
+    }
+    /* Indented child checkboxes — the parent-child composition pattern */
+    .demo-children {
+      margin-left: calc(var(--space-5) + 2px);  /* 18px box + 8px gap */
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+      margin-top: var(--space-2);
+    }
+    /* Fieldset/legend reset for the group example */
+    fieldset.demo-fieldset {
+      border: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+    fieldset.demo-fieldset legend {
+      font-family: var(--font-sans);
+      font-size: var(--text-sm);
+      font-weight: var(--weight-medium);
+      color: var(--text);
+      padding: 0;
+      margin-bottom: var(--space-2);
+    }
+    .demo-help {
+      font-family: var(--font-sans);
+      font-size: var(--text-sm);
+      color: var(--text-muted);
+      margin-top: var(--space-1);
+    }
+    .demo-error {
+      font-family: var(--font-sans);
+      font-size: var(--text-sm);
+      color: var(--error);
+      margin-top: var(--space-1);
+    }
+    .wrong {
+      border-left: var(--border-rule) solid var(--error);
+      padding: var(--space-3) var(--space-4);
+      margin-bottom: var(--space-5);
+      background: var(--surface-sunken);
+    }
+    .wrong > p:first-child {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      color: var(--text-subtle);
+      text-transform: uppercase;
+      letter-spacing: var(--tracking-label);
+      margin-bottom: var(--space-2);
+    }
+  </style>
+</head>
+<body>
+
+  <h1>checkbox</h1>
+  <p>A custom-styled checkbox that replaces the browser default entirely. Same accessibility as a native checkbox — it still IS a native checkbox, just visually re-skinned via <code>appearance: none</code> and a CSS-only checkmark.</p>
+
+  <hr>
+
+  <!-- Default unchecked and checked -->
+  <p class="meta">default — unchecked and checked, with wrapping &lt;label&gt; for full click target</p>
+  <div class="demo-region">
+    <label class="demo-checkbox">
+      <input type="checkbox">
+      <span>Subscribe to the monthly digest</span>
+    </label>
+    <label class="demo-checkbox">
+      <input type="checkbox" checked>
+      <span>Receive notifications about upcoming work parties</span>
+    </label>
+  </div>
+
+  <!-- Disabled -->
+  <p class="meta">disabled — uses the disabled attribute; the wrapping label also looks disabled (via :has())</p>
+  <div class="demo-region">
+    <label class="demo-checkbox">
+      <input type="checkbox" disabled>
+      <span>Receive SMS alerts (not configured yet)</span>
+    </label>
+    <label class="demo-checkbox">
+      <input type="checkbox" checked disabled>
+      <span>Member of Ferndale Co-op (managed by admins)</span>
+    </label>
+  </div>
+
+  <!-- Indeterminate -->
+  <p class="meta">indeterminate — set via JS (no HTML attribute exists for this state)</p>
+  <div class="demo-region">
+    <label class="demo-checkbox">
+      <input type="checkbox" id="indeterminate-demo">
+      <span>Select all (3 of 5 children selected — indeterminate)</span>
+    </label>
+    <p class="demo-help">Indeterminate is JS-only. The script at the bottom of this page sets <code>element.indeterminate = true</code> on page load to demonstrate.</p>
+  </div>
+
+  <!-- Invalid -->
+  <p class="meta">aria-invalid="true" — applied after validation, never pristine</p>
+  <div class="demo-region">
+    <label class="demo-checkbox">
+      <input type="checkbox" required aria-invalid="true" aria-describedby="terms-error">
+      <span>I agree to the community guidelines <span style="color: var(--error)" aria-hidden="true">*</span></span>
+    </label>
+    <p class="demo-error" id="terms-error">You must agree to the community guidelines before joining.</p>
+  </div>
+
+  <hr>
+
+  <!-- Group with fieldset -->
+  <p class="meta">group — &lt;fieldset&gt; with &lt;legend&gt; is the accessible composition pattern</p>
+  <div class="demo-region">
+    <fieldset class="demo-fieldset">
+      <legend>How would you like to be contacted?</legend>
+      <label class="demo-checkbox">
+        <input type="checkbox" name="contact" value="email" checked>
+        <span>Email</span>
+      </label>
+      <label class="demo-checkbox">
+        <input type="checkbox" name="contact" value="signal">
+        <span>Signal</span>
+      </label>
+      <label class="demo-checkbox">
+        <input type="checkbox" name="contact" value="phone">
+        <span>Phone call</span>
+      </label>
+      <label class="demo-checkbox">
+        <input type="checkbox" name="contact" value="post">
+        <span>Post (we'll need your address)</span>
+      </label>
+    </fieldset>
+  </div>
+
+  <!-- Parent-child indented -->
+  <p class="meta">parent-child — indented children; parent state managed via JS</p>
+  <div class="demo-region">
+    <label class="demo-checkbox">
+      <input type="checkbox" id="parent-demo">
+      <span>Receive all community updates</span>
+    </label>
+    <div class="demo-children">
+      <label class="demo-checkbox">
+        <input type="checkbox" class="child-demo" checked>
+        <span>Weekly newsletter</span>
+      </label>
+      <label class="demo-checkbox">
+        <input type="checkbox" class="child-demo">
+        <span>Event announcements</span>
+      </label>
+      <label class="demo-checkbox">
+        <input type="checkbox" class="child-demo" checked>
+        <span>Decision-making notices</span>
+      </label>
+    </div>
+    <p class="demo-help">Parent shows <em>indeterminate</em> when some but not all children are checked, <em>checked</em> when all are, <em>unchecked</em> when none are. The CSS handles the styling; the markup needs a small amount of JS to keep the states in sync. The script at the bottom of this page demonstrates.</p>
+  </div>
+
+  <hr>
+
+  <!-- Wrong uses -->
+  <p class="meta">when not to use a checkbox</p>
+
+  <div class="wrong">
+    <p>Avoid — no label</p>
+    <p>Every checkbox needs an accessible name. Either wrap it in a <code>&lt;label&gt;</code> as shown above, associate a separate <code>&lt;label for="..."&gt;</code> with the input's <code>id</code>, or provide an <code>aria-label</code>. An unlabelled checkbox is invisible to screen readers and ambiguous for everyone else.</p>
+  </div>
+
+  <div class="wrong">
+    <p>Avoid — checkbox when a toggle would be clearer</p>
+    <p>Use a checkbox when the user is selecting from a set of options or confirming a stateful choice (subscribe / agree / include). Don't use a checkbox for binary on/off settings where the action takes effect immediately — that's a toggle switch, which behaves differently (immediate apply vs queued change) and reads differently to users.</p>
+  </div>
+
+  <div class="wrong">
+    <p>Avoid — checkbox group where the user must pick exactly one</p>
+    <p>If the user must select exactly one option from a list (and only one), use radio buttons. Checkboxes imply "select zero or more"; radios imply "select exactly one." Picking the wrong control sets the wrong expectation about what's allowed.</p>
+  </div>
+
+  <div class="wrong">
+    <p>Avoid — marking pristine required checkboxes invalid</p>
+    <p>Don't apply <code>aria-invalid="true"</code> to a required checkbox on page load. Marking the "I agree" checkbox invalid before the user has had a chance to interact with the form makes the whole form look broken. Apply <code>aria-invalid</code> after a validation attempt — typically on form submit.</p>
+  </div>
+
+  <!-- Reference-page-only JS to demonstrate indeterminate and parent-child -->
+  <script>
+    // Standalone indeterminate demo
+    document.getElementById('indeterminate-demo').indeterminate = true;
+
+    // Parent-child sync demo
+    const parent = document.getElementById('parent-demo');
+    const children = document.querySelectorAll('.child-demo');
+
+    function syncParent() {
+      const checkedCount = Array.from(children).filter(c => c.checked).length;
+      if (checkedCount === 0) {
+        parent.checked = false;
+        parent.indeterminate = false;
+      } else if (checkedCount === children.length) {
+        parent.checked = true;
+        parent.indeterminate = false;
+      } else {
+        parent.checked = false;
+        parent.indeterminate = true;
+      }
+    }
+
+    function syncChildren() {
+      children.forEach(c => c.checked = parent.checked);
+      parent.indeterminate = false;
+    }
+
+    children.forEach(c => c.addEventListener('change', syncParent));
+    parent.addEventListener('change', syncChildren);
+    syncParent();  // initial state
+  </script>
+
+</body>
+</html>
