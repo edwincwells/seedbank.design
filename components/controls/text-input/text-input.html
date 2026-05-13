@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>text-input — seedbank.design</title>
+  <link rel="stylesheet" href="../../../tokens/tokens.css">
+  <link rel="stylesheet" href="../../foundations/prose/prose.css">
+  <link rel="stylesheet" href="../../foundations/dividers/dividers.css">
+  <link rel="stylesheet" href="../../foundations/lists/lists.css">
+  <link rel="stylesheet" href="../../foundations/focus-ring/focus-ring.css">
+  <link rel="stylesheet" href="../button/button.css">
+  <link rel="stylesheet" href="./text-input.css">
+  <style>
+    /* Reference-page-only styles. Not part of the component. */
+    body {
+      background: var(--surface);
+      margin: 0;
+      padding: var(--space-6) var(--space-5);
+      max-width: 720px;
+    }
+    .meta {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      color: var(--text-subtle);
+      margin-bottom: var(--space-2);
+    }
+    .demo-region {
+      border: var(--border-hairline) dashed var(--border-subtle);
+      padding: var(--space-3) var(--space-4);
+      margin-bottom: var(--space-6);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+    .demo-region--inline {
+      flex-direction: row;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    /* The reference page uses simple inline labels for accessibility
+       without yet having the form-field pattern. Form-field will handle
+       the proper composition later. */
+    .demo-label {
+      font-family: var(--font-sans);
+      font-size: var(--text-sm);
+      font-weight: var(--weight-medium);
+      color: var(--text);
+      display: block;
+      margin-bottom: var(--space-1);
+    }
+    .demo-label .required {
+      color: var(--error);
+      margin-left: 2px;
+    }
+    .demo-help {
+      font-family: var(--font-sans);
+      font-size: var(--text-sm);
+      color: var(--text-muted);
+      margin-top: var(--space-1);
+    }
+    .demo-error {
+      font-family: var(--font-sans);
+      font-size: var(--text-sm);
+      color: var(--error);
+      margin-top: var(--space-1);
+    }
+    .wrong {
+      border-left: var(--border-rule) solid var(--error);
+      padding: var(--space-3) var(--space-4);
+      margin-bottom: var(--space-5);
+      background: var(--surface-sunken);
+    }
+    .wrong > p:first-child {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      color: var(--text-subtle);
+      text-transform: uppercase;
+      letter-spacing: var(--tracking-label);
+      margin-bottom: var(--space-2);
+    }
+  </style>
+</head>
+<body>
+
+  <h1>text-input</h1>
+  <p>Text-shaped form inputs and <code>&lt;textarea&gt;</code>. This component styles the input element itself; composition with labels, help text, and inline errors is handled by the <code>form-field</code> pattern. An input on its own with a wrapping <code>&lt;label&gt;</code> is a complete, accessible control — that's how the examples here are written.</p>
+
+  <hr>
+
+  <!-- All text-shaped input types -->
+  <p class="meta">input types — every text-shaped input renders the same way</p>
+  <div class="demo-region">
+    <label>
+      <span class="demo-label">Email <span class="required" aria-hidden="true">*</span></span>
+      <input type="email" placeholder="you@community.org" required>
+    </label>
+
+    <label>
+      <span class="demo-label">Password <span class="required" aria-hidden="true">*</span></span>
+      <input type="password" placeholder="••••••••" required>
+    </label>
+
+    <label>
+      <span class="demo-label">Website</span>
+      <input type="url" placeholder="https://example.org">
+    </label>
+
+    <label>
+      <span class="demo-label">Phone</span>
+      <input type="tel" placeholder="+44 7700 900000">
+    </label>
+
+    <label>
+      <span class="demo-label">Search</span>
+      <input type="search" placeholder="Search the directory">
+    </label>
+
+    <label>
+      <span class="demo-label">Number of members</span>
+      <input type="number" placeholder="0" min="0">
+    </label>
+  </div>
+
+  <!-- Textarea -->
+  <p class="meta">&lt;textarea&gt; — vertical resize only, 80px minimum height</p>
+  <div class="demo-region">
+    <label>
+      <span class="demo-label">Notes</span>
+      <textarea placeholder="What did you discuss at the meeting?"></textarea>
+      <p class="demo-help">Help text. The form-field pattern will document the proper composition.</p>
+    </label>
+  </div>
+
+  <hr>
+
+  <!-- States -->
+  <p class="meta">disabled — uses the disabled attribute, not interactive</p>
+  <div class="demo-region">
+    <label>
+      <span class="demo-label">Community ID</span>
+      <input type="text" value="seedbank-bristol-014" disabled>
+      <p class="demo-help">Assigned automatically. Cannot be changed.</p>
+    </label>
+  </div>
+
+  <p class="meta">readonly — focusable and submitted, but not editable</p>
+  <div class="demo-region">
+    <label>
+      <span class="demo-label">Generated handle</span>
+      <input type="text" value="@ferndale-coop" readonly>
+      <p class="demo-help">Derived from your community name. To change it, edit the name.</p>
+    </label>
+  </div>
+
+  <p class="meta">aria-invalid="true" — applied after validation, never on pristine fields</p>
+  <div class="demo-region">
+    <label>
+      <span class="demo-label">Email <span class="required" aria-hidden="true">*</span></span>
+      <input type="email" value="not-an-email" aria-invalid="true" aria-describedby="email-error">
+      <p class="demo-error" id="email-error">Enter a valid email address — this one is missing the @ symbol.</p>
+    </label>
+  </div>
+
+  <hr>
+
+  <!-- Side-by-side with a button — the alignment test -->
+  <p class="meta">inline with a button — heights match by design</p>
+  <div class="demo-region demo-region--inline">
+    <label style="flex: 1;">
+      <span class="demo-label" style="margin-bottom: 0; position: absolute; left: -9999px;">Search</span>
+      <input type="search" placeholder="Search members" style="margin: 0;">
+    </label>
+    <button>Search</button>
+  </div>
+
+  <!-- Search input with no visible label -->
+  <p class="meta">no visible label — aria-label is required</p>
+  <div class="demo-region">
+    <input type="search" placeholder="Search the directory" aria-label="Search the directory">
+  </div>
+
+  <hr>
+
+  <!-- Wrong uses -->
+  <p class="meta">when not to use a text-input</p>
+
+  <div class="wrong">
+    <p>Avoid — placeholder as label</p>
+    <p>The placeholder is auxiliary text. When the user starts typing, it disappears — leaving the field unlabelled. Screen readers may or may not announce the placeholder, depending on browser. Always provide a real <code>&lt;label&gt;</code> (or <code>aria-label</code> if no visible label is possible). Placeholders are for example values and format hints only.</p>
+  </div>
+
+  <div class="wrong">
+    <p>Avoid — no label at all</p>
+    <p>Every input needs an accessible name. Either wrap the input in a <code>&lt;label&gt;</code>, associate a separate <code>&lt;label for="..."&gt;</code> with the input's <code>id</code>, or provide an <code>aria-label</code> attribute. An unlabelled input is invisible to screen readers and unusable for many users.</p>
+  </div>
+
+  <div class="wrong">
+    <p>Avoid — marking pristine fields invalid</p>
+    <p>Don't apply <code>aria-invalid="true"</code> to fields the user hasn't interacted with yet. Marking every empty required field as invalid on page load makes the entire form look broken before the user has done anything. Apply the attribute after a validation attempt — on blur, on submit, or after the user has typed and corrected.</p>
+  </div>
+
+  <div class="wrong">
+    <p>Avoid — type="number" for things that aren't quantities</p>
+    <p>Use <code>type="number"</code> only for actual quantities (counts, measurements). For phone numbers, postcodes, credit card numbers, or anything where the value is a sequence of digits but isn't a number to be calculated with, use <code>type="text"</code> with <code>inputmode="numeric"</code> instead. <code>type="number"</code> applies number-specific behaviour (up/down spinners, scientific notation parsing, locale formatting) that breaks these use cases.</p>
+  </div>
+
+</body>
+</html>

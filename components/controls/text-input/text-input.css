@@ -1,0 +1,243 @@
+/* ==========================================================================
+   seedbank.design — text-input.css
+   --------------------------------------------------------------------------
+   Text-shaped form inputs and <textarea>. Covers every input type that
+   renders as a typed text field:
+     text, email, password, url, tel, search, number
+   Plus <textarea>.
+
+   This component styles the input element only. Composition concerns —
+   the <label>, help text, inline errors, required indicators — belong to
+   the form-field pattern. An input on its own with a wrapping <label> is
+   a complete, accessible control; form-field will wrap it later to handle
+   the more elaborate compositions.
+
+   Scope deliberately excludes:
+     - date, time, color, file (visually distinct, UA-specific affordances)
+     - checkbox, radio (separate components)
+     - select (separate component)
+
+   Visual approach:
+     - Sunken background (--surface-sunken) so the input reads as "where
+       you type" against an editorial page surface
+     - --border-thick (1.5px) border in --border by default
+     - Focus handled by the focus-ring foundation (outline outside the box)
+       — the input's own border does NOT change on focus, so no layout
+       shift between states
+     - Invalid (aria-invalid="true") flips the border to --error; same width
+     - Sizing matches button heights so inputs and buttons align visually
+       when placed side by side
+
+   --------------------------------------------------------------------------
+   seedbank.design — licensed under MIT (code) and CC BY-SA 4.0
+   (documentation and design assets). This file is a design system asset —
+   it ships with every clone. Forks are encouraged to adapt it; adaptations
+   should be documented.
+   ========================================================================== */
+
+
+/* --------------------------------------------------------------------------
+   1. BASE — TEXT-SHAPED INPUTS AND TEXTAREA
+   --------------------------------------------------------------------------
+   The selector list explicitly enumerates every text-shaped input type.
+   Listing types individually (rather than just `input`) means we don't
+   accidentally style checkboxes, radios, or other visually-distinct
+   controls.
+
+   --border-thick width and --surface-sunken background mean inputs read
+   as visibly different from the page surface without being visually loud.
+   Height matches button defaults (36px) so inputs and buttons align when
+   placed side by side in a row.
+   --------------------------------------------------------------------------  */
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="url"],
+input[type="tel"],
+input[type="search"],
+input[type="number"],
+textarea {
+  /* Reset UA defaults that conflict with the system */
+  appearance: none;
+  -webkit-appearance: none;
+  margin: 0;
+
+  /* Layout */
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+
+  /* Typography — matches the prose foundation's body settings */
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-snug);
+  color: var(--text);
+
+  /* Sizing — matches button default to align visually side by side.
+     Horizontal padding is slightly less than buttons (12px vs 16px)
+     because inputs typically hold longer content. */
+  padding: var(--space-2) var(--space-3);  /* 8px 12px */
+  min-height: 36px;
+
+  /* Shape — interactive vocabulary uses --radius-md */
+  border-radius: var(--radius-md);
+  border: var(--border-thick) solid var(--border);
+
+  /* Background — sunken so the field reads as "where you type" */
+  background: var(--surface-sunken);
+
+  /* Transitions — only border colour, not width, so no layout shift */
+  transition: border-color 0.12s ease, background-color 0.12s ease;
+}
+
+
+/* --------------------------------------------------------------------------
+   2. TEXTAREA-SPECIFIC RULES
+   --------------------------------------------------------------------------
+   Textareas inherit everything above, but need additional rules: a
+   sensible minimum height, vertical-only resize (horizontal resize breaks
+   layout in unpredictable ways), and looser line-height for multi-line
+   reading.
+   --------------------------------------------------------------------------  */
+
+textarea {
+  min-height: 80px;
+  resize: vertical;
+  line-height: var(--leading-base);  /* looser than single-line inputs */
+}
+
+
+/* --------------------------------------------------------------------------
+   3. PLACEHOLDER STYLING
+   --------------------------------------------------------------------------
+   Placeholders are auxiliary text — example values, format hints. They
+   must be visibly distinct from real user-entered values, and meet
+   contrast requirements.
+
+   --text-subtle resolves to ~4.5:1 against --surface-sunken, meeting WCAG
+   AA for auxiliary text. The README documents the load-bearing rule:
+   placeholders are NOT labels. A field with only a placeholder loses its
+   label when the user types.
+   --------------------------------------------------------------------------  */
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-subtle);
+  opacity: 1;  /* Firefox defaults to <1; normalise across browsers */
+}
+
+
+/* --------------------------------------------------------------------------
+   4. INVALID STATE
+   --------------------------------------------------------------------------
+   Driven by aria-invalid="true" — state from attribute, not from a class.
+
+   Border colour switches to --error; width stays at --border-thick so the
+   field's box doesn't shift. The user's text content keeps its normal
+   colour — what they typed is theirs, not "error content".
+
+   IMPORTANT — see the README. aria-invalid="true" should only be applied
+   AFTER a validation attempt, not on a pristine field. Marking fields
+   invalid before the user has interacted with them is a common
+   accessibility failure.
+   --------------------------------------------------------------------------  */
+
+input[aria-invalid="true"],
+textarea[aria-invalid="true"] {
+  border-color: var(--error);
+}
+
+
+/* --------------------------------------------------------------------------
+   5. DISABLED AND READONLY
+   --------------------------------------------------------------------------
+   These look similar but are semantically distinct:
+
+   disabled — the field cannot be interacted with at all. Not focusable,
+              not submitted with the form. Visually muted via opacity.
+              Matches button disabled treatment.
+
+   readonly — the field is focusable, selectable, and submitted with the
+              form, but cannot be edited. Visually distinct (lighter
+              background) to communicate "fixed content, not editable".
+   --------------------------------------------------------------------------  */
+
+input[disabled],
+textarea[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+input[readonly],
+textarea[readonly] {
+  background: var(--surface);  /* lighter than --surface-sunken — looks "set" */
+  border-color: var(--border-subtle);
+  cursor: default;
+}
+
+
+/* --------------------------------------------------------------------------
+   6. TYPE=SEARCH UA CLEAR BUTTON
+   --------------------------------------------------------------------------
+   WebKit/Blink browsers render a small "x" button inside type="search"
+   inputs to clear the value. The default styling clashes with the system
+   look. We remove it — forks that want a clear button should provide one
+   explicitly as a sibling element rather than rely on the UA chrome.
+   --------------------------------------------------------------------------  */
+
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-results-button,
+input[type="search"]::-webkit-search-results-decoration {
+  -webkit-appearance: none;
+}
+
+
+/* --------------------------------------------------------------------------
+   7. NUMBER INPUT SPINNERS
+   --------------------------------------------------------------------------
+   Browsers render up/down spinner controls on type="number". They are
+   small, inconsistent across browsers, and difficult to hit on touch
+   devices. The README documents that forks should usually use a regular
+   text input with inputmode="numeric" and pattern attributes instead of
+   type="number" — but if type="number" is used, we hide the spinners
+   so the field renders consistently with other inputs.
+   --------------------------------------------------------------------------  */
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;  /* Firefox */
+}
+
+
+/* --------------------------------------------------------------------------
+   8. PRINT RULES
+   --------------------------------------------------------------------------
+   Inputs in print should retain their structure — the printed page is
+   often a record of what was filled in. Backgrounds are removed to save
+   ink; borders are kept (in --text colour) so the field outline still
+   reads.
+   --------------------------------------------------------------------------  */
+
+@media print {
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="url"],
+  input[type="tel"],
+  input[type="search"],
+  input[type="number"],
+  textarea {
+    background: transparent !important;
+    border-color: var(--text) !important;
+    color: var(--text) !important;
+  }
+}
