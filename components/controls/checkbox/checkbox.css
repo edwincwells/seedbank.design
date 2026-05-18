@@ -152,21 +152,72 @@ input[type="checkbox"]:indeterminate {
    pristine field. Most checkboxes are never invalid — the case is required
    checkboxes (e.g. "I agree to the terms") that get submitted unchecked.
 
-   Border becomes --error; width stays --border-thick. If the box is also
-   checked (rare but possible — a checkbox can be programmatically marked
-   both checked and invalid), the fill stays --action and the border
-   becomes --error. The two signals stack.
+   Border becomes --error; width stays --border-thick.
+
+   Clear-on-checked: when the user satisfies the requirement by checking
+   the box, the CSS clears both the red border AND the .error-message
+   element. The aria-invalid attribute is still on the input in markup —
+   only JS can remove it — but continuing to show error signals after
+   the user has answered is the form failing to keep up.
+
+   The .error-message hiding has two forms because checkboxes appear in
+   two structural patterns:
+     (a) Single checkbox with wrapping <label> — the error sits as a
+         sibling of the label, in the same parent container
+     (b) Group of checkboxes inside <fieldset> — the error sits inside
+         the fieldset, alongside the labels
+
+   Both forms target .error-message via :has(). Visibility: hidden keeps
+   the element's layout space, so checking the box doesn't cause a
+   vertical jump.
+
+   Caveat: this clears the visual for the common "must check" validation.
+   A form with more complex validation that should keep showing the error
+   even when checked would need a different signal mechanism.
    --------------------------------------------------------------------------  */
 
 input[type="checkbox"][aria-invalid="true"] {
   border-color: var(--error);
 }
 
+/* Clear-on-checked: single checkbox case.
+   When the wrapping label contains a checked invalid checkbox, the
+   border clears on the checkbox itself, and the error message that
+   follows the label is hidden. */
+label:has(input[type="checkbox"]:checked) input[type="checkbox"][aria-invalid="true"] {
+  border-color: var(--action);
+}
+
+label:has(input[type="checkbox"]:checked) + .error-message {
+  visibility: hidden;
+}
+
+/* Clear-on-checked: group case.
+   When any checkbox inside a fieldset is checked, clear the red border
+   on the unchecked invalid checkboxes and hide the error message. The
+   checked checkboxes themselves keep their --action fill via the rule
+   above. Matches radio's group-clearing pattern. */
+fieldset:has(input[type="checkbox"]:checked) input[type="checkbox"][aria-invalid="true"]:not(:checked) {
+  border-color: var(--border-strong);
+}
+
+fieldset:has(input[type="checkbox"]:checked) .error-message {
+  visibility: hidden;
+}
+
 
 /* --------------------------------------------------------------------------
    5. DISABLED STATE
    --------------------------------------------------------------------------
-   Standard disabled attribute. Opacity 0.5 matches text-input and button.
+   Standard disabled attribute. Opacity 0.5 matches text-input, button,
+   and radio.
+
+   The CSS uses :disabled (pseudo-class), NOT [disabled] (attribute
+   selector). This matters: inside <fieldset disabled>, the browser
+   marks every descendant checkbox as :disabled, but does NOT add the
+   `disabled` attribute to the markup. The attribute selector would
+   miss the fieldset-disabled case; the pseudo-class catches both
+   paths.
 
    For the wrapping <label>: when its child input is disabled, the label
    text should look disabled too. The :has() selector handles this in all
@@ -175,16 +226,16 @@ input[type="checkbox"][aria-invalid="true"] {
    acceptable degradation.
    --------------------------------------------------------------------------  */
 
-input[type="checkbox"][disabled] {
+input[type="checkbox"]:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
-input[type="checkbox"][disabled]:hover {
+input[type="checkbox"]:disabled:hover {
   border-color: var(--border-strong);  /* override the hover state */
 }
 
-label:has(input[type="checkbox"][disabled]) {
+label:has(input[type="checkbox"]:disabled) {
   opacity: 0.5;
   cursor: not-allowed;
 }

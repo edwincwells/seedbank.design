@@ -122,10 +122,36 @@ The most common case for an invalid select is a required field submitted with th
   <option value="email">Email</option>
   <option value="signal">Signal</option>
 </select>
-<p id="contact-error" class="field-error">Please choose a contact method.</p>
+<p id="contact-error" class="error-message">Please choose a contact method.</p>
 ```
 
 Don't apply `aria-invalid="true"` on page load. Don't apply it to required fields preemptively.
+
+### Clear-on-valid-selection
+
+The CSS clears both the red border AND the error message once the user picks a real option (any option whose value isn't the empty placeholder). The detection logic:
+
+```css
+select[aria-invalid="true"]:has(option:checked:not([value=""]))
+```
+
+This says "an invalid select that contains a checked option whose value is non-empty" — exactly the moment the user has answered the "must pick something" requirement.
+
+For the error message clearing to work, **the error `<p>` must carry the `.error-message` class** and live as a sibling of the `<select>` within a common wrapper:
+
+```html
+<div class="field">
+  <label for="contact">...</label>
+  <select id="contact" required aria-invalid="true" aria-describedby="contact-error">...</select>
+  <p id="contact-error" class="error-message">Please choose a contact method.</p>
+</div>
+```
+
+The message uses `visibility: hidden` (not `display: none`) so the layout doesn't jump when the user picks an option. The `aria-invalid` attribute is still on the select in markup — only JS can remove it — but the visual stops complaining the moment the requirement is met.
+
+Caveat: this clears the visual when ANY non-placeholder option is selected. A form that needs to validate the chosen option further (e.g. "the selected option is no longer available") would need a different signal mechanism, since the clear-on-valid-selection rule will suppress the red that should still be present.
+
+Browser support for `:has()` is ~94% globally. Older browsers fall back to "red stays after selection" — annoying but not broken; the form itself can still clear `aria-invalid` and the message text on re-validation.
 
 ---
 

@@ -148,13 +148,13 @@
   </div>
 
   <!-- Invalid -->
-  <p class="meta">aria-invalid="true" — applied after validation, never pristine</p>
+  <p class="meta">aria-invalid="true" — applied after validation, never pristine · clears on check</p>
   <div class="demo-region">
     <label class="demo-checkbox">
       <input type="checkbox" required aria-invalid="true" aria-describedby="terms-error">
       <span>I agree to the community guidelines <span style="color: var(--error)" aria-hidden="true">*</span></span>
     </label>
-    <p class="demo-error" id="terms-error">You must agree to the community guidelines before joining.</p>
+    <p class="demo-error error-message" id="terms-error">You must agree to the community guidelines before joining.</p>
   </div>
 
   <hr>

@@ -3,6 +3,7 @@
 Tested against the three criteria in `TESTING.md`.
 
 **Tested in:** Chrome on macOS by Edwin, 18 May 2026.
+**Amendments tested:** Chrome on macOS by Edwin, 18 May 2026 (see Controls-pass amendments below).
 
 The body font-family bug surfaced during the first test pass triggered a foundation amendment to `prose.css` (see Findings below). Tests were re-run with the updated foundation and reference page in place; the receipts below reflect the post-amendment state.
 
@@ -74,14 +75,54 @@ Re-test after the amendment confirmed all three criteria pass. The receipts abov
 
 ---
 
+## Controls-pass amendments (18 May 2026)
+
+Three changes made during the controls-layer pass alongside the radio v0.1 work. All resolved in CSS.
+
+**1. `[disabled]` → `:disabled` on per-element rules.**
+
+Radio testing surfaced that the attribute selector misses the fieldset-disabled case — inside `<fieldset disabled>`, the browser marks descendants as `:disabled` but does NOT add the `disabled` attribute to the markup. The same issue applied to select: a `<select>` inside a `<fieldset disabled>` would have shown the wrong cursor and would have been hoverable.
+
+Resolution: swapped the per-element rules to use `:disabled` (pseudo-class). The `fieldset[disabled]` selectors elsewhere are correct as-is. The existing reference-page examples don't exercise the fieldset-disabled case, so no visible regression to test against from the existing demos.
+
+**2. Clear-on-valid-selection for invalid state.**
+
+The most common required-select failure: user submits with the placeholder option still selected, then picks a real option. The red border stayed until JS removed `aria-invalid`. Same problem identified during radio testing.
+
+Resolution: added rules that detect when a non-placeholder option has been chosen:
+- `select[aria-invalid="true"]:has(option:checked:not([value=""]))` — the "user has picked something real" condition. Clears the red border by setting it back to `--border-strong`.
+- A paired `:hover` rule re-instates the standard hover state for the now-valid select.
+- A general-sibling combinator (`~`) rule hides the `.error-message` that follows the select within the same wrapper.
+
+The CSS detects the satisfied state by looking inside the select for a checked option whose value isn't the empty placeholder.
+
+**3. `.error-message` convention.**
+
+The reference page's invalid demo error `<p>` now carries `class="demo-error error-message"` so the convention is exercised. The error must sit as a sibling of the `<select>` within a common wrapper (the existing `.field` div in the demo).
+
+### Amendment receipts
+
+**Disabled-via-fieldset behaviour:** verified by wrapping the existing locked-region select in `<fieldset disabled>` via Chrome dev tools. Cursor became `not-allowed` on both the select and the label; hover did not trigger the border colour shift. The previously-broken behaviour is now correct.
+
+**Clear-on-valid-selection:** in the existing invalid demo, picking any non-placeholder option ("Email", "Signal", or "Phone call") cleared both the red border AND the error message immediately. Re-selecting the placeholder option (`"Choose one…"`) brought both back — the rule fires on the live `:has(option:checked:not([value=""]))` state, so the round-trip works in both directions as expected.
+
+**Layout integrity on clear:** confirmed — `visibility: hidden` preserved the message's layout space. No vertical jump on selection or re-selection of the placeholder.
+
+**Hover state on the now-valid select:** verified — picking a real option restored the default hover behaviour (border shifts to `--text` on hover). The invalid hover override no longer fires once `aria-invalid` has been "visually resolved" by the `:has()` rule.
+
+---
+
 ## Open questions for v0.2 and beyond
 
 - **Placeholder option `disabled` convention.** Should the placeholder option be `disabled` by default in documentation examples? Trade-off: prevents reverting to "nothing chosen" after a real pick (good for required fields), but blocks legitimate "actually I want to clear this" intents (bad for optional fields). May vary by field requiredness. Worth resolving before `form-field` lands so the pattern can codify it.
+- **Per-option validation patterns.** The clear-on-valid-selection rule fires when ANY non-placeholder option is chosen. A fork validating that the chosen option is itself valid (e.g. "this option is no longer available") would need a different signal mechanism. Document if it becomes a real concern.
+- **The general-sibling combinator dependency.** The `.error-message` hide rule uses `~`, which requires the error to live in the same parent as the `<select>`. This works with the current `.field` wrapping pattern. When `form-field` is built, this becomes part of its codified composition.
 - **`--control-size-sm` token.** A small-size token for selects, inputs, and (potentially) other controls. Currently each control hardcodes its sizing; if dense-UI compositions surface a real need, consolidate then.
 - **Custom listbox in `patterns/`.** When, if ever, to build. The barrier is high (JS, ARIA combobox, focus management) but real fork needs may justify it. Track demand.
 - **Print rendering of `<select multiple>` selections.** Browsers vary in how they show selected options without their coloured background. May be a fork-specific concern; revisit if a fork reports trouble.
 - **`<optgroup>` styling.** If a future CSS specification makes the open panel reachable, revisit. No such proposal is currently at a useful stage.
 - **iOS / Android testing.** Deferred from this v0.1 receipt. The documented limitation framing covers the open-panel rendering question, but device-specific behaviour on touch (especially `<select multiple>`) is worth verifying when a fork deploys to mobile-first contexts.
+- **The `.error-message` convention is now load-bearing across checkbox, radio, and select.** When `form-field` is built, this convention should be codified explicitly: error messages live inside the field's wrapping container (label/fieldset/wrapper div) and carry the `.error-message` class.
 - Print preview check, as flagged for prior components — still optional, still worth adding to the standing checklist if a habit forms.
 
 ---

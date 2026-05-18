@@ -3,6 +3,7 @@
 Tested against the three criteria in `TESTING.md`.
 
 **Tested in:** Chrome on macOS by Edwin, 12 May 2026.
+**Amendments tested:** Chrome on macOS by Edwin, 18 May 2026 (see Controls-pass amendments below).
 
 ---
 
@@ -93,11 +94,51 @@ At 320px viewport width:
 
 ---
 
+## Controls-pass amendments (18 May 2026)
+
+Three changes made during the controls-layer pass alongside the radio v0.1 work. All resolved in CSS; no foundation-level changes required for this pass.
+
+**1. `[disabled]` → `:disabled` on per-input rules.**
+
+Radio testing surfaced that the attribute selector misses the fieldset-disabled case — inside `<fieldset disabled>`, the browser marks descendants as `:disabled` but does NOT add the `disabled` attribute to the markup. The same issue applied to checkbox: any checkbox inside a `<fieldset disabled>` would have shown the wrong cursor and would have been hoverable.
+
+Resolution: swapped the per-input rules to use `:disabled` (pseudo-class). The `fieldset[disabled]` selectors elsewhere are correct as-is. The existing reference-page examples don't exercise the fieldset-disabled case, so no visible regression to test against from the existing demos.
+
+**2. Clear-on-checked for invalid state.**
+
+The "I agree to the terms" case: a required checkbox fails validation on submit, the user checks the box, but the red border stays until JS removes `aria-invalid`. Same problem identified during radio testing — visually confusing and dishonest about state.
+
+Resolution: added two CSS rules:
+- `label:has(input:checked) input[type="checkbox"][aria-invalid="true"]` — clears the border on the now-checked invalid checkbox by re-instating the `--action` border via specificity
+- `fieldset:has(input:checked) input[type="checkbox"][aria-invalid="true"]:not(:checked)` — for grouped checkbox cases, clears the border on unchecked invalid siblings when any checkbox in the group has been checked
+
+**3. `.error-message` convention for error message clearing.**
+
+Added rules that hide the `.error-message` element (using `visibility: hidden` to preserve layout) when the user has satisfied the requirement:
+- Single checkbox: `label:has(input:checked) + .error-message` — error follows the wrapping label as a sibling
+- Grouped checkbox: `fieldset:has(input:checked) .error-message` — error inside the fieldset
+
+The reference page's invalid demo error `<p>` now carries `class="demo-error error-message"` so the convention is exercised.
+
+### Amendment receipts
+
+**Disabled-via-fieldset behaviour:** verified by wrapping an existing checkbox group in `<fieldset disabled>` via Chrome dev tools. Cursor became `not-allowed` on both the input and the label; hover did not trigger the border colour shift. The previously-broken behaviour is now correct.
+
+**Clear-on-checked for the "I agree" case:** in the existing invalid demo, checking the box cleared both the red border AND the error message immediately. The label and asterisk remained visible; only the error `<p>` was hidden. Re-unchecking the box brought both back, as expected — the rule fires on the live `:checked` state, not as a one-way transition.
+
+**Layout integrity on clear:** confirmed — `visibility: hidden` preserved the message's layout space. No vertical jump on check or uncheck.
+
+**Grouped-checkbox clear behaviour:** not exercised by the existing reference page (no grouped checkbox is marked invalid). The rule is in place; the canonical "select at least one" composition will surface during real fork usage.
+
+---
+
 ## Open questions for v0.2 and beyond
 
 - **SVG checkmark colour in heavily-remapped forks.** The hardcoded `#fafaf7` works for the default palette because `--action` resolves to colours dark enough for a light checkmark to read against them. A fork that remaps `--action` to a lighter colour (pale yellow, for instance) would lose checkmark contrast. The README documents the re-encoding requirement; v0.2 might add a contrast-checking note to the adapting guide.
 - **Indeterminate state without JS.** Some communities may not be able to wire JS at all (e.g. static-site-only deployments). The indeterminate state isn't reachable in those contexts. Worth a documented note in the adapting guide about which features require JS — checkbox indeterminate, parent-child sync, button aria-busy toggling. Currently scattered across READMEs; would benefit from a consolidated reference.
-- **`:has()` fallback.** Works in current Chrome (and all current browsers per caniuse). The graceful-degradation behaviour in older browsers (label stays full-opacity while input dims) isn't worse than the no-CSS state. No action needed, but worth tracking if forks report it as an issue.
+- **`:has()` fallback.** Works in current Chrome (and all current browsers per caniuse). The graceful-degradation behaviour in older browsers (label stays full-opacity while input dims, error stays visible after check) isn't worse than the no-CSS state. No action needed, but worth tracking if forks report it as an issue.
+- **Grouped-checkbox invalid pattern.** The "select at least one" group case is covered by the clear-on-checked rule, but the reference page doesn't demonstrate it. Worth adding a demo block in a future iteration so the rule is visibly exercised in the reference, not just present in the CSS.
+- **The `.error-message` convention is now load-bearing across checkbox, radio, and select.** When `form-field` is built, this convention should be codified explicitly: error messages live inside the field's wrapping container (label/fieldset/wrapper div) and carry the `.error-message` class.
 - Print preview check, as flagged for prior components — confirmed working for checkbox specifically; still worth adding to the standing checklist.
 
 ---

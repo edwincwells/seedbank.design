@@ -202,6 +202,35 @@ The most common use case for an invalid checkbox is a required "I agree to the t
 
 Don't apply `aria-invalid="true"` on page load. Don't apply it to the entire form's required fields preemptively. Apply it only after the user has had a chance to interact and validation has been attempted.
 
+### Clear-on-checked
+
+The CSS clears both the red border AND the error message once the user checks the box. The `aria-invalid` attribute is still on the input in markup — only JS can remove it — but the visual stops nagging the user the moment they satisfy the requirement.
+
+For the error message clearing to work, **the error `<p>` must carry the `.error-message` class** and live as a direct sibling of the wrapping `<label>` (for a single checkbox) or inside the `<fieldset>` (for a group). The CSS handles both:
+
+```html
+<!-- Single checkbox: error follows the label -->
+<label class="checkbox-row">
+  <input type="checkbox" required aria-invalid="true">
+  <span>I agree *</span>
+</label>
+<p class="error-message">You must agree to continue.</p>
+
+<!-- Grouped checkboxes: error inside the fieldset -->
+<fieldset>
+  <legend>Which apply to you? *</legend>
+  <label><input type="checkbox" required aria-invalid="true"> Option A</label>
+  <label><input type="checkbox" required aria-invalid="true"> Option B</label>
+  <p class="error-message">Select at least one.</p>
+</fieldset>
+```
+
+The message uses `visibility: hidden` (not `display: none`) so the layout doesn't jump when the user checks the box. The form itself should remove `aria-invalid` and update the message content on its next validation cycle to bring the markup into agreement with the visual.
+
+This works for "must check" and "must select at least one" validation patterns. More complex validation (e.g. the checked value is itself invalid) needs a different signalling mechanism, since clear-on-checked will suppress the red that should still be present.
+
+Browser support for `:has()` is ~94% globally. Older browsers fall back to "red stays after checking" — annoying but not broken; the form itself can still clear `aria-invalid` and the message text on re-validation.
+
 ---
 
 ## Tokens used

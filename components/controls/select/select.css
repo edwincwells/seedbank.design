@@ -181,11 +181,25 @@ select[multiple] option:checked {
 /* --------------------------------------------------------------------------
    4. INVALID STATE
    --------------------------------------------------------------------------
-   Driven by aria-invalid="true", same convention as text-input and
-   checkbox. Only apply AFTER validation, never on a pristine field.
+   Driven by aria-invalid="true", same convention as text-input,
+   checkbox, and radio. Only apply AFTER validation, never on a
+   pristine field.
 
    Border becomes --error; width stays --border-thick. Hover override
-   below prevents the hover state from masking the invalid signal.
+   prevents the hover state from masking the invalid signal.
+
+   Clear-on-valid-selection: the most common required-select failure is
+   "user submitted with the placeholder option still selected" — the
+   first <option value=""> is selected, but the value is empty so
+   `required` reports invalid. The CSS detects when the user has picked
+   a real option by looking for a checked option whose value is NOT
+   empty, then clears the border and hides the .error-message that
+   follows the select.
+
+   The error-message lookup uses the general sibling combinator (~)
+   because the .error-message sits as a sibling of the <select> within
+   a common wrapper. Visibility: hidden keeps the layout space so the
+   form doesn't jump when the user picks an option.
    --------------------------------------------------------------------------  */
 
 select[aria-invalid="true"] {
@@ -196,12 +210,38 @@ select[aria-invalid="true"]:hover {
   border-color: var(--error);
 }
 
+/* Clear-on-valid-selection: invalid select with a non-empty option
+   checked. The :has() lookup walks into the select's options; the
+   :checked:not([value=""]) tests "is a real option selected." */
+select[aria-invalid="true"]:has(option:checked:not([value=""])) {
+  border-color: var(--border-strong);
+}
+
+select[aria-invalid="true"]:has(option:checked:not([value=""])):hover {
+  border-color: var(--text);
+  /* Re-instate the standard hover state for the now-valid select. */
+}
+
+/* Hide the .error-message that follows the now-valid select. The
+   general sibling combinator (~) reaches any later sibling within
+   the same parent. */
+select[aria-invalid="true"]:has(option:checked:not([value=""])) ~ .error-message {
+  visibility: hidden;
+}
+
 
 /* --------------------------------------------------------------------------
    5. DISABLED STATE
    --------------------------------------------------------------------------
    Standard disabled attribute. Opacity 0.5 matches text-input, checkbox,
-   and button.
+   radio, and button.
+
+   The CSS uses :disabled (pseudo-class), NOT [disabled] (attribute
+   selector). This matters: inside <fieldset disabled>, the browser
+   marks every descendant select as :disabled, but does NOT add the
+   `disabled` attribute to the markup. The attribute selector would
+   miss the fieldset-disabled case; the pseudo-class catches both
+   paths.
 
    The :has() selector handles label dimming when the inner select is
    disabled. Same approach and same browser-support caveat as checkbox
@@ -209,17 +249,17 @@ select[aria-invalid="true"]:hover {
    "select dims, label doesn't", acceptable degradation.
    --------------------------------------------------------------------------  */
 
-select[disabled] {
+select:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
-select[disabled]:hover {
+select:disabled:hover {
   border-color: var(--border-strong);
   /* Override the hover state on disabled selects. */
 }
 
-label:has(select[disabled]) {
+label:has(select:disabled) {
   opacity: 0.5;
   cursor: not-allowed;
 }
