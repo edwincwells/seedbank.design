@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>select — seedbank.design</title>
+  <link rel="stylesheet" href="../../../tokens/tokens.css">
+  <link rel="stylesheet" href="../../foundations/prose/prose.css">
+  <link rel="stylesheet" href="../../foundations/focus-ring/focus-ring.css">
+  <link rel="stylesheet" href="./select.css">
+  <style>
+    /* Reference-page-only styles. Not part of the component.
+       Used to lay out the demonstration; not inherited by forks. */
+    body {
+      background: var(--surface);
+      margin: 0;
+      padding: var(--space-6) var(--space-5);
+      max-width: 720px;
+    }
+    .row {
+      padding: var(--space-4) 0;
+      border-bottom: var(--border-hairline) solid var(--border);
+    }
+    .row:last-child {
+      border-bottom: none;
+    }
+    .meta {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      color: var(--text-subtle);
+      margin-bottom: var(--space-2);
+    }
+    .section-rule {
+      border: none;
+      border-top: var(--border-hairline) solid var(--border);
+      margin: var(--space-7) 0 var(--space-5);
+    }
+
+    /* Placeholder label layout — what form-field will provide. */
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-1);
+      max-width: 400px;
+    }
+    .demo-label {
+      font-family: var(--font-sans);
+      font-size: var(--text-sm);
+      font-weight: var(--weight-medium);
+      color: var(--text);
+    }
+    .demo-help {
+      font-family: var(--font-sans);
+      font-size: var(--text-sm);
+      color: var(--text-muted);
+    }
+    .demo-error {
+      font-family: var(--font-sans);
+      font-size: var(--text-sm);
+      color: var(--error);
+    }
+    .required {
+      color: var(--error);
+    }
+
+    /* Demonstration of the placeholder-option pattern. The first option
+       has empty value and is disabled, so it can't be re-selected. */
+  </style>
+</head>
+<body>
+
+  <h1>select</h1>
+  <p>Native <code>&lt;select&gt;</code> with UA chrome stripped and re-skinned to match the system's form vocabulary. Single-select and multi-select are both styled, with caveats — see the README for the open-panel limitation and the steering toward checkbox groups for most multi-select cases.</p>
+
+  <hr class="section-rule">
+
+  <!-- Default state -->
+  <div class="row">
+    <p class="meta">default · closed state · matches text-input plus a chevron</p>
+    <div class="field">
+      <label class="demo-label" for="region">Region</label>
+      <select id="region">
+        <option value="">Select a region…</option>
+        <option value="north">North</option>
+        <option value="south">South</option>
+        <option value="east">East</option>
+        <option value="west">West</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Pre-selected value -->
+  <div class="row">
+    <p class="meta">with a value already chosen</p>
+    <div class="field">
+      <label class="demo-label" for="frequency">Notification frequency</label>
+      <select id="frequency">
+        <option value="">Choose a frequency…</option>
+        <option value="daily">Daily digest</option>
+        <option value="weekly" selected>Weekly summary</option>
+        <option value="monthly">Monthly roundup</option>
+        <option value="never">Never</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Required -->
+  <div class="row">
+    <p class="meta">required · visible asterisk in the label · pristine state, no aria-invalid yet</p>
+    <div class="field">
+      <label class="demo-label" for="role">
+        Your role in the collective <span class="required" aria-hidden="true">*</span>
+      </label>
+      <select id="role" required aria-describedby="role-help">
+        <option value="">Select a role…</option>
+        <option value="member">Member</option>
+        <option value="steward">Steward</option>
+        <option value="facilitator">Facilitator</option>
+        <option value="observer">Observer</option>
+      </select>
+      <p class="demo-help" id="role-help">This shapes which discussions you'll be invited to.</p>
+    </div>
+  </div>
+
+  <!-- Invalid -->
+  <div class="row">
+    <p class="meta">invalid · aria-invalid="true" after validation · error message linked via aria-describedby</p>
+    <div class="field">
+      <label class="demo-label" for="contact">
+        Preferred contact method <span class="required" aria-hidden="true">*</span>
+      </label>
+      <select id="contact" required aria-invalid="true" aria-describedby="contact-error">
+        <option value="">Choose one…</option>
+        <option value="email">Email</option>
+        <option value="signal">Signal</option>
+        <option value="phone">Phone call</option>
+      </select>
+      <p class="demo-error" id="contact-error">Please choose a contact method before continuing.</p>
+    </div>
+  </div>
+
+  <!-- Disabled -->
+  <div class="row">
+    <p class="meta">disabled · the select dims, and the label dims via :has()</p>
+    <div class="field">
+      <label class="demo-label" for="locked-region">Region (locked)</label>
+      <select id="locked-region" disabled>
+        <option value="south" selected>South</option>
+      </select>
+    </div>
+  </div>
+
+  <hr class="section-rule">
+
+  <!-- Optgroup -->
+  <div class="row">
+    <p class="meta">with &lt;optgroup&gt; · semantically supported · visual rendering deferred to the OS</p>
+    <div class="field">
+      <label class="demo-label" for="resource">Resource type</label>
+      <select id="resource">
+        <option value="">Select a resource…</option>
+        <optgroup label="Tools">
+          <option value="drill">Drill</option>
+          <option value="saw">Saw</option>
+          <option value="sewing-machine">Sewing machine</option>
+        </optgroup>
+        <optgroup label="Space">
+          <option value="workshop">Workshop bay</option>
+          <option value="meeting-room">Meeting room</option>
+          <option value="kitchen">Kitchen</option>
+        </optgroup>
+        <optgroup label="Skills">
+          <option value="bike-repair">Bike repair</option>
+          <option value="electronics">Electronics repair</option>
+          <option value="mending">Mending</option>
+        </optgroup>
+      </select>
+    </div>
+  </div>
+
+  <hr class="section-rule">
+
+  <!-- Multi-select -->
+  <div class="row">
+    <p class="meta">&lt;select multiple&gt; · no arrow · the list-box rendering · use checkbox groups for most cases (see README)</p>
+    <div class="field">
+      <label class="demo-label" for="interests">Interest areas</label>
+      <select id="interests" multiple size="5">
+        <option value="growing">Growing & gardening</option>
+        <option value="repair" selected>Repair café</option>
+        <option value="cooking">Community kitchen</option>
+        <option value="childcare" selected>Childcare network</option>
+        <option value="energy">Energy cooperative</option>
+        <option value="housing">Housing working group</option>
+        <option value="comms">Comms & outreach</option>
+      </select>
+      <p class="demo-help">Hold Cmd (Mac) or Ctrl (Windows) to choose multiple. On touch devices, this interaction is often broken — checkbox groups are usually a better fit.</p>
+    </div>
+  </div>
+
+  <hr class="section-rule">
+
+  <h2>Wrong-use blocks</h2>
+
+  <div class="row">
+    <p class="meta">don't: use &lt;select&gt; for fewer than ~5 options</p>
+    <p>A short list of mutually exclusive options is better served by a radio group — every option is visible without an interaction, and the choice is immediate. Selects hide their options behind a panel that costs a click and a moment of cognitive load.</p>
+    <p>Use <code>&lt;select&gt;</code> when the list is long enough that showing all options inline would dominate the form (regions, currencies, time zones, languages). Use radios when the user benefits from seeing all options at once.</p>
+  </div>
+
+  <div class="row">
+    <p class="meta">don't: rely on &lt;optgroup&gt; for visually meaningful grouping</p>
+    <p>The grouping is semantic — assistive tech announces it — but the visual rendering is set by the OS and varies. If users need to see the groups clearly (e.g. for a long sortable list), a custom listbox or a different control is the right answer. <code>&lt;optgroup&gt;</code> is good for accessibility metadata; it's not a reliable visual structure.</p>
+  </div>
+
+  <div class="row">
+    <p class="meta">don't: assume the open dropdown panel can be styled</p>
+    <p>The panel that opens when a user clicks the select is rendered by the operating system. CSS cannot reach it. The closed state matches the system's vocabulary; the open state will look like whatever macOS, Windows, iOS, or Android draws. This is a documented limitation, not a bug — honest about what the platform allows.</p>
+  </div>
+
+</body>
+</html>

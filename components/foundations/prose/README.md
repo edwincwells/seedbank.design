@@ -8,6 +8,7 @@ This is a **foundation** — it applies globally via element selectors. Include 
 
 ## What it styles
 
+- The page's default font family, via a single rule on `<body>`
 - All six heading levels (`h1`–`h6`)
 - Paragraphs (`p`)
 - Inline emphasis (`strong`, `em`, `small`)
@@ -19,6 +20,8 @@ It does **not** style:
 - Lists — see `foundations/lists` (when built)
 - Code — see `display/code` (when built)
 - Tables — see `display/table` (when built)
+
+The body font-family rule means every descendant element — including form chrome (`label`, `fieldset`, `legend`), input controls (`input`, `select`, `textarea`, `button`), and table cells — inherits `--font-sans` by default. Components that need a different family (e.g. monospace for tokenised values) set it explicitly on themselves. See the body default note below.
 
 ---
 
@@ -36,6 +39,24 @@ It does **not** style:
 **On `h6` as the uppercase eyebrow.** The system uses small uppercase section labels heavily — they are semantically headings even though they don't look like conventional ones. Giving `h6` the eyebrow treatment provides a clean semantic answer for that pattern instead of requiring a non-heading element styled separately.
 
 If your fork doesn't use the eyebrow pattern, you can remap `h6` to be a smaller `h5` by editing the `h6` block in `prose.css`. Document the change.
+
+---
+
+## Body default
+
+The foundation sets one rule on `<body>`: `font-family: var(--font-sans)`.
+
+This exists because the prose foundation only styles a small set of elements explicitly — headings, paragraphs, inline emphasis. Everything else (form chrome, input controls, table cells, anything in future components prose doesn't reach) inherits font-family from its ancestor chain. Without the `<body>` rule, that chain ends at the user agent's default — typically a serif on macOS and Windows — and the result is form labels rendering in Times next to inputs rendering in Plex Sans.
+
+Setting `--font-sans` on `<body>` rather than on a long enumerated list of elements is deliberate. Inheritance covers everything, including elements that don't exist yet in the system. Components that need a different family (mono for tokenised metadata, for example) set it explicitly on themselves and override the body default by specificity.
+
+To use a different page-default font, override this one rule:
+
+```css
+body { font-family: 'Your Family', system-ui, sans-serif; }
+```
+
+Don't change `--font-sans` itself unless you want the change to propagate to every component that references the token — that's usually what you want, but it's worth knowing the two paths exist.
 
 ---
 

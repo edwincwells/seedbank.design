@@ -1,0 +1,260 @@
+/* ==========================================================================
+   seedbank.design — select.css
+   --------------------------------------------------------------------------
+   The select control. A native <select> element with the UA chrome stripped
+   and re-skinned to match the system's form vocabulary.
+
+   What this styles:
+     - <select>                  single-select dropdown
+     - <select multiple>         list-box multi-select (styled minimally;
+                                 see README for steering toward checkbox
+                                 groups in most cases)
+
+   What this does NOT style:
+     - The open dropdown panel. That panel is rendered by the operating
+       system and is unreachable from CSS in every browser. We style the
+       closed state; the open panel is whatever the OS draws. Documented
+       in the README as a known limitation, framed honestly per
+       PRINCIPLES.md #02.
+     - <optgroup> labels. CSS reach into <optgroup> is partial and patchy
+       across browsers. Half-styled is worse than UA-styled — we leave
+       them alone and document the trade-off.
+
+   Visual approach:
+     - Matches text-input exactly in closed state: --surface-sunken
+       background, --border-thick neutral border, --radius-md corners.
+       Form controls read as a coherent set.
+     - The custom arrow (chevron-down SVG, encoded as a data-URI
+       background-image) is the only visual difference from text-input,
+       and is what signals "this opens a panel".
+     - Focus handled by the focus-ring foundation.
+
+   State conventions (consistent with text-input and checkbox):
+     - aria-invalid="true" for invalid state (applied after validation)
+     - disabled attribute for disabled state (label dims via :has())
+     - required attribute pairs with a visible asterisk in the label markup
+
+   --------------------------------------------------------------------------
+   seedbank.design — licensed under MIT (code) and CC BY-SA 4.0
+   (documentation and design assets). This file is a design system asset —
+   it ships with every clone. Forks are encouraged to adapt it; adaptations
+   should be documented.
+   ========================================================================== */
+
+
+/* --------------------------------------------------------------------------
+   1. THE CLOSED STATE
+   --------------------------------------------------------------------------
+   appearance: none strips the UA chrome (the box, the bevel, the native
+   arrow). We then draw the box ourselves to match text-input, and add a
+   custom chevron via background-image.
+
+   padding-right is larger than padding-left to make room for the arrow.
+   The arrow sits at right: var(--space-3) (12px from the right edge) at
+   approximately 12px wide, so the right padding needs to clear it plus
+   give the longest option label some breathing room before it visually
+   collides with the arrow.
+
+   Typography matches text-input: --text-base size, regular weight,
+   --font-sans family. No min-height set — height is driven by line-height
+   plus padding, consistent with text-input.
+   --------------------------------------------------------------------------  */
+
+select {
+  /* Reset UA chrome */
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  margin: 0;
+
+  /* Layout */
+  display: inline-block;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+
+  /* Typography — matches text-input */
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-snug);
+  color: var(--text);
+
+  /* Sizing — matches text-input */
+  padding: var(--space-2) var(--space-6) var(--space-2) var(--space-3);
+  /* 8px top/bottom, 32px right (to clear the arrow), 12px left */
+
+  /* Shape — matches text-input */
+  background-color: var(--surface-sunken);
+  border: var(--border-thick) solid var(--border-strong);
+  border-radius: var(--radius-md);
+
+  /* The chevron-down arrow. SVG encoded as a data-URI background-image.
+     stroke="%231a1a1a" is --text-light URL-encoded. CSS variables can't
+     be used inside a data-URI — see README for the hardcoded-colour
+     exception and the print-mode override below.
+
+     viewBox 0 0 16 16, path draws a chevron from upper-left, down to
+     centre-bottom, up to upper-right. 1.5px stroke for a clean line at
+     12px render size. */
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 16 16' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M4 6 L8 10 L12 6' stroke='%231a1a1a' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--space-3) center;
+  background-size: 12px 12px;
+
+  /* Transitions on colour properties only — no layout shift between states */
+  transition: background-color 0.12s ease, border-color 0.12s ease;
+
+  cursor: pointer;
+}
+
+/* Hover state — border darkens to signal interactivity, matching
+   text-input's :hover treatment. */
+select:hover {
+  border-color: var(--text);
+}
+
+
+/* --------------------------------------------------------------------------
+   2. DARK MODE ARROW
+   --------------------------------------------------------------------------
+   The arrow SVG hardcodes a colour. In dark mode the default colour
+   (#1a1a1a) becomes invisible against the dark sunken surface. Re-encode
+   with --text-dark (#f0f0f0) for dark-mode rendering.
+
+   This is the same trade-off documented in checkbox.css. CSS variables
+   can't be referenced inside a data-URI, so each mode gets its own
+   hardcoded value.
+   --------------------------------------------------------------------------  */
+
+@media (prefers-color-scheme: dark) {
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 16 16' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M4 6 L8 10 L12 6' stroke='%23f0f0f0' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E");
+  }
+}
+
+
+/* --------------------------------------------------------------------------
+   3. MULTI-SELECT
+   --------------------------------------------------------------------------
+   <select multiple> renders as a list-box rather than a dropdown — there
+   is no closed state, no panel to open. The arrow is meaningless here
+   and would mislead users, so we suppress the background-image.
+
+   Per the README, checkbox groups are usually a better fit for
+   multi-select on the web. Multi-select <select> survives where there's
+   a real need (technical admin UI, long lists where checkbox groups
+   would consume too much vertical space) — when forks do use it, this
+   styling gives them something consistent with the rest of the system.
+
+   The size attribute (e.g. <select multiple size="6">) controls how
+   many options are visible; we don't override that.
+   --------------------------------------------------------------------------  */
+
+select[multiple] {
+  background-image: none;
+  /* No arrow. The expanded list-box doesn't need one. */
+  padding-right: var(--space-3);
+  /* Restore symmetric padding — no arrow to clear. */
+  cursor: default;
+  /* The list-box itself isn't clickable; individual options are. */
+}
+
+/* Individual options inside multi-select. CSS reach into <option> is
+   limited but reliable for padding and background-color on the
+   list-box rendering. We keep the styling minimal — enough to make
+   selected items visible against the sunken background. */
+select[multiple] option {
+  padding: var(--space-1) var(--space-2);
+}
+
+select[multiple] option:checked {
+  /* Selected options pick up the action colour as background.
+     Browser support for styling :checked on <option> is good in
+     list-box rendering but inconsistent inside the closed dropdown
+     panel (where we can't reach it anyway). */
+  background-color: var(--action);
+  color: var(--surface);
+}
+
+
+/* --------------------------------------------------------------------------
+   4. INVALID STATE
+   --------------------------------------------------------------------------
+   Driven by aria-invalid="true", same convention as text-input and
+   checkbox. Only apply AFTER validation, never on a pristine field.
+
+   Border becomes --error; width stays --border-thick. Hover override
+   below prevents the hover state from masking the invalid signal.
+   --------------------------------------------------------------------------  */
+
+select[aria-invalid="true"] {
+  border-color: var(--error);
+}
+
+select[aria-invalid="true"]:hover {
+  border-color: var(--error);
+}
+
+
+/* --------------------------------------------------------------------------
+   5. DISABLED STATE
+   --------------------------------------------------------------------------
+   Standard disabled attribute. Opacity 0.5 matches text-input, checkbox,
+   and button.
+
+   The :has() selector handles label dimming when the inner select is
+   disabled. Same approach and same browser-support caveat as checkbox
+   and text-input — ~94% global support, older browsers fall back to
+   "select dims, label doesn't", acceptable degradation.
+   --------------------------------------------------------------------------  */
+
+select[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+select[disabled]:hover {
+  border-color: var(--border-strong);
+  /* Override the hover state on disabled selects. */
+}
+
+label:has(select[disabled]) {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+
+/* --------------------------------------------------------------------------
+   6. PRINT RULES
+   --------------------------------------------------------------------------
+   Selects in print are static records of what was chosen. We keep them
+   visible (borders printed) but suppress backgrounds to save ink. The
+   arrow SVG gets re-encoded with the print text colour so it remains
+   visible against the now-transparent background.
+
+   For <select multiple>, no arrow override needed — it has no arrow
+   in any state.
+   --------------------------------------------------------------------------  */
+
+@media print {
+  select {
+    background-color: transparent !important;
+    border-color: var(--text) !important;
+    color: var(--text) !important;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 16 16' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M4 6 L8 10 L12 6' stroke='%231a1a1a' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E") !important;
+  }
+
+  select[multiple] {
+    background-image: none !important;
+  }
+
+  select[multiple] option:checked {
+    background-color: transparent !important;
+    color: var(--text) !important;
+    /* In print, distinguish selected options by some other means than
+       a coloured background. Browsers handle this variably; some print
+       a checkmark, some bold the text, some do nothing. The user's
+       actual selection is what was submitted, which is what matters. */
+  }
+}

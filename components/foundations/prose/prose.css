@@ -8,6 +8,13 @@
    prose.css once in your fork and every heading, paragraph, and inline
    element receives the system styling. No classes needed.
 
+   Page default: prose.css sets --font-sans on <body> so every element on
+   the page inherits the system's sans family by default, including form
+   chrome (label, fieldset, legend, input, select, textarea, button) and
+   table cells. Without this rule, those elements fall back to the user
+   agent's default — usually a serif — which the prose foundation does
+   not otherwise reach. See section 1.
+
    Heading scale mapping:
      h1   32px (--text-xxl)   page title, rarely used
      h2   22px (--text-xl)    major section
@@ -31,7 +38,35 @@
 
 
 /* --------------------------------------------------------------------------
-   1. HEADINGS
+   1. PAGE DEFAULT
+   --------------------------------------------------------------------------
+   Set --font-sans as the page's default font family on <body> so every
+   descendant element inherits it unless explicitly overridden.
+
+   This is the foundation's reach into elements it doesn't otherwise style:
+   form chrome (label, fieldset, legend), input controls (input, select,
+   textarea, button), and table elements (th, td) all sit outside the
+   heading/paragraph/inline-emphasis triad that prose.css explicitly styles.
+   Without this rule, they fall back to the user agent's default font —
+   usually a serif on macOS and Windows — which jars against the rest of
+   the system.
+
+   Setting it on <body> rather than on a long element list is deliberate:
+   it covers everything inherited (including elements added in future
+   components) without enumerating them. Components that need a different
+   family (e.g. mono for tokenised values) set it explicitly on themselves.
+
+   A fork that wants a different page-default font should override this
+   one rule rather than the per-element styles below.
+   --------------------------------------------------------------------------  */
+
+body {
+  font-family: var(--font-sans);
+}
+
+
+/* --------------------------------------------------------------------------
+   2. HEADINGS
    --------------------------------------------------------------------------
    Six levels. Weight is always 500 (--weight-medium). The system has no
    bold weight — see PRINCIPLES.md #01 on two-weight constraint.
@@ -102,7 +137,7 @@ h6:first-child {
 
 
 /* --------------------------------------------------------------------------
-   2. PARAGRAPHS
+   3. PARAGRAPHS
    --------------------------------------------------------------------------
    Default body text. 14px regular weight, default text colour, base leading.
 
@@ -132,7 +167,7 @@ p:last-child {
 
 
 /* --------------------------------------------------------------------------
-   3. LONG-FORM PROSE
+   4. LONG-FORM PROSE
    --------------------------------------------------------------------------
    Per PRINCIPLES.md, long-form reading gets looser line height. Opt in by
    wrapping a region in <article> or applying the .prose-long class. The
@@ -146,7 +181,7 @@ article p,
 
 
 /* --------------------------------------------------------------------------
-   4. INLINE EMPHASIS
+   5. INLINE EMPHASIS
    --------------------------------------------------------------------------
    strong uses --weight-medium (500), not bold. The system has no bold weight.
    em uses italic. small uses the smaller --text-sm size.
@@ -170,7 +205,7 @@ small {
 
 
 /* --------------------------------------------------------------------------
-   5. PRINT RULES
+   6. PRINT RULES
    --------------------------------------------------------------------------
    Per PRINCIPLES.md #01, the system is tested in print mode. These rules
    prevent the most common print-rendering failures for prose: orphaned
