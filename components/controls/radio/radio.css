@@ -1,0 +1,306 @@
+/* ==========================================================================
+   seedbank.design — radio.css
+   --------------------------------------------------------------------------
+   The radio control. Always grouped — radios in isolation are nonsense (a
+   single radio that can't be unselected is a checkbox in a confusing
+   costume). The README refuses that case explicitly.
+
+   What this styles:
+     - <input type="radio">      individual radio button
+     - <fieldset> + <legend>     the required composition pattern for
+                                 a radio group
+
+   Visual approach:
+     Closely parallels checkbox — same sunken background, same thick
+     neutral border, same activity-coloured fill when selected. The
+     differences are deliberate:
+       - border-radius: 50% (circle, not rounded square)
+       - The selected-state dot is a pure-CSS ::before pseudo-element,
+         not an SVG data-URI
+
+   Why ::before instead of an SVG (the divergence from checkbox):
+     Checkbox's tick mark genuinely needs SVG — it's a path, not a shape.
+     Radio's "filled dot" is a circle inside a circle, trivially expressed
+     in CSS via an absolutely-positioned ::before. Going pure CSS means
+     radio doesn't add to the SVG-colour-hardcoding exception list — the
+     inner dot uses var(--surface) directly and resolves correctly across
+     light/dark modes without re-encoding.
+
+   Keyboard model — entirely native, no JS, no tabindex overrides:
+     Within a radio group (radios sharing a `name` attribute), arrow keys
+     move focus AND change selection, skipping disabled radios. Tab moves
+     focus PAST the group to the next control. This is the browser's
+     default; we don't fight it. Documented in the README.
+
+   No-deselect behaviour:
+     Once a radio in a group is selected, the user can only switch to
+     another radio in the same group — they cannot return to "nothing
+     selected." For optional groups, the README recommends an explicit
+     "None" option as the escape hatch.
+
+   --------------------------------------------------------------------------
+   seedbank.design — licensed under MIT (code) and CC BY-SA 4.0
+   (documentation and design assets). This file is a design system asset —
+   it ships with every clone. Forks are encouraged to adapt it; adaptations
+   should be documented.
+   ========================================================================== */
+
+
+/* --------------------------------------------------------------------------
+   1. THE CIRCLE
+   --------------------------------------------------------------------------
+   appearance: none strips the UA radio completely. The box geometry is
+   identical to checkbox — 18px square, --border-thick neutral border,
+   sunken background — but with border-radius: 50% making it a circle.
+
+   position: relative is required so the ::before dot (Section 2) can
+   position absolutely within it.
+   --------------------------------------------------------------------------  */
+
+input[type="radio"] {
+  /* Reset UA chrome */
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  margin: 0;
+  padding: 0;
+
+  /* Layout */
+  display: inline-block;
+  vertical-align: text-top;
+  flex-shrink: 0;
+  position: relative;
+
+  /* Size — matches checkbox for visual consistency in mixed forms */
+  width: 18px;
+  height: 18px;
+
+  /* Shape — the one visual difference from checkbox */
+  border-radius: 50%;
+  border: var(--border-thick) solid var(--border-strong);
+  background: var(--surface-sunken);
+
+  /* Transitions on colour properties only — no layout shift between states */
+  transition: background-color 0.12s ease, border-color 0.12s ease;
+
+  cursor: pointer;
+}
+
+/* Hover state — matches checkbox. Border colour shift signals
+   interactivity; the label-wide click target gets its own feedback
+   via the cursor pointer. */
+input[type="radio"]:hover {
+  border-color: var(--text);
+}
+
+
+/* --------------------------------------------------------------------------
+   2. SELECTED STATE
+   --------------------------------------------------------------------------
+   When selected, the outer circle fills with --action and an inner dot
+   appears in --surface colour. The dot is a ::before pseudo-element
+   positioned at the centre of the radio.
+
+   Pseudo-element sizing: 8px square. With the radio's 18px outer size
+   minus the 1.5px border on each side, the inner usable space is ~15px;
+   an 8px dot leaves a ~3.5px ring of --action visible around it. This
+   ratio reads cleanly at the default size and remains visible when the
+   control scales (zoom, font-size changes).
+
+   Centring: top: 50% / left: 50% with transform: translate(-50%, -50%)
+   handles centring regardless of the radio's size. Forks that change
+   the radio's size don't need to touch the dot positioning.
+   --------------------------------------------------------------------------  */
+
+input[type="radio"]:checked {
+  background-color: var(--action);
+  border-color: var(--action);
+}
+
+input[type="radio"]:checked::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--surface);
+}
+
+
+/* --------------------------------------------------------------------------
+   3. INVALID STATE
+   --------------------------------------------------------------------------
+   Driven by aria-invalid="true" applied to each radio in the failing
+   group. The per-radio approach matches how every other invalid state
+   in the system works (one attribute on one control), and the visual
+   signal — red border on each radio in the group — covers the group
+   naturally because the radios are visually adjacent.
+
+   Same timing rule as text-input, select, and checkbox: aria-invalid
+   only applies AFTER validation, never on a pristine group.
+
+   The error message is linked from the wrapping <fieldset> via
+   aria-describedby, OR from each radio individually. The CSS doesn't
+   know which the markup uses; both work.
+
+   Clear-on-selected: the section ends with a :has()-based rule that
+   clears the red border on the entire group once any radio inside has
+   been selected. The justification is in the comment block above the
+   rule; the short version is that "must select one" has been satisfied,
+   and continuing to show red after the requirement is met is the form
+   failing to keep up with its own state.
+   --------------------------------------------------------------------------  */
+
+input[type="radio"][aria-invalid="true"] {
+  border-color: var(--error);
+}
+
+input[type="radio"][aria-invalid="true"]:hover {
+  border-color: var(--error);
+}
+
+/* Clear the invalid visual when the group has been answered.
+
+   The user has satisfied the "at least one selected" requirement that
+   caused the group to be flagged invalid. The aria-invalid attribute
+   is still on every radio in the markup — only JS can remove it — but
+   continuing to show red after the requirement has been met is the
+   form failing to update its own state, not honest reporting.
+
+   The :has() lookup walks from the radio up to its <fieldset>, asks
+   "is anything inside selected?", and if so, clears the red border
+   on every aria-invalid radio in the group. The selected radio still
+   gets its --action border via its own :checked rule below.
+
+   The same lookup also hides the .error-message element when it lives
+   inside the <fieldset>. This is the system's convention: error messages
+   that describe a group's validation state live inside the group's
+   <fieldset>, with the .error-message class. CSS then handles the
+   "user resolved the error" lifecycle entirely — no JS required for
+   the visual to match the user's mental model.
+
+   Visibility: hidden, not display: none. The message keeps its space
+   in the layout so selecting a radio doesn't cause a vertical jump.
+
+   Caveat: this clears the visual for the common "must select one"
+   validation pattern. A form with per-option validation beyond that
+   (e.g. "the selected option is no longer available") would need to
+   re-signal the invalid state via a different mechanism, since this
+   rule will quietly suppress the red on selection.
+
+   Browser support: :has() is ~94% globally. Older browsers fall back
+   to "red stays after selection" — annoying but not broken; the form
+   itself can still clear aria-invalid on re-validation. */
+fieldset:has(input[type="radio"]:checked) input[type="radio"][aria-invalid="true"] {
+  border-color: var(--border-strong);
+}
+
+fieldset:has(input[type="radio"]:checked) input[type="radio"][aria-invalid="true"]:checked {
+  border-color: var(--action);
+}
+
+fieldset:has(input[type="radio"]:checked) .error-message {
+  visibility: hidden;
+}
+
+
+/* --------------------------------------------------------------------------
+   4. DISABLED STATE — INDIVIDUAL AND GROUP-LEVEL
+   --------------------------------------------------------------------------
+   Two paths into disabled:
+     - `disabled` on a single radio — that option alone is unavailable
+     - `disabled` on the wrapping <fieldset> — the browser disables all
+       descendants automatically; we just need to style for it
+
+   The CSS uses :disabled (pseudo-class), NOT [disabled] (attribute
+   selector). This matters: inside <fieldset disabled>, the browser
+   marks every descendant radio as :disabled, but it does NOT add the
+   `disabled` attribute to the markup. The attribute selector would
+   miss the fieldset-disabled case; the pseudo-class catches both
+   paths.
+
+   The :has() selector dims the wrapping <label> when its child radio is
+   disabled, matching the convention from checkbox and select. Same
+   ~94% browser support; older browsers fall back to "radio dims, label
+   stays" — acceptable degradation.
+
+   For the group-disabled case, we also need to dim the <legend> when
+   its <fieldset> is disabled. Browsers handle the descendant disabling
+   automatically (every radio inside becomes non-interactive); the
+   visual dimming of the legend has to be styled explicitly.
+   --------------------------------------------------------------------------  */
+
+input[type="radio"]:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+input[type="radio"]:disabled:hover {
+  border-color: var(--border-strong);
+}
+
+label:has(input[type="radio"]:disabled) {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Group-disabled: when <fieldset> has the disabled attribute, the
+   browser disables every descendant control. We dim the legend and the
+   labels to communicate the group-wide state visually. */
+fieldset[disabled] legend {
+  opacity: 0.5;
+}
+
+fieldset[disabled] label {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* When the group is disabled, the per-input opacity from above would
+   stack on top of the per-label opacity from this block, producing
+   ~0.25 effective opacity. Reset the input opacity inside a disabled
+   fieldset so the dimming stays at 0.5 across the whole group. */
+fieldset[disabled] input[type="radio"] {
+  opacity: 1;
+}
+
+
+/* --------------------------------------------------------------------------
+   5. PRINT RULES
+   --------------------------------------------------------------------------
+   Radios in print are static — no hover, no focus ring. We keep them
+   visible (borders printed) but suppress backgrounds to save ink. The
+   selected-state inner dot needs to flip from --surface (light) to a
+   dark colour so it remains visible against the now-transparent outer
+   circle.
+
+   The print-mode dot uses --text directly via CSS variable — no SVG to
+   re-encode, no hardcoded hex anywhere in the print rules. The pure-CSS
+   approach pays off here: print mode is one rule, not a re-encoded
+   data-URI per mode.
+   --------------------------------------------------------------------------  */
+
+@media print {
+  input[type="radio"] {
+    background-color: transparent !important;
+    border-color: var(--text) !important;
+  }
+
+  input[type="radio"]:checked {
+    /* The outer fill drops to transparent; the border stays in --text.
+       The user needs to see which option was selected on the printed
+       page — the inner dot carries that signal alone. */
+    background-color: transparent !important;
+    border-color: var(--text) !important;
+  }
+
+  input[type="radio"]:checked::before {
+    background: var(--text) !important;
+    /* Dot flips to --text so it reads against the transparent outer
+       circle. No re-encoding required — CSS variables resolve at
+       render time, including inside @media print. */
+  }
+}

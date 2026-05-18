@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>radio — seedbank.design</title>
+  <link rel="stylesheet" href="../../../tokens/tokens.css">
+  <link rel="stylesheet" href="../../foundations/prose/prose.css">
+  <link rel="stylesheet" href="../../foundations/dividers/dividers.css">
+  <link rel="stylesheet" href="../../foundations/lists/lists.css">
+  <link rel="stylesheet" href="../../foundations/focus-ring/focus-ring.css">
+  <link rel="stylesheet" href="./radio.css">
+  <style>
+    /* Reference-page-only styles. Not part of the component. */
+    body {
+      background: var(--surface);
+      margin: 0;
+      padding: var(--space-6) var(--space-5);
+      max-width: 720px;
+    }
+    .meta {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      color: var(--text-subtle);
+      margin-bottom: var(--space-2);
+    }
+    .demo-region {
+      border: var(--border-hairline) dashed var(--border-subtle);
+      padding: var(--space-3) var(--space-4);
+      margin-bottom: var(--space-6);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+    /* The wrapping <label> with display:flex and gap aligns the circle
+       with the text on a shared baseline — parallels .demo-checkbox. */
+    .demo-radio {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-2);
+      font-family: var(--font-sans);
+      font-size: var(--text-base);
+      color: var(--text);
+      cursor: pointer;
+      line-height: var(--leading-snug);
+    }
+    /* Fieldset/legend reset for the group examples — the required
+       composition pattern for radios. */
+    fieldset.demo-fieldset {
+      border: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+    fieldset.demo-fieldset legend {
+      font-family: var(--font-sans);
+      font-size: var(--text-sm);
+      font-weight: var(--weight-medium);
+      color: var(--text);
+      padding: 0;
+      margin-bottom: var(--space-2);
+    }
+    .demo-help {
+      font-family: var(--font-sans);
+      font-size: var(--text-sm);
+      color: var(--text-muted);
+      margin-top: var(--space-1);
+    }
+    .demo-error {
+      font-family: var(--font-sans);
+      font-size: var(--text-sm);
+      color: var(--error);
+      margin-top: var(--space-1);
+    }
+    .wrong {
+      border-left: var(--border-rule) solid var(--error);
+      padding: var(--space-3) var(--space-4);
+      margin-bottom: var(--space-5);
+      background: var(--surface-sunken);
+    }
+    .wrong > p:first-child {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      color: var(--text-subtle);
+      text-transform: uppercase;
+      letter-spacing: var(--tracking-label);
+      margin-bottom: var(--space-2);
+    }
+  </style>
+</head>
+<body>
+
+  <h1>radio</h1>
+  <p>A grouped set of mutually exclusive options. Always in a <code>&lt;fieldset&gt;</code> with a <code>&lt;legend&gt;</code> — radios in isolation are nonsense (a single radio that can't be unselected is a checkbox in a confusing costume). Same accessibility as a native radio — it still IS a native radio, just visually re-skinned via <code>appearance: none</code> and a CSS-only inner dot.</p>
+
+  <hr>
+
+  <!-- Default group with one selected -->
+  <p class="meta">default — group with one selected · &lt;fieldset&gt; + &lt;legend&gt; is the required composition</p>
+  <div class="demo-region">
+    <fieldset class="demo-fieldset">
+      <legend>Preferred contact method</legend>
+      <label class="demo-radio">
+        <input type="radio" name="contact-default" value="email" checked>
+        <span>Email</span>
+      </label>
+      <label class="demo-radio">
+        <input type="radio" name="contact-default" value="signal">
+        <span>Signal</span>
+      </label>
+      <label class="demo-radio">
+        <input type="radio" name="contact-default" value="phone">
+        <span>Phone call</span>
+      </label>
+    </fieldset>
+  </div>
+
+  <!-- Optional group with explicit None option -->
+  <p class="meta">optional group — explicit "None" option as the escape hatch (radios can't be deselected)</p>
+  <div class="demo-region">
+    <fieldset class="demo-fieldset">
+      <legend>Dietary requirements for the next potluck</legend>
+      <label class="demo-radio">
+        <input type="radio" name="diet" value="vegetarian">
+        <span>Vegetarian</span>
+      </label>
+      <label class="demo-radio">
+        <input type="radio" name="diet" value="vegan">
+        <span>Vegan</span>
+      </label>
+      <label class="demo-radio">
+        <input type="radio" name="diet" value="gluten-free">
+        <span>Gluten-free</span>
+      </label>
+      <label class="demo-radio">
+        <input type="radio" name="diet" value="none" checked>
+        <span>No requirements</span>
+      </label>
+    </fieldset>
+    <p class="demo-help">Without the "No requirements" option, anyone who clicked accidentally would be stuck — radios can't be deselected, only switched.</p>
+  </div>
+
+  <hr>
+
+  <!-- Individual disabled radio in an active group -->
+  <p class="meta">disabled — individual radio · option unavailable, rest of group still active</p>
+  <div class="demo-region">
+    <fieldset class="demo-fieldset">
+      <legend>Pickup location</legend>
+      <label class="demo-radio">
+        <input type="radio" name="pickup" value="hall" checked>
+        <span>Community hall</span>
+      </label>
+      <label class="demo-radio">
+        <input type="radio" name="pickup" value="garden">
+        <span>Garden shed</span>
+      </label>
+      <label class="demo-radio">
+        <input type="radio" name="pickup" value="cafe" disabled>
+        <span>Café (closed for refurbishment)</span>
+      </label>
+    </fieldset>
+  </div>
+
+  <!-- Whole group disabled via fieldset -->
+  <p class="meta">disabled — entire group via &lt;fieldset disabled&gt; · the question is locked</p>
+  <div class="demo-region">
+    <fieldset class="demo-fieldset" disabled>
+      <legend>Membership tier (set by admins)</legend>
+      <label class="demo-radio">
+        <input type="radio" name="tier" value="member" checked>
+        <span>Member</span>
+      </label>
+      <label class="demo-radio">
+        <input type="radio" name="tier" value="steward">
+        <span>Steward</span>
+      </label>
+      <label class="demo-radio">
+        <input type="radio" name="tier" value="facilitator">
+        <span>Facilitator</span>
+      </label>
+    </fieldset>
+  </div>
+
+  <hr>
+
+  <!-- Required group -->
+  <p class="meta">required — asterisk in the legend, not on each radio · the question is the required thing</p>
+  <div class="demo-region">
+    <fieldset class="demo-fieldset">
+      <legend>
+        Are you attending the AGM? <span style="color: var(--error)" aria-hidden="true">*</span>
+      </legend>
+      <label class="demo-radio">
+        <input type="radio" name="agm" value="yes" required>
+        <span>Yes, in person</span>
+      </label>
+      <label class="demo-radio">
+        <input type="radio" name="agm" value="remote" required>
+        <span>Yes, remotely</span>
+      </label>
+      <label class="demo-radio">
+        <input type="radio" name="agm" value="no" required>
+        <span>No, sending a proxy</span>
+      </label>
+    </fieldset>
+  </div>
+
+  <!-- Invalid group -->
+  <p class="meta">aria-invalid="true" — on each radio in the failing group · error linked from the fieldset · clears on selection</p>
+  <div class="demo-region">
+    <fieldset class="demo-fieldset" aria-describedby="vote-error">
+      <legend>
+        Cast your vote <span style="color: var(--error)" aria-hidden="true">*</span>
+      </legend>
+      <label class="demo-radio">
+        <input type="radio" name="vote" value="for" required aria-invalid="true">
+        <span>For</span>
+      </label>
+      <label class="demo-radio">
+        <input type="radio" name="vote" value="against" required aria-invalid="true">
+        <span>Against</span>
+      </label>
+      <label class="demo-radio">
+        <input type="radio" name="vote" value="abstain" required aria-invalid="true">
+        <span>Abstain</span>
+      </label>
+      <p class="demo-error error-message" id="vote-error">You must cast a vote before the proposal can be recorded.</p>
+    </fieldset>
+  </div>
+
+  <hr>
+
+  <!-- Wrong uses -->
+  <p class="meta">when not to use a radio group</p>
+
+  <div class="wrong">
+    <p>Avoid — a single radio</p>
+    <p>A radio with nothing to be exclusive with is a checkbox in a confusing costume. Once selected, it can't be unselected — so it can't represent a "yes / no" toggle. If you have one option, use a checkbox. If you have a binary choice, use two radios in a group (with a legend that names the question).</p>
+  </div>
+
+  <div class="wrong">
+    <p>Avoid — radios without a <code>&lt;legend&gt;</code></p>
+    <p>The <code>&lt;legend&gt;</code> provides the accessible name for the group. Without it, screen readers announce each radio individually with no context — "Email, radio button, not checked" tells the user nothing about what question they're answering. The legend is the group's question; the radios are its options. Both are required.</p>
+  </div>
+
+  <div class="wrong">
+    <p>Avoid — radios where the user can pick zero or more than one</p>
+    <p>Radios mean "select exactly one." If zero is a valid answer for an optional group, include an explicit "None" option (see the dietary example above) — don't make the user guess that they can skip the question. If more than one is valid, use checkboxes. Picking the wrong control sets the wrong expectation about what's allowed.</p>
+  </div>
+
+  <div class="wrong">
+    <p>Avoid — fighting the native keyboard model</p>
+    <p>The browser's default behaviour for a radio group is: <em>Tab moves focus past the group; arrow keys move within the group and change selection, skipping disabled radios.</em> Don't add <code>tabindex="0"</code> to each radio (it breaks the group navigation), and don't add JS to "fix" the arrow-key behaviour (it already works). The native model is correct; trust it.</p>
+  </div>
+
+  <div class="wrong">
+    <p>Avoid — marking pristine required radios invalid</p>
+    <p>Don't apply <code>aria-invalid="true"</code> to a required radio group on page load. Marking every vote option invalid before the user has had a chance to interact makes the whole form look broken. Apply <code>aria-invalid</code> after a validation attempt — typically on form submit — and apply it to <em>every radio in the failing group</em>, not just one. The visual signal (red borders across the group) reads the group as a whole.</p>
+  </div>
+
+</body>
+</html>
