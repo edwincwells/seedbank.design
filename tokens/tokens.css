@@ -32,8 +32,7 @@
    --------------------------------------------------------------------------
    Four categorical colours for status-bearing content. Used as:
      - 5px left-rule on cards and list items where the row carries a state
-     - Text colour in em-dash badges (— Available, — Under repair)
-     - Background of pill badges where a higher-contrast badge is needed
+     - Text colour and tint-mix base for status badges (see display/badge)
      - Accent colour on focus states, links, and highlighted numbers
 
    These are NOT functional tokens. --grow is not "success", --repair is
@@ -223,55 +222,6 @@
   }
 }
 
-/* --------------------------------------------------------------------------
-   2b. CONTENT SEMANTIC TOKENS
-   --------------------------------------------------------------------------
-   Tokens for content semantics — meanings carried by the content itself,
-   not by the interface's reporting state. Currently links; future entries
-   might include quotation, citation, or other content-level signals if
-   they earn a first-class place.
-
-   The distinction from functional tokens (section 2): functional tokens
-   describe what the system is reporting (success, warning, info, error).
-   Content semantic tokens describe what the content itself is (a link, a
-   quotation). They sit on the same axis as activity tokens (--grow,
-   --repair, --share, --make) — naming meaning, not state — but operate
-   on content elements rather than status-bearing rows.
-
-   In the default palette, --link resolves to the same blue family as
-   --info and --focus. This is a practical consequence of "high-contrast
-   blue is the most universally recognised". The tokens remap
-   independently; a fork can recolour links without touching --info, and
-   vice versa.
-
-   On --link-visited: hue-shifted toward indigo rather than same-hue-darker.
-   The shift carries the "you've been here" signal that users bring from
-   every other website without pulling toward --make (system purple) — the
-   desaturation keeps the categorical signal clean. Forks that want to
-   suppress visited styling for consistency or privacy reasons can map
-   --link-visited to var(--link).
-   --------------------------------------------------------------------------  */
-
-:root {
-  /* Light-mode values — for white and near-white backgrounds */
-  --link-light:         #1f5fa8;  /* same blue as --info default; ~6.1:1 on surface */
-  --link-visited-light: #4a3d8a;  /* desaturated indigo; ~5.8:1 on surface */
-
-  /* Dark-mode values — for dark backgrounds */
-  --link-dark:          #6cb0ee;
-  --link-visited-dark:  #b0a0e0;
-
-  /* Mode-resolved tokens */
-  --link:         var(--link-light);
-  --link-visited: var(--link-visited-light);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --link:         var(--link-dark);
-    --link-visited: var(--link-visited-dark);
-  }
-}
 
 /* --------------------------------------------------------------------------
    3. TYPE TOKENS
@@ -366,17 +316,15 @@
 /* --------------------------------------------------------------------------
    6. BORDER WIDTH TOKENS
    --------------------------------------------------------------------------
-   Four weights. The 0.5px hairline is the system's default for dividers;
-   the 1.5px weight is for emphasised borders and input underlines; the
-   2px weight is reserved for the global focus ring (see
-   components/foundations/focus-ring); the 5px weight is reserved for the
-   activity-coloured left-rule on status-bearing rows and cards.
+   Three weights. The 0.5px hairline is the system's default for dividers;
+   the 1.5px weight is for input focus and emphasised borders; the 5px
+   weight is reserved for the activity-coloured left-rule on status-
+   bearing rows and cards.
    --------------------------------------------------------------------------  */
 
 :root {
   --border-hairline: 0.5px;  /* default dividers, list separators */
-  --border-thick:    1.5px;  /* emphasised borders, input underlines */
-  --border-focus:    2px;    /* global focus ring outline */
+  --border-thick:    1.5px;  /* input focus, button outlines */
   --border-rule:     5px;    /* left-rule accent on status rows */
 }
 
