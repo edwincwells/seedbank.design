@@ -1,0 +1,217 @@
+/* ==========================================================================
+   seedbank.design — badge.css
+   --------------------------------------------------------------------------
+   The badge component. A small pill-shaped label for status, category, or
+   count indicators. Non-interactive by default — a <span>, not a button or
+   link. Forks that need a clickable badge wrap it in an <a> or <button>.
+
+   One visual treatment: subtle tint background with saturated coloured
+   text. The tint is derived per-token via color-mix() so a fork that
+   remaps --grow to terracotta gets a terracotta-tinted badge without
+   touching this file.
+
+   Variants follow the token system's two-axis structure:
+
+     Activity tokens     .badge-grow, .badge-repair, .badge-share, .badge-make
+                         For status that names what the community does.
+
+     Functional tokens   .badge-success, .badge-warning, .badge-info, .badge-error
+                         For status that names what the interface is reporting.
+
+   The two sets are independent on purpose — a fork that remaps activity
+   colours should usually leave functional badges alone. See
+   tokens.css and the README for the activity-vs-functional distinction.
+
+   The base .badge (no colour class) is neutral — uses --text and a
+   --surface-raised background. Most badges are "draft", "tag", category-y
+   things that don't need colour to do work.
+
+   Sizing: one size only. ~3px / 10px padding, --text-xs, medium weight.
+   A badge smaller than this is illegible; larger is a button. Forks that
+   need denser badges should override locally.
+
+   Icons: the base .badge uses inline-flex with a small gap, so a badge
+   with an icon child works without any additional class. Icons must still
+   be paired with visible text — the system's icon-with-label rule applies.
+
+   --------------------------------------------------------------------------
+   seedbank.design — licensed under MIT (code) and CC BY-SA 4.0
+   (documentation and design assets). This file is a design system asset —
+   it ships with every clone. Forks are encouraged to adapt it; adaptations
+   should be documented.
+   ========================================================================== */
+
+
+/* --------------------------------------------------------------------------
+   1. BASE
+   --------------------------------------------------------------------------
+   Applies to every badge regardless of colour. inline-flex so an optional
+   icon child sits cleanly next to the label. The pill radius is the
+   defining shape — flat tops would compete visually with cards and inputs.
+
+   The default (no colour class) uses --text on --surface-raised — the
+   neutral treatment for category-y or draft badges that don't carry a
+   semantic status.
+   --------------------------------------------------------------------------  */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);  /* 4px between icon and label, if icon present */
+
+  font-family: var(--font-sans);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-snug);
+  white-space: nowrap;
+
+  padding: 3px var(--space-3);  /* 3px / 12px — the hardcoded 3px is the
+                                   one vertical padding value that doesn't
+                                   align to the spacing scale; tested down
+                                   from --space-1 (4px) for a tighter pill */
+  border-radius: var(--radius-pill);
+
+  /* Neutral default — overridden by colour variants below.
+     The neutral background resolves to --surface-raised, which would
+     disappear when the badge is placed on a card or row with the same
+     surface. The hairline border carries definition on any of the three
+     surface tokens. Coloured variants null this border out — their tint
+     background provides the lift, and a hairline border on top of the
+     tint reads as visual noise. */
+  background: var(--surface-raised);
+  color: var(--text);
+  border: var(--border-hairline) solid var(--border);
+}
+
+/* Icons inside badges size with the label, same pattern as button */
+.badge > svg,
+.badge > .icon {
+  width: 1em;
+  height: 1em;
+  flex-shrink: 0;
+}
+
+
+/* --------------------------------------------------------------------------
+   2. ACTIVITY VARIANTS
+   --------------------------------------------------------------------------
+   For status that names what the community does. Used on cards and rows
+   where the activity colour is doing semantic work — a workshop "Under
+   repair", a garden plot "Growing".
+
+   color-mix() derives a subtle tint from the activity colour against the
+   surface. 15% mix in light mode gives a clearly-coloured-but-soft tint
+   that lets the text colour carry the meaning. Browser support ~94% —
+   forks deploying to older browsers will see the text colour but no
+   background; still readable, still semantic, still passes WCAG AA.
+   --------------------------------------------------------------------------  */
+
+.badge-grow {
+  background: color-mix(in srgb, var(--grow) 15%, var(--surface));
+  color: var(--grow);
+  border-color: transparent;
+}
+
+.badge-repair {
+  background: color-mix(in srgb, var(--repair) 15%, var(--surface));
+  color: var(--repair);
+  border-color: transparent;
+}
+
+.badge-share {
+  background: color-mix(in srgb, var(--share) 15%, var(--surface));
+  color: var(--share);
+  border-color: transparent;
+}
+
+.badge-make {
+  background: color-mix(in srgb, var(--make) 15%, var(--surface));
+  color: var(--make);
+  border-color: transparent;
+}
+
+
+/* --------------------------------------------------------------------------
+   3. FUNCTIONAL VARIANTS
+   --------------------------------------------------------------------------
+   For status that names what the interface is reporting. Used on form
+   validation messages, system status indicators, alert banners.
+
+   Identical mix mechanic to activity variants. In the default palette,
+   .badge-success looks the same as .badge-grow (both derived from the same
+   green); they remap independently — a desert fork keeps success green
+   while --grow becomes terracotta. See tokens.css section 2.
+   --------------------------------------------------------------------------  */
+
+.badge-success {
+  background: color-mix(in srgb, var(--success) 15%, var(--surface));
+  color: var(--success);
+  border-color: transparent;
+}
+
+.badge-warning {
+  background: color-mix(in srgb, var(--warning) 15%, var(--surface));
+  color: var(--warning);
+  border-color: transparent;
+}
+
+.badge-info {
+  background: color-mix(in srgb, var(--info) 15%, var(--surface));
+  color: var(--info);
+  border-color: transparent;
+}
+
+.badge-error {
+  background: color-mix(in srgb, var(--error) 15%, var(--surface));
+  color: var(--error);
+  border-color: transparent;
+}
+
+
+/* --------------------------------------------------------------------------
+   4. DARK MODE — BUMP THE MIX RATIO
+   --------------------------------------------------------------------------
+   In dark mode, mixing 15% of the lightened dark-mode colour with the dark
+   surface produces a tint too close to the surface to read. Bumping to
+   22% gives the badge enough lift off the background while keeping the
+   subtle character. The mix is against --surface (which resolves to the
+   dark surface in this mode) so the tint sits correctly on the page.
+
+   This is one of the few places in the system that needs a per-mode
+   tweak beyond the token swap — colour mixing is non-linear and the
+   ratios that look right against #fafaf7 don't look right against #1a1a1a.
+   --------------------------------------------------------------------------  */
+
+@media (prefers-color-scheme: dark) {
+  .badge-grow    { background: color-mix(in srgb, var(--grow)    22%, var(--surface)); }
+  .badge-repair  { background: color-mix(in srgb, var(--repair)  22%, var(--surface)); }
+  .badge-share   { background: color-mix(in srgb, var(--share)   22%, var(--surface)); }
+  .badge-make    { background: color-mix(in srgb, var(--make)    22%, var(--surface)); }
+
+  .badge-success { background: color-mix(in srgb, var(--success) 22%, var(--surface)); }
+  .badge-warning { background: color-mix(in srgb, var(--warning) 22%, var(--surface)); }
+  .badge-info    { background: color-mix(in srgb, var(--info)    22%, var(--surface)); }
+  .badge-error   { background: color-mix(in srgb, var(--error)   22%, var(--surface)); }
+}
+
+
+/* --------------------------------------------------------------------------
+   5. PRINT RULES
+   --------------------------------------------------------------------------
+   Print drops the tint background to save ink. The text colour is also
+   forced to --text (effectively black on the printed page) because some
+   tinted variants — especially --warning amber and --make purple — print
+   poorly as coloured text on white. A thin border keeps the pill shape
+   legible so badges remain visible as bounded units in a printed list or
+   table row.
+   --------------------------------------------------------------------------  */
+
+@media print {
+  .badge,
+  .badge-grow, .badge-repair, .badge-share, .badge-make,
+  .badge-success, .badge-warning, .badge-info, .badge-error {
+    background: transparent !important;
+    color: var(--text) !important;
+    border: var(--border-hairline) solid var(--text);
+  }
+}

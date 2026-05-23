@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>badge — seedbank.design</title>
+  <link rel="stylesheet" href="../../../tokens/tokens.css">
+  <link rel="stylesheet" href="../../foundations/prose/prose.css">
+  <link rel="stylesheet" href="../../foundations/focus-ring/focus-ring.css">
+  <link rel="stylesheet" href="./badge.css">
+  <style>
+    /* Reference-page-only styles. Not part of the component.
+       Used to lay out the demonstration; not inherited by forks. */
+    body {
+      background: var(--surface);
+      margin: 0;
+      padding: var(--space-6) var(--space-5);
+      max-width: 720px;
+    }
+    .row {
+      padding: var(--space-4) 0;
+      border-bottom: var(--border-hairline) solid var(--border);
+    }
+    .row:last-child {
+      border-bottom: none;
+    }
+    .demo-meta {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      color: var(--text-subtle);
+      margin-bottom: var(--space-2);
+    }
+    .demo-cluster {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+      align-items: center;
+    }
+    .demo-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: var(--font-sans);
+      font-size: var(--text-sm);
+    }
+    .demo-table th,
+    .demo-table td {
+      text-align: left;
+      padding: var(--space-2) var(--space-3);
+      border-bottom: var(--border-hairline) solid var(--border-subtle);
+    }
+    .demo-table th {
+      font-weight: var(--weight-medium);
+      color: var(--text-subtle);
+      font-size: var(--text-xs);
+      text-transform: uppercase;
+      letter-spacing: var(--tracking-label);
+    }
+    .demo-card {
+      padding: var(--space-3) var(--space-4);
+      border-left: var(--border-rule) solid var(--repair);
+      background: var(--surface-raised);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-3);
+    }
+    .demo-card-title {
+      font-size: var(--text-md);
+      font-weight: var(--weight-medium);
+      color: var(--text);
+    }
+    .demo-card-meta {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      color: var(--text-subtle);
+      margin-top: 2px;
+    }
+    .section-rule {
+      border: none;
+      border-top: var(--border-hairline) solid var(--border);
+      margin: var(--space-7) 0 var(--space-5);
+    }
+  </style>
+</head>
+<body>
+
+  <h1>badge</h1>
+  <p>A small pill-shaped label for status, category, or count. Non-interactive by default — a <code>&lt;span&gt;</code>, not a button or link. One visual treatment (subtle tint with saturated text), nine colour options (neutral default plus four activity and four functional variants).</p>
+
+  <hr class="section-rule">
+
+  <!-- Neutral default -->
+  <div class="row">
+    <p class="demo-meta">default — neutral, no colour class</p>
+    <div class="demo-cluster">
+      <span class="badge">Draft</span>
+      <span class="badge">Archived</span>
+      <span class="badge">Tools</span>
+      <span class="badge">Childcare</span>
+      <span class="badge">12 new</span>
+    </div>
+  </div>
+
+  <!-- Activity variants -->
+  <div class="row">
+    <p class="demo-meta">activity variants — for status naming what the community does</p>
+    <div class="demo-cluster">
+      <span class="badge badge-grow">Growing</span>
+      <span class="badge badge-repair">Under repair</span>
+      <span class="badge badge-share">Shared</span>
+      <span class="badge badge-make">In progress</span>
+    </div>
+  </div>
+
+  <!-- Functional variants -->
+  <div class="row">
+    <p class="demo-meta">functional variants — for status the interface is reporting</p>
+    <div class="demo-cluster">
+      <span class="badge badge-success">Submitted</span>
+      <span class="badge badge-warning">Needs review</span>
+      <span class="badge badge-info">New</span>
+      <span class="badge badge-error">Failed</span>
+    </div>
+  </div>
+
+  <hr class="section-rule">
+
+  <!-- With icons -->
+  <div class="row">
+    <p class="demo-meta">with icons — inline-flex layout handles the gap automatically</p>
+    <div class="demo-cluster">
+      <span class="badge badge-grow">
+        <svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 8 L7 12 L13 4"/>
+        </svg>
+        Verified
+      </span>
+      <span class="badge badge-repair">
+        <svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="8" cy="8" r="6"/>
+          <path d="M8 5 L8 8 L10 10"/>
+        </svg>
+        Pending
+      </span>
+      <span class="badge badge-warning">
+        <svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M8 2 L14 13 L2 13 Z"/>
+          <path d="M8 6 L8 9"/>
+          <circle cx="8" cy="11" r="0.5" fill="currentColor"/>
+        </svg>
+        Needs review
+      </span>
+      <span class="badge badge-info">
+        <svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="8" cy="8" r="6"/>
+          <path d="M8 7 L8 11"/>
+          <circle cx="8" cy="5" r="0.5" fill="currentColor"/>
+        </svg>
+        New
+      </span>
+    </div>
+  </div>
+
+  <hr class="section-rule">
+
+  <!-- In a card context -->
+  <div class="row">
+    <p class="demo-meta">in context — status badge on an activity-coloured card row</p>
+    <div class="demo-card">
+      <div>
+        <div class="demo-card-title">Drill — Bosch GSB 18V</div>
+        <div class="demo-card-meta">Workshop · last serviced March 2026</div>
+      </div>
+      <span class="badge badge-repair">Under repair</span>
+    </div>
+  </div>
+
+  <!-- Neutral badge on raised surface — checking it differentiates -->
+  <div class="row">
+    <p class="demo-meta">in context — neutral badge on a raised-surface card (the hairline border earns its keep here)</p>
+    <div class="demo-card" style="border-left-color: var(--border);">
+      <div>
+        <div class="demo-card-title">Workshop minutes — March 2026</div>
+        <div class="demo-card-meta">Authored by Mira · 4 contributors</div>
+      </div>
+      <span class="badge">Draft</span>
+    </div>
+  </div>
+
+  <!-- In a table context -->
+  <div class="row">
+    <p class="demo-meta">in context — status column in a table</p>
+    <table class="demo-table">
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Location</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Mitre saw</td>
+          <td>Workshop A</td>
+          <td><span class="badge badge-grow">Available</span></td>
+        </tr>
+        <tr>
+          <td>Sewing machine</td>
+          <td>Textile room</td>
+          <td><span class="badge badge-share">In use</span></td>
+        </tr>
+        <tr>
+          <td>Bandsaw</td>
+          <td>Workshop A</td>
+          <td><span class="badge badge-repair">Under repair</span></td>
+        </tr>
+        <tr>
+          <td>Heat press</td>
+          <td>Print room</td>
+          <td><span class="badge">Archived</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <hr class="section-rule">
+
+  <!-- Clickable badge (wrap, don't restyle) -->
+  <div class="row">
+    <p class="demo-meta">clickable — wrap the badge in &lt;a&gt; or &lt;button&gt;, don't restyle the span</p>
+    <p>Badges are non-interactive by default. To make one clickable (a filter tag, a category link), wrap it in the appropriate interactive element. The badge styling stays unchanged; the wrapper provides the interaction and focus behaviour.</p>
+    <div class="demo-cluster">
+      <a href="#" style="text-decoration: none;"><span class="badge badge-make">Workshops</span></a>
+      <a href="#" style="text-decoration: none;"><span class="badge badge-share">Mutual aid</span></a>
+      <a href="#" style="text-decoration: none;"><span class="badge">All categories</span></a>
+    </div>
+  </div>
+
+</body>
+</html>
