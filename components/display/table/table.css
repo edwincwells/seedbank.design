@@ -1,0 +1,315 @@
+/* ==========================================================================
+   seedbank.design — table.css
+   --------------------------------------------------------------------------
+   The table component. Semantic data tables for read-only display.
+   Editorial visual treatment — hairline horizontal row separators, no
+   vertical lines, no zebra striping, no rounded outer corners. Reads
+   like a print table from a report or newspaper, not a spreadsheet.
+
+   Scope is deliberately tight:
+     - <table>, <caption>, <thead>, <tbody>, <tfoot>, <tr>, <th>, <td>
+     - Optional row-level status via .tr-grow / .tr-repair / .tr-share / .tr-make
+     - Optional numeric column alignment via .td-num
+     - Optional .table-wrap div for horizontal scroll at small viewports
+
+   Not in scope: sortable headers, filter UI, row selection, pagination,
+   sticky headers, expand/collapse rows, responsive stack-into-cards.
+   These are composition concerns for forks, not variants of this component.
+
+   Two reference cards on the visual approach:
+
+     Column headers (<th> in <thead>) are styled as eyebrow labels —
+     uppercase, --text-xs, --tracking-label, --text-subtle. They label
+     columns; they don't demand attention.
+
+     Row headers (<th> in <tbody> — for two-axis tables where each row has
+     a label as well as data) get a different treatment: sentence-case
+     --text-sm at --weight-medium, default text colour. The role differs
+     from column header (a label, not an eyebrow) so the treatment differs.
+
+   Activity-coloured row status is a class on <tr>: .tr-grow, .tr-repair,
+   .tr-share, .tr-make. This is the FIRST place in the system where a
+   class is used for state instead of an attribute — the system's
+   attribute-driven convention works well for binary states (disabled,
+   required, aria-invalid) but doesn't fit a four-way categorical axis
+   cleanly. The class names map directly to activity tokens; the same
+   pattern will be used by patterns/card-status-row.
+
+   --------------------------------------------------------------------------
+   seedbank.design — licensed under MIT (code) and CC BY-SA 4.0
+   (documentation and design assets). This file is a design system asset —
+   it ships with every clone. Forks are encouraged to adapt it; adaptations
+   should be documented.
+   ========================================================================== */
+
+
+/* --------------------------------------------------------------------------
+   1. BASE TABLE
+   --------------------------------------------------------------------------
+   border-collapse: collapse for clean single-pixel hairlines between rows
+   (the alternative, border-collapse: separate, leaves visible spacing
+   between cells that doesn't suit the editorial look).
+
+   width: 100% by default — tables fill their container. Forks that want
+   shrink-to-fit tables override locally.
+
+   The table inherits font-family from prose; declared explicitly here so
+   the component is self-contained when used without the prose foundation.
+   --------------------------------------------------------------------------  */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  color: var(--text);
+  line-height: var(--leading-base);
+}
+
+
+/* --------------------------------------------------------------------------
+   2. CAPTION
+   --------------------------------------------------------------------------
+   <caption> is the accessible name of the table — it's read first by
+   screen readers and provides essential context. Forks should write
+   captions for every data table.
+
+   Visual treatment: a small title above the table, left-aligned. The
+   caption is structural, not decorative — keep it visible.
+
+   Forks that need to visually hide the caption while keeping it for
+   assistive tech should apply a .sr-only utility (not yet in the system —
+   small addition when first needed).
+   --------------------------------------------------------------------------  */
+
+caption {
+  caption-side: top;
+  text-align: left;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--text);
+  padding: 0 0 var(--space-3);
+}
+
+
+/* --------------------------------------------------------------------------
+   3. COLUMN HEADERS
+   --------------------------------------------------------------------------
+   <th> cells in <thead>. Eyebrow treatment — uppercase, small, tracked,
+   subtle colour. Mirrors the h6 styling from the prose foundation and
+   the .demo-meta usage throughout the reference pages: a quiet label
+   that names the column without competing with the data below.
+
+   text-align: left as the default. Numeric columns override via .td-num
+   (which applies to both the <th> and the <td>s in that column).
+
+   The hairline below <thead> is set as a border-bottom on the <th> cells
+   rather than on <tr> or <thead>, because border-collapse means tr/section
+   borders render unreliably across browsers — cell borders are the safe
+   primitive.
+
+   The border-bottom uses --border-strong (not --border) so the thead/tbody
+   division reads as a structural separation, distinct from the lighter
+   hairlines between body rows.
+   --------------------------------------------------------------------------  */
+
+thead th {
+  text-align: left;
+  vertical-align: bottom;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--text-subtle);
+  padding: var(--space-2) var(--space-3);
+  border-bottom: var(--border-hairline) solid var(--border-strong);
+}
+
+
+/* --------------------------------------------------------------------------
+   4. BODY CELLS
+   --------------------------------------------------------------------------
+   <td> and the row-header case (<th> inside <tbody>). One density —
+   --space-2 vertical / --space-3 horizontal padding. Hairline border-top
+   on each <tr> in the body produces the row separators (set on the row
+   for cleanliness; works under border-collapse because the row's border
+   is delegated to its cells).
+
+   The first body row would otherwise carry a redundant top border under
+   the thead's bottom border — suppressed via :first-child.
+
+   vertical-align: top makes multi-line cell content align cleanly when
+   row heights vary. The alternative (middle) reads strangely when one
+   cell wraps to three lines and its neighbours don't.
+   --------------------------------------------------------------------------  */
+
+tbody td,
+tbody th {
+  padding: var(--space-2) var(--space-3);
+  vertical-align: top;
+  text-align: left;
+}
+
+tbody tr {
+  border-top: var(--border-hairline) solid var(--border);
+}
+
+tbody tr:first-child {
+  border-top: none;
+}
+
+/* Row-header <th> in <tbody> — for two-axis tables where each row has a
+   label. Sentence-case, slightly heavier than body, default text colour.
+   The role is "label this row" — not the eyebrow treatment of column
+   headers, but distinct enough from a <td> that screen readers and sighted
+   users both recognise the row's name. */
+tbody th {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--text);
+}
+
+
+/* --------------------------------------------------------------------------
+   5. TFOOT
+   --------------------------------------------------------------------------
+   Used for totals, summaries, or recap rows. A stronger top border
+   visually separates the foot from the body so totals don't read as
+   "just another row". --weight-medium text reinforces the structural role.
+   --------------------------------------------------------------------------  */
+
+tfoot td,
+tfoot th {
+  padding: var(--space-2) var(--space-3);
+  vertical-align: top;
+  text-align: left;
+  font-weight: var(--weight-medium);
+  border-top: var(--border-thick) solid var(--border-strong);
+}
+
+
+/* --------------------------------------------------------------------------
+   6. NUMERIC COLUMN ALIGNMENT
+   --------------------------------------------------------------------------
+   Apply .td-num to both the <th> in the header AND every <td> (or <th>)
+   in that column. Right-aligned for place-value alignment.
+
+   font-variant-numeric: tabular-nums forces equal digit widths so decimal
+   points align across rows. This is the convention for any column showing
+   counts, currency, quantities, percentages — anywhere numbers stack.
+
+   The sans family is kept (no mono switch) because mono columns visually
+   shout against the editorial calm of the rest of the table. tabular-nums
+   gives the alignment benefit without the visual noise.
+   --------------------------------------------------------------------------  */
+
+.td-num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+
+/* --------------------------------------------------------------------------
+   7. ROW STATUS — ACTIVITY LEFT-RULE
+   --------------------------------------------------------------------------
+   When a row carries a status (e.g. a tool tracking table where each row
+   is a tool and the activity colour names the state), apply .tr-grow,
+   .tr-repair, .tr-share, or .tr-make to the <tr>.
+
+   Implementation gotcha: under border-collapse: collapse you can't put a
+   reliable border on a <tr> element — the table model delegates row
+   borders to the row's cells, and different browsers handle this with
+   varying success. The reliable place to put the left-rule is on the
+   row's first cell.
+
+   The :first-child selector picks up the first <th> or <td> in the row
+   without needing the markup author to add a class to that cell. This
+   survives column reordering and works whether the row starts with a
+   header cell (two-axis tables) or a data cell.
+
+   The padding-left bump compensates for the 5px rule so the first
+   column's text doesn't shift relative to other rows. Forks that find
+   this too tight can override.
+   --------------------------------------------------------------------------  */
+
+tr.tr-grow   > :first-child { border-left: var(--border-rule) solid var(--grow);   padding-left: var(--space-3); }
+tr.tr-repair > :first-child { border-left: var(--border-rule) solid var(--repair); padding-left: var(--space-3); }
+tr.tr-share  > :first-child { border-left: var(--border-rule) solid var(--share);  padding-left: var(--space-3); }
+tr.tr-make   > :first-child { border-left: var(--border-rule) solid var(--make);   padding-left: var(--space-3); }
+
+
+/* --------------------------------------------------------------------------
+   8. TABLE WRAP — HORIZONTAL SCROLL AT SMALL VIEWPORTS
+   --------------------------------------------------------------------------
+   Tables don't reflow. At 320px, a four-column table will exceed the
+   viewport. The recommended composition is to wrap the <table> in a
+   <div class="table-wrap"> so overflow is contained to a scrollable
+   region inside the page, rather than the whole page scrolling
+   horizontally.
+
+   The wrap doesn't change the table's appearance — only its overflow
+   behaviour. Forks that don't wrap will see page-level horizontal
+   scroll on narrow viewports; not broken, but not ideal.
+
+   tabindex="0" should be set on the wrap in the markup so keyboard users
+   can scroll the table region with arrow keys. The CSS can't add that;
+   it's a markup convention documented in the README.
+   --------------------------------------------------------------------------  */
+
+.table-wrap {
+  overflow-x: auto;
+  /* A subtle scrollbar appearance — modern browsers will show the
+     scrollbar inside the wrap rather than overlaying it. Forks can
+     override for a different scrollbar style. */
+  -webkit-overflow-scrolling: touch;
+}
+
+
+/* --------------------------------------------------------------------------
+   9. PRINT RULES
+   --------------------------------------------------------------------------
+   Tables print well by default — paper handles hairlines, page splits,
+   and column alignment without special treatment. The rules here:
+
+     - display: table-header-group on thead so column headers repeat on
+       every printed page if the table breaks across pages. This is a
+       real print-quality win — most design systems skip it.
+     - page-break-inside: avoid on tr so rows don't split mid-row
+     - Activity-coloured left-rules become --text on print, same approach
+       as badge — coloured rules can read oddly in monochrome print
+     - Backgrounds and the .table-wrap scroll behaviour are suppressed;
+       on paper the table just flows.
+   --------------------------------------------------------------------------  */
+
+@media print {
+  thead {
+    display: table-header-group;
+  }
+
+  tfoot {
+    display: table-footer-group;
+  }
+
+  tr {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  thead {
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+
+  /* Activity-coloured left-rules become dark for print legibility */
+  tr.tr-grow   > :first-child,
+  tr.tr-repair > :first-child,
+  tr.tr-share  > :first-child,
+  tr.tr-make   > :first-child {
+    border-left-color: var(--text) !important;
+  }
+
+  /* Suppress wrap scroll behaviour — let the table flow naturally on paper */
+  .table-wrap {
+    overflow: visible !important;
+  }
+}

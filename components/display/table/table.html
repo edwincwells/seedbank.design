@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>table — seedbank.design</title>
+  <link rel="stylesheet" href="../../../tokens/tokens.css">
+  <link rel="stylesheet" href="../../foundations/prose/prose.css">
+  <link rel="stylesheet" href="../../foundations/focus-ring/focus-ring.css">
+  <link rel="stylesheet" href="../badge/badge.css">
+  <link rel="stylesheet" href="./table.css">
+  <style>
+    /* Reference-page-only styles. Not part of the component.
+       Used to lay out the demonstration; not inherited by forks. */
+    body {
+      background: var(--surface);
+      margin: 0;
+      padding: var(--space-6) var(--space-5);
+      max-width: 720px;
+    }
+    .row {
+      padding: var(--space-5) 0;
+      border-bottom: var(--border-hairline) solid var(--border);
+    }
+    .row:last-child {
+      border-bottom: none;
+    }
+    .demo-meta {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      color: var(--text-subtle);
+      margin-bottom: var(--space-3);
+    }
+    .section-rule {
+      border: none;
+      border-top: var(--border-hairline) solid var(--border);
+      margin: var(--space-7) 0 var(--space-5);
+    }
+    .demo-callout {
+      padding: var(--space-3) var(--space-4);
+      background: var(--surface-raised);
+      border-left: var(--border-rule) solid var(--border);
+      font-size: var(--text-sm);
+      color: var(--text-muted);
+      margin-bottom: var(--space-4);
+    }
+  </style>
+</head>
+<body>
+
+  <h1>table</h1>
+  <p>A semantic data table for read-only display. Editorial visual treatment — hairline horizontal row separators, no vertical lines, no zebra striping. Optional row-level status via activity-coloured left-rules. Wrap in <code>&lt;div class="table-wrap"&gt;</code> for horizontal scroll at narrow viewports.</p>
+
+  <hr class="section-rule">
+
+  <!-- Basic table -->
+  <div class="row">
+    <p class="demo-meta">basic — caption, thead, tbody, no status</p>
+    <table>
+      <caption>Workshop tools inventory</caption>
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Location</th>
+          <th>Last service</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Mitre saw</td>
+          <td>Workshop A</td>
+          <td>March 2026</td>
+        </tr>
+        <tr>
+          <td>Sewing machine</td>
+          <td>Textile room</td>
+          <td>January 2026</td>
+        </tr>
+        <tr>
+          <td>Bandsaw</td>
+          <td>Workshop A</td>
+          <td>November 2025</td>
+        </tr>
+        <tr>
+          <td>Heat press</td>
+          <td>Print room</td>
+          <td>—</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- With activity-coloured row status -->
+  <div class="row">
+    <p class="demo-meta">with row status — activity-coloured left-rule on rows that carry state</p>
+    <table>
+      <caption>Workshop tools — current state</caption>
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Location</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="tr-grow">
+          <td>Mitre saw</td>
+          <td>Workshop A</td>
+          <td><span class="badge badge-grow">Available</span></td>
+        </tr>
+        <tr class="tr-share">
+          <td>Sewing machine</td>
+          <td>Textile room</td>
+          <td><span class="badge badge-share">In use</span></td>
+        </tr>
+        <tr class="tr-repair">
+          <td>Bandsaw</td>
+          <td>Workshop A</td>
+          <td><span class="badge badge-repair">Under repair</span></td>
+        </tr>
+        <tr>
+          <td>Heat press</td>
+          <td>Print room</td>
+          <td><span class="badge">Archived</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- With numeric columns -->
+  <div class="row">
+    <p class="demo-meta">numeric columns — .td-num right-aligns and applies tabular-nums</p>
+    <table>
+      <caption>October energy usage by space</caption>
+      <thead>
+        <tr>
+          <th>Space</th>
+          <th class="td-num">kWh used</th>
+          <th class="td-num">% of budget</th>
+          <th class="td-num">Cost</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Workshop</td>
+          <td class="td-num">142.8</td>
+          <td class="td-num">38%</td>
+          <td class="td-num">£42.84</td>
+        </tr>
+        <tr>
+          <td>Kitchen</td>
+          <td class="td-num">89.4</td>
+          <td class="td-num">24%</td>
+          <td class="td-num">£26.82</td>
+        </tr>
+        <tr>
+          <td>Office</td>
+          <td class="td-num">67.1</td>
+          <td class="td-num">18%</td>
+          <td class="td-num">£20.13</td>
+        </tr>
+        <tr>
+          <td>Comms room</td>
+          <td class="td-num">44.9</td>
+          <td class="td-num">12%</td>
+          <td class="td-num">£13.47</td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td>Total</td>
+          <td class="td-num">344.2</td>
+          <td class="td-num">92%</td>
+          <td class="td-num">£103.26</td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <!-- Two-axis table with row headers -->
+  <div class="row">
+    <p class="demo-meta">two-axis — &lt;th&gt; row headers in &lt;tbody&gt; for screen reader navigation</p>
+    <table>
+      <caption>Repair café — first hour of activity</caption>
+      <thead>
+        <tr>
+          <th>Item type</th>
+          <th class="td-num">Brought in</th>
+          <th class="td-num">Diagnosed</th>
+          <th class="td-num">Repaired</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th>Small electronics</th>
+          <td class="td-num">8</td>
+          <td class="td-num">6</td>
+          <td class="td-num">4</td>
+        </tr>
+        <tr>
+          <th>Clothing</th>
+          <td class="td-num">5</td>
+          <td class="td-num">5</td>
+          <td class="td-num">3</td>
+        </tr>
+        <tr>
+          <th>Bicycles</th>
+          <td class="td-num">3</td>
+          <td class="td-num">3</td>
+          <td class="td-num">2</td>
+        </tr>
+        <tr>
+          <th>Furniture</th>
+          <td class="td-num">2</td>
+          <td class="td-num">1</td>
+          <td class="td-num">1</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <hr class="section-rule">
+
+  <!-- Wrapped for horizontal scroll -->
+  <div class="row">
+    <p class="demo-meta">wrapped — &lt;div class="table-wrap"&gt; contains horizontal scroll instead of letting it push the page</p>
+    <div class="demo-callout">This wide table is wrapped in a scrollable container. Resize the page narrow or view at 320px to see the wrap engage. Without the wrap, the table would force horizontal page scroll.</div>
+    <div class="table-wrap" tabindex="0">
+      <table>
+        <caption>Solar generation by hour — week of 15 May</caption>
+        <thead>
+          <tr>
+            <th>Day</th>
+            <th class="td-num">06:00</th>
+            <th class="td-num">09:00</th>
+            <th class="td-num">12:00</th>
+            <th class="td-num">15:00</th>
+            <th class="td-num">18:00</th>
+            <th class="td-num">Day total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>Monday</th>
+            <td class="td-num">0.4</td>
+            <td class="td-num">2.1</td>
+            <td class="td-num">3.8</td>
+            <td class="td-num">2.6</td>
+            <td class="td-num">0.7</td>
+            <td class="td-num">14.2</td>
+          </tr>
+          <tr>
+            <th>Tuesday</th>
+            <td class="td-num">0.5</td>
+            <td class="td-num">2.4</td>
+            <td class="td-num">4.1</td>
+            <td class="td-num">3.0</td>
+            <td class="td-num">0.9</td>
+            <td class="td-num">16.8</td>
+          </tr>
+          <tr>
+            <th>Wednesday</th>
+            <td class="td-num">0.3</td>
+            <td class="td-num">1.6</td>
+            <td class="td-num">2.9</td>
+            <td class="td-num">2.0</td>
+            <td class="td-num">0.5</td>
+            <td class="td-num">10.6</td>
+          </tr>
+          <tr>
+            <th>Thursday</th>
+            <td class="td-num">0.4</td>
+            <td class="td-num">2.0</td>
+            <td class="td-num">3.5</td>
+            <td class="td-num">2.4</td>
+            <td class="td-num">0.6</td>
+            <td class="td-num">13.4</td>
+          </tr>
+          <tr>
+            <th>Friday</th>
+            <td class="td-num">0.6</td>
+            <td class="td-num">2.7</td>
+            <td class="td-num">4.4</td>
+            <td class="td-num">3.2</td>
+            <td class="td-num">1.0</td>
+            <td class="td-num">18.1</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <hr class="section-rule">
+
+  <!-- Wrong-use block -->
+  <div class="row">
+    <p class="demo-meta">avoid — don't use this component for layout, sortable grids, or selectable rows</p>
+    <p>The table component is for semantic display of data. If you need sorting, filtering, row selection, or pagination, build those behaviours on top of this component — they are not variants of it. If you're using a <code>&lt;table&gt;</code> for page layout, stop; use a grid or flex layout instead.</p>
+  </div>
+
+</body>
+</html>
