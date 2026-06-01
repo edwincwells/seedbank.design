@@ -1,0 +1,173 @@
+/* ==========================================================================
+   seedbank.design — code.css
+   --------------------------------------------------------------------------
+   The code display component. Two semantic uses of code in HTML, styled
+   together because they share the mono font and most colour decisions:
+
+     <code>           inline code in running prose — class names, tokens,
+                      filenames, function calls
+     <pre><code>      multi-line code blocks — CSS rules, markup patterns,
+                      shell commands
+
+   Applied via element selectors (not classes) so that <code> in a fork's
+   content gets the treatment automatically. This is a deliberate
+   inconsistency with badge and table, which are opt-in via class. The
+   restraint of the visual treatment makes it safe to apply globally,
+   and the friction of "write <code> and remember to add .code" is not
+   worth the consistency.
+
+   Not in scope: syntax highlighting, copy-to-clipboard buttons, line
+   numbers, language labels. These are composition concerns for forks —
+   they require JS or build-step processing, both of which violate the
+   system's no-JS-in-components rule.
+
+   Visual decisions worth surfacing:
+     - Inline <code> uses a tinted --surface-sunken background and slight
+       padding, matching the convention from documentation sites. Reads
+       clearly as "code" against prose without shouting.
+     - 0.9em size shift on inline <code> compensates for mono fonts
+       rendering visually larger than sans at the same point size. The
+       em-relative size scales with surrounding text (a heading-sized
+       <code> shrinks proportionally).
+     - <pre><code> blocks use the same sunken background but with
+       --radius-md (the "software" radius), --text-sm size (13px) to fit
+       longer lines, and overflow-x: auto for lines exceeding container.
+     - <pre><code> blocks are keyboard-focusable via tabindex="0" in the
+       markup convention. Same focus-ring caveat as table-wrap applies —
+       see notes.md.
+
+   --------------------------------------------------------------------------
+   seedbank.design — licensed under MIT (code) and CC BY-SA 4.0
+   (documentation and design assets). This file is a design system asset —
+   it ships with every clone. Forks are encouraged to adapt it; adaptations
+   should be documented.
+   ========================================================================== */
+
+
+/* --------------------------------------------------------------------------
+   1. INLINE <code>
+   --------------------------------------------------------------------------
+   The 0.9em is em-relative so it scales with the surrounding text size.
+   Mono fonts visually render larger than sans at the same point — the
+   shift equalises them so inline code doesn't feel oversized against
+   its prose context.
+
+   The --surface-sunken background is the same recessed tone used by
+   text-input and checkbox backgrounds. It signals "different register
+   from prose" without competing with badge tints or pulling visual
+   weight from the content around it.
+
+   Padding is tight — just enough to give the tint room around the
+   characters. The --radius-sm corner stops the tint from feeling like
+   a hard rectangle.
+
+   word-break: break-word handles long inline code (paths, URLs as code)
+   so they don't force horizontal scroll inside their container.
+   --------------------------------------------------------------------------  */
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  background: var(--surface-sunken);
+  color: var(--text);
+  padding: 1px var(--space-1);
+  border-radius: var(--radius-sm);
+  word-break: break-word;
+}
+
+
+/* --------------------------------------------------------------------------
+   2. <pre><code> CODE BLOCKS
+   --------------------------------------------------------------------------
+   The <pre> element provides the block container; the <code> inside it
+   carries the mono font from the inline rule above, but the block context
+   overrides several of the inline properties.
+
+   --text-sm (13px) for code lines fits more characters per row than the
+   --text-base default would. Code is typically longer than prose, so
+   stepping down a size helps. The --leading-base line height keeps lines
+   readable without crowding.
+
+   overflow-x: auto handles long lines — the block scrolls horizontally
+   inside its container rather than pushing the page or wrapping
+   mid-statement. tabindex="0" in the markup makes the block focusable
+   so keyboard users can arrow-scroll. See notes.md for the focus-ring
+   caveat (same as table-wrap).
+
+   white-space: pre preserves the formatting authors put into the code —
+   indentation, line breaks, spacing. This is the entire point of <pre>.
+
+   No max-width: code blocks are deliberately full-width in their
+   container, unlike paragraphs (which cap at 65ch). Code lines have
+   their own length conventions and shouldn't be constrained by prose
+   readability rules.
+   --------------------------------------------------------------------------  */
+
+pre {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  line-height: var(--leading-base);
+  color: var(--text);
+  background: var(--surface-sunken);
+  padding: var(--space-3) var(--space-4);
+  margin: 0 0 var(--space-4);
+  border-radius: var(--radius-md);
+  overflow-x: auto;
+  white-space: pre;
+  -webkit-overflow-scrolling: touch;
+}
+
+
+/* --------------------------------------------------------------------------
+   3. <code> INSIDE <pre>
+   --------------------------------------------------------------------------
+   When <code> is inside <pre>, the inline tinted-background treatment
+   shouldn't apply — the <pre> already provides the background, padding,
+   and visual container. Per-character tints inside the block would be
+   noise.
+
+   Override the inline rules: no background, no padding, no border-radius,
+   size inherited from the <pre> parent rather than the 0.9em shrink.
+   word-break: normal so code formatting is preserved.
+   --------------------------------------------------------------------------  */
+
+pre code {
+  background: none;
+  padding: 0;
+  border-radius: 0;
+  font-size: inherit;
+  word-break: normal;
+}
+
+
+/* --------------------------------------------------------------------------
+   4. PRINT RULES
+   --------------------------------------------------------------------------
+   Inline <code> drops the tint background (saves ink) but keeps the mono
+   font so it's still distinguishable from surrounding prose. <pre><code>
+   blocks drop their background but gain a hairline border for definition,
+   same approach as badge.
+
+   white-space: pre-wrap on print so long lines wrap rather than being
+   clipped at the page edge — print has no horizontal scroll, so the
+   on-screen scroll behaviour has to change.
+
+   page-break-inside: avoid keeps code blocks together when possible. For
+   blocks longer than a page, the break is unavoidable; this rule
+   minimises mid-block breaks for short-to-medium blocks.
+   --------------------------------------------------------------------------  */
+
+@media print {
+  code {
+    background: transparent !important;
+    padding: 0 !important;
+  }
+
+  pre {
+    background: transparent !important;
+    border: var(--border-hairline) solid var(--text);
+    white-space: pre-wrap;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+}

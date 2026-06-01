@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>code — seedbank.design</title>
+  <link rel="stylesheet" href="../../../tokens/tokens.css">
+  <link rel="stylesheet" href="../../foundations/prose/prose.css">
+  <link rel="stylesheet" href="../../foundations/focus-ring/focus-ring.css">
+  <link rel="stylesheet" href="./code.css">
+  <style>
+    /* Reference-page-only styles. Not part of the component.
+       Used to lay out the demonstration; not inherited by forks. */
+    body {
+      background: var(--surface);
+      margin: 0;
+      padding: var(--space-6) var(--space-5);
+      max-width: 720px;
+    }
+    .row {
+      padding: var(--space-4) 0;
+      border-bottom: var(--border-hairline) solid var(--border);
+    }
+    .row:last-child {
+      border-bottom: none;
+    }
+    .demo-meta {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      color: var(--text-subtle);
+      margin-bottom: var(--space-3);
+    }
+    .section-rule {
+      border: none;
+      border-top: var(--border-hairline) solid var(--border);
+      margin: var(--space-7) 0 var(--space-5);
+    }
+  </style>
+</head>
+<body>
+
+  <h1>code</h1>
+  <p>Inline <code>&lt;code&gt;</code> and block <code>&lt;pre&gt;&lt;code&gt;</code> treatments. Applied globally via element selectors — no class needed. No syntax highlighting (composition concern for forks).</p>
+
+  <hr class="section-rule">
+
+  <!-- Inline code in prose -->
+  <div class="row">
+    <p class="demo-meta">inline — &lt;code&gt; in running prose</p>
+    <p>The system's primary action colour is set via the <code>--action</code> token, which by default resolves to <code>--grow</code>. To swap the primary to a different activity colour, override the token in your fork's <code>tokens.css</code>.</p>
+    <p>Component classes follow a <code>variant-name</code> pattern: <code>btn-secondary</code>, <code>badge-warning</code>, <code>tr-repair</code>. State is driven by attributes — <code>disabled</code>, <code>aria-invalid</code>, <code>aria-busy</code> — not by class names like <code>btn-disabled</code>.</p>
+  </div>
+
+  <!-- Inline code in different sizes -->
+  <div class="row">
+    <p class="demo-meta">inline — scales with surrounding text size</p>
+    <h2>The <code>--action</code> token in a heading</h2>
+    <h3>The <code>--share</code> token in a smaller heading</h3>
+    <p>And the <code>--repair</code> token in body text for comparison.</p>
+    <p><small>Even inline <code>code</code> inside small text scales proportionally.</small></p>
+  </div>
+
+  <!-- Inline code with long content -->
+  <div class="row">
+    <p class="demo-meta">inline — long content wraps via word-break</p>
+    <p>A long inline path: <code>/Users/edwin/Development/seedbank.design/components/display/code/code.css</code> wraps inside its container rather than forcing horizontal scroll.</p>
+  </div>
+
+  <hr class="section-rule">
+
+  <!-- Basic code block -->
+  <div class="row">
+    <p class="demo-meta">block — &lt;pre&gt;&lt;code&gt; for multi-line code</p>
+    <pre tabindex="0"><code>:root {
+  --grow:   #2f7a1f;
+  --repair: #a85d11;
+  --share:  #1f5fa8;
+  --make:   #6a3d9e;
+}</code></pre>
+  </div>
+
+  <!-- Code block with longer lines (scroll demo) -->
+  <div class="row">
+    <p class="demo-meta">block — long lines scroll horizontally inside the block, not the page</p>
+    <pre tabindex="0"><code>.badge-grow {
+  background: color-mix(in srgb, var(--grow) 15%, var(--surface));
+  color: var(--grow);
+  border-color: transparent;
+}
+
+/* This comment is deliberately long to demonstrate horizontal scroll behaviour inside the code block — without overflow-x: auto, this line would either wrap mid-sentence or push the page horizontally. */</code></pre>
+  </div>
+
+  <!-- HTML markup example -->
+  <div class="row">
+    <p class="demo-meta">block — markup example, with inline code references in surrounding prose</p>
+    <p>The wrapping <code>&lt;label&gt;</code> pattern provides the full-label click target for checkboxes and radio inputs:</p>
+    <pre tabindex="0"><code>&lt;label class="checkbox-row"&gt;
+  &lt;input type="checkbox"&gt;
+  &lt;span&gt;Subscribe to the monthly digest&lt;/span&gt;
+&lt;/label&gt;</code></pre>
+    <p>Wire up the <code>change</code> event in your stack however it handles event listeners.</p>
+  </div>
+
+  <!-- Shell command example -->
+  <div class="row">
+    <p class="demo-meta">block — shell command, single line</p>
+    <pre tabindex="0"><code>git add components/display/code/ &amp;&amp; git commit -m "Add display/code component"</code></pre>
+  </div>
+
+  <hr class="section-rule">
+
+  <!-- Wrong-use block -->
+  <div class="row">
+    <p class="demo-meta">avoid — don't use &lt;code&gt; for emphasis or styling, only for actual code</p>
+    <p>The element is semantic. Using <code>&lt;code&gt;</code> to make text look monospace when it isn't code is wrong — screen readers will announce the content as code, and forks that change the mono font won't see the change applied to non-code uses. If you want monospace text for stylistic reasons, write a class for it; don't reach for <code>&lt;code&gt;</code>.</p>
+  </div>
+
+</body>
+</html>
