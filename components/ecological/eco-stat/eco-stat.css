@@ -1,0 +1,248 @@
+/* ==========================================================================
+   seedbank.design — eco-stat.css
+   --------------------------------------------------------------------------
+   The honest value display: a single quantity shown with its uncertainty,
+   not as a false-precise number. The first component in the ecological
+   layer and the primitive every other ecological component composes.
+
+   Principle 02 (honest uncertainty over false precision) made concrete:
+     - A value is shown with an explicit low–high range, not a bare number
+     - The range is asymmetric by default — the estimate need not sit at the
+       midpoint, because real ecological uncertainty rarely does
+     - There is NO precise point marker on the range track. A dot at "1.8"
+       would reassert the precision the range exists to refuse — the band IS
+       the message ("the answer is somewhere in here")
+     - A value with genuinely no uncertainty omits the range entirely.
+       Honesty runs both ways: don't fake a range any more than fake a point
+     - A value not yet measured renders as an explicit gap, never blank
+
+   The text form is canonical. The range track (section 5) is an optional
+   visual enhancement layered on top — it carries no meaning the text does
+   not already carry, and is aria-hidden so it is not announced twice. With
+   no CSS loaded the stat reads as a complete line of label, value, and
+   range. See README.md and notes.md.
+
+   No data+action footer here. eco-stat is an atomic primitive; the
+   data-plus-action pairing (principle 03) lives at composition level
+   (cards, dashboards), not on every individual number.
+
+   --------------------------------------------------------------------------
+   seedbank.design — licensed under MIT (code) and CC BY-SA 4.0
+   (documentation and design assets). This file is a design system asset —
+   it ships with every clone. Forks are encouraged to adapt it; adaptations
+   should be documented.
+   ========================================================================== */
+
+
+/* --------------------------------------------------------------------------
+   1. CONTAINER
+   --------------------------------------------------------------------------
+   No surface, no border, no radius. eco-stat is bare text by default — it
+   sits inside whatever composes it (a card, a dashboard cell, a sentence).
+   Editorial vocabulary: this is content, not a control.
+   --------------------------------------------------------------------------  */
+
+.eco-stat {
+  font-family: var(--font-sans);
+}
+
+
+/* --------------------------------------------------------------------------
+   2. LABEL
+   --------------------------------------------------------------------------
+   What the number is. Sans, muted (meaningful content, not metadata), sits
+   above the value. Every property is set explicitly so the component holds
+   its shape with or without prose.css loaded.
+   --------------------------------------------------------------------------  */
+
+.eco-stat-label {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-regular);
+  color: var(--text-muted);
+  line-height: var(--leading-base);
+  margin: 0 0 var(--space-1);
+  max-width: none;
+}
+
+
+/* --------------------------------------------------------------------------
+   3. VALUE AND UNIT
+   --------------------------------------------------------------------------
+   The headline number. Mono (tokenised-metadata convention), 500, large.
+   The unit rides alongside in sans at a smaller size and muted colour, so
+   the numeral dominates. Baseline-aligned via inline-flex.
+
+   The <data> element carries the machine-readable value; the visible text
+   is the human rendering. They may differ in precision (value="1834" shown
+   as "1.8k").
+   --------------------------------------------------------------------------  */
+
+.eco-stat-value {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-xxl);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-tight);
+  color: var(--text);
+  margin: 0;
+  max-width: none;
+}
+
+.eco-stat-value data {
+  font-variant-numeric: tabular-nums;
+}
+
+.eco-stat-unit {
+  font-family: var(--font-sans);
+  font-size: var(--text-md);
+  font-weight: var(--weight-regular);
+  color: var(--text-muted);
+}
+
+
+/* --------------------------------------------------------------------------
+   4. RANGE (text — canonical)
+   --------------------------------------------------------------------------
+   The uncertainty band, in words. Subtle colour (secondary to the headline
+   value) but still AA against the surface. Numerals stay mono; the qualifier
+   word ("estimated", "measured") and unit stay sans.
+
+   This text is the honest core of the component. It is present whenever a
+   value carries uncertainty, and it survives with no CSS.
+   --------------------------------------------------------------------------  */
+
+.eco-stat-range {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-regular);
+  color: var(--text-subtle);
+  line-height: var(--leading-base);
+  margin: var(--space-1) 0 0;
+  max-width: none;
+}
+
+.eco-stat-range data {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+
+/* --------------------------------------------------------------------------
+   5. RANGE TRACK (visual enhancement — optional, aria-hidden)
+   --------------------------------------------------------------------------
+   A geometry-only depiction of the band: a rail with a filled region from
+   the low value to the high value. NO point marker, by design (see header).
+
+   Meaning never rests on this track: it duplicates the range text and is
+   aria-hidden. It carries no colour-dependent meaning, so it survives on
+   e-ink and in print — differentiation is position and width, not hue.
+
+   Positions are data, supplied per-instance as two custom properties on the
+   element (percentages along the rail's own scale):
+
+     <div class="eco-stat-track" aria-hidden="true"
+          style="--range-start: 30%; --range-end: 60%"></div>
+
+   The fork computes the two percentages from its own scale (the rail's 0%
+   and 100% endpoints). This is the one place the component takes inline
+   values — they are data-derived geometry, not hardcoded style, the same
+   way a progress bar's width is data.
+   --------------------------------------------------------------------------  */
+
+.eco-stat-track {
+  position: relative;
+  height: 6px;
+  margin-top: var(--space-2);
+  background: var(--surface-sunken);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+}
+
+.eco-stat-track::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--range-start, 0%);
+  width: calc(var(--range-end, 100%) - var(--range-start, 0%));
+  background: var(--border-strong);
+  border-radius: var(--radius-pill);
+}
+
+/* Optional scale endpoints under the rail — mono, subtle, for context. Use
+   when the rail's absolute bounds matter (e.g. "0–4 kg"). aria-hidden along
+   with the track: the essential range is already in the text. */
+.eco-stat-scale {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-subtle);
+  margin-top: var(--space-1);
+}
+
+
+/* --------------------------------------------------------------------------
+   6. COMPACT MODIFIER
+   --------------------------------------------------------------------------
+   For dense contexts — several stats in a dashboard grid. Smaller value,
+   tighter type. A variant class, not a state — consistent with .btn-sm.
+   --------------------------------------------------------------------------  */
+
+.eco-stat-compact .eco-stat-value {
+  font-size: var(--text-xl);
+}
+
+.eco-stat-compact .eco-stat-label {
+  font-size: var(--text-xs);
+}
+
+.eco-stat-compact .eco-stat-range {
+  font-size: var(--text-xs);
+}
+
+
+/* --------------------------------------------------------------------------
+   7. UNMEASURED STATE
+   --------------------------------------------------------------------------
+   A stat whose value is genuinely not known. Honest uncertainty runs to its
+   limit: a missing value is shown as an explicit gap, never as blank space
+   or a fabricated zero. The value slot holds a "—" placeholder in the
+   subtle colour, and the range line carries the reason ("not measured").
+
+   Driven by an attribute, not a class — state from attributes per project
+   convention. data-unmeasured on the container.
+
+   Note: the "—" here is a no-value placeholder (the long-standing data-table
+   convention), NOT the decorative em-dash status prefix that the system
+   dropped. Different glyph job entirely.
+   --------------------------------------------------------------------------  */
+
+.eco-stat[data-unmeasured] .eco-stat-value {
+  color: var(--text-subtle);
+  font-weight: var(--weight-regular);
+}
+
+
+/* --------------------------------------------------------------------------
+   8. PRINT RULES
+   --------------------------------------------------------------------------
+   The text form prints as-is. The track keeps its band as a bordered region
+   on an outlined rail, so the uncertainty stays legible on paper without
+   spending ink on fills.
+   --------------------------------------------------------------------------  */
+
+@media print {
+  .eco-stat-track {
+    background: transparent;
+    border: var(--border-hairline) solid var(--text);
+  }
+
+  .eco-stat-track::before {
+    background: transparent;
+    border: var(--border-hairline) solid var(--text);
+  }
+}

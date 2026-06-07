@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>eco-stat — seedbank.design</title>
+  <link rel="stylesheet" href="../../../tokens/tokens.css">
+  <link rel="stylesheet" href="../../foundations/prose/prose.css">
+  <link rel="stylesheet" href="./eco-stat.css">
+  <style>
+    /* Reference-page-only styles. Not part of the component.
+       Used to lay out the demonstration; not inherited by forks. */
+    body {
+      background: var(--surface);
+      margin: 0;
+      padding: var(--space-6) var(--space-5);
+      max-width: 720px;
+    }
+    .demo-row {
+      padding: var(--space-4) 0;
+      border-bottom: var(--border-hairline) solid var(--border);
+    }
+    .demo-row:last-child {
+      border-bottom: none;
+    }
+    .demo-meta {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      color: var(--text-subtle);
+      margin-bottom: var(--space-3);
+    }
+    .section-rule {
+      border: none;
+      border-top: var(--border-hairline) solid var(--border);
+      margin: var(--space-7) 0 var(--space-5);
+    }
+    /* A bare demo grid to show several compact stats at density — this is
+       NOT the dashboard component (that composes eco-stat later), only a
+       density check. */
+    .demo-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-4);
+    }
+    @media (max-width: 480px) {
+      .demo-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>eco-stat</h1>
+  <p>The honest value display. A single quantity shown with its uncertainty, never as a false-precise number. The text is canonical; the optional track is geometry only and never carries meaning alone. This page shows every state styled by <code>eco-stat.css</code>.</p>
+
+  <hr class="section-rule">
+
+  <!-- Default: value + range text only -->
+  <div class="demo-row">
+    <p class="demo-meta">default · value + low–high range, text only</p>
+    <div class="eco-stat">
+      <p class="eco-stat-label">Carbon footprint — linen offcut</p>
+      <p class="eco-stat-value">
+        <data value="1.8">1.8</data>
+        <span class="eco-stat-unit">kg CO₂e</span>
+      </p>
+      <p class="eco-stat-range">estimated <data value="1.2">1.2</data>–<data value="2.4">2.4</data> kg CO₂e</p>
+    </div>
+  </div>
+
+  <!-- Default + track -->
+  <div class="demo-row">
+    <p class="demo-meta">with track · band geometry, no point marker, aria-hidden</p>
+    <div class="eco-stat">
+      <p class="eco-stat-label">Carbon footprint — linen offcut</p>
+      <p class="eco-stat-value">
+        <data value="1.8">1.8</data>
+        <span class="eco-stat-unit">kg CO₂e</span>
+      </p>
+      <p class="eco-stat-range">estimated <data value="1.2">1.2</data>–<data value="2.4">2.4</data> kg CO₂e</p>
+      <div class="eco-stat-track" aria-hidden="true" style="--range-start: 30%; --range-end: 60%"></div>
+      <div class="eco-stat-scale" aria-hidden="true">
+        <span>0</span>
+        <span>4 kg</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Asymmetric range: estimate not centred -->
+  <div class="demo-row">
+    <p class="demo-meta">asymmetric · estimate sits low in the band, not the midpoint</p>
+    <div class="eco-stat">
+      <p class="eco-stat-label">Water use — workshop, October</p>
+      <p class="eco-stat-value">
+        <data value="430">430</data>
+        <span class="eco-stat-unit">litres / day</span>
+      </p>
+      <p class="eco-stat-range">estimated <data value="390">390</data>–<data value="620">620</data> litres</p>
+      <div class="eco-stat-track" aria-hidden="true" style="--range-start: 20%; --range-end: 90%"></div>
+      <div class="eco-stat-scale" aria-hidden="true">
+        <span>200</span>
+        <span>700 l</span>
+      </div>
+    </div>
+  </div>
+
+  <hr class="section-rule">
+
+  <!-- Exact value: no range, by design -->
+  <div class="demo-row">
+    <p class="demo-meta">exact · genuinely no uncertainty, so no range line</p>
+    <div class="eco-stat">
+      <p class="eco-stat-label">Households on shared array</p>
+      <p class="eco-stat-value">
+        <data value="14">14</data>
+        <span class="eco-stat-unit">households</span>
+      </p>
+    </div>
+  </div>
+
+  <!-- Unmeasured -->
+  <div class="demo-row">
+    <p class="demo-meta">unmeasured · data-unmeasured · explicit gap, never blank</p>
+    <div class="eco-stat" data-unmeasured>
+      <p class="eco-stat-label">Embodied carbon — finishing stage</p>
+      <p class="eco-stat-value">
+        <span>—</span>
+        <span class="eco-stat-unit">kg CO₂e</span>
+      </p>
+      <p class="eco-stat-range">not measured — stage not disclosed by distributor</p>
+    </div>
+  </div>
+
+  <hr class="section-rule">
+
+  <!-- Compact density check -->
+  <div class="demo-row">
+    <p class="demo-meta">compact · .eco-stat-compact · density check (not the dashboard component)</p>
+    <div class="demo-grid">
+      <div class="eco-stat eco-stat-compact">
+        <p class="eco-stat-label">Grid draw vs last year</p>
+        <p class="eco-stat-value">
+          <data value="-23">−23</data>
+          <span class="eco-stat-unit">%</span>
+        </p>
+        <p class="eco-stat-range">±<data value="4">4</data> points</p>
+      </div>
+      <div class="eco-stat eco-stat-compact">
+        <p class="eco-stat-label">CO₂e avoided</p>
+        <p class="eco-stat-value">
+          <data value="4.1">4.1</data>
+          <span class="eco-stat-unit">t</span>
+        </p>
+        <p class="eco-stat-range">estimated <data value="3.2">3.2</data>–<data value="5.0">5.0</data> t</p>
+      </div>
+      <div class="eco-stat eco-stat-compact" data-unmeasured>
+        <p class="eco-stat-label">Water use</p>
+        <p class="eco-stat-value">
+          <span>—</span>
+        </p>
+        <p class="eco-stat-range">meter offline</p>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
