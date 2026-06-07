@@ -3,6 +3,7 @@
 Tested against the three criteria in `TESTING.md`.
 
 **Tested in:** Chrome on macOS by Edwin, 18 May 2026.
+**Focus-ring re-validated:** Chrome on macOS by Edwin, 7 June 2026 (see Focus-ring re-validation below).
 
 Three issues surfaced during the first test pass and were resolved in `radio.css` (see Findings below). Tests were re-run with the updated CSS in place; the receipts below reflect the post-fix state.
 
@@ -36,7 +37,7 @@ At 320px viewport width (tested via Chrome dev tools responsive mode), radio gro
 
 **Dark mode.** The inner dot remained visible against the `--action` fill in dark mode. Both tokens re-resolve via `prefers-color-scheme`, so the dot adapted automatically without any re-encoding — the payoff of the pure-CSS approach.
 
-**Focus ring on radios.** The focus-ring foundation's `outline` approach sat cleanly outside the circle's border in default, selected, and invalid states. No visual clash with the red invalid border.
+**Focus ring on radios.** The focus-ring foundation's `outline` approach sat cleanly outside the circle's border in default, selected, and invalid states. No visual clash with the red invalid border. *(This observation predates the 7 June 2026 foundation fix and has been re-confirmed — see Focus-ring re-validation below.)*
 
 **Selected + hover interaction.** Hovering over a selected radio did not produce a visible flash. The hover rule changes `border-color` to `--text`, but on a selected radio the border is `--action`, and the selected fill is also `--action` — the hover override would only show as a subtle outline shift that wasn't visible in practice. No `:not(:checked)` qualifier needed.
 
@@ -90,6 +91,14 @@ The `.error-message` convention has been backported to checkbox and select in th
 Caveat documented in both the CSS comment and the README: forms with per-option validation beyond "must select one" need to handle this differently, since the clear-on-selected rule will suppress red that should still be present.
 
 Re-test after the fix confirmed all three criteria pass. The receipts above reflect the post-fix state.
+
+---
+
+## Focus-ring re-validation (7 June 2026)
+
+The focus-ring foundation referenced `--border-focus`, a token that was absent from the committed `tokens.css`, which silently invalidated the `outline` shorthand and removed the focus ring system-wide. This was caught during `methodology` testing and fixed in the foundation (`--border-focus: 2px` added to `tokens.css` §6; a `var(--border-focus, 2px)` fallback added to `focus-ring.css`). See `focus-ring/notes.md` for the full record.
+
+The "Focus ring on radios" observation above predates that fix. Re-tested 7 June 2026 with the fix in place: the ring renders correctly under keyboard focus on the circle in default, selected, and invalid states, sitting cleanly outside the circle with no clash against the `--error` border. (As noted in `focus-ring/notes.md`, a radio group is a single tab stop and arrow keys move within it; the ring follows the focused radio as expected.) **Pass.**
 
 ---
 

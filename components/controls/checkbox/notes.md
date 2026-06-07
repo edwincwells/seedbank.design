@@ -4,6 +4,7 @@ Tested against the three criteria in `TESTING.md`.
 
 **Tested in:** Chrome on macOS by Edwin, 12 May 2026.
 **Amendments tested:** Chrome on macOS by Edwin, 18 May 2026 (see Controls-pass amendments below).
+**Focus-ring re-validated:** Chrome on macOS by Edwin, 7 June 2026 (see Focus-ring re-validation below).
 
 ---
 
@@ -63,6 +64,8 @@ At 320px viewport width:
 **Focus ring on a checked checkbox.** Both the `--action` fill and the blue focus ring rendered simultaneously without visual clash — the ring sits outside the box cleanly.
 
 **Focus ring on an invalid checkbox.** The red border and the blue focus ring both rendered legibly together. Two distinct signals, both clear.
+
+*(The three focus-ring observations above predate the 7 June 2026 foundation fix and have been re-confirmed — see Focus-ring re-validation below.)*
 
 **Indeterminate visual.** The standalone indeterminate demo loaded with the horizontal dash visible, not a tick. The JS-on-load pattern worked as documented.
 
@@ -129,6 +132,14 @@ The reference page's invalid demo error `<p>` now carries `class="demo-error err
 **Layout integrity on clear:** confirmed — `visibility: hidden` preserved the message's layout space. No vertical jump on check or uncheck.
 
 **Grouped-checkbox clear behaviour:** not exercised by the existing reference page (no grouped checkbox is marked invalid). The rule is in place; the canonical "select at least one" composition will surface during real fork usage.
+
+---
+
+## Focus-ring re-validation (7 June 2026)
+
+The focus-ring foundation referenced `--border-focus`, a token that was absent from the committed `tokens.css`, which silently invalidated the `outline` shorthand and removed the focus ring system-wide. This was caught during `methodology` testing and fixed in the foundation (`--border-focus: 2px` added to `tokens.css` §6; a `var(--border-focus, 2px)` fallback added to `focus-ring.css`). See `focus-ring/notes.md` for the full record.
+
+The three "Focus ring" observations above predate that fix. Re-tested 7 June 2026 with the fix in place: the ring renders correctly under keyboard focus on the 18px box in default, checked, and invalid states, sitting cleanly outside the box and reading alongside both the `--action` fill and the `--error` border without clash. **Pass.**
 
 ---
 

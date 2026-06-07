@@ -3,6 +3,7 @@
 Tested against the three criteria in `TESTING.md`.
 
 **Tested in:** Chrome on macOS by Edwin, 12 May 2026.
+**Focus-ring re-validated:** Chrome on macOS by Edwin, 7 June 2026 (see Focus-ring re-validation below).
 
 ---
 
@@ -59,7 +60,7 @@ At 320px viewport width:
 
 **Active state filter.** `filter: brightness(0.92)` produced visible feedback on every variant, including ghost (where the hover background dims slightly on press, giving the click a tactile feel even without a default fill).
 
-**Focus ring visibility.** The focus ring was clearly visible on every variant. On the destructive variant, the blue focus outline sat outside the red border without visual clash — the `outline` (rather than `box-shadow`) approach in the focus-ring foundation gives the ring its own visual space.
+**Focus ring visibility.** The focus ring was clearly visible on every variant. On the destructive variant, the blue focus outline sat outside the red border without visual clash — the `outline` (rather than `box-shadow`) approach in the focus-ring foundation gives the ring its own visual space. *(See the Focus-ring re-validation section below — this observation predated the foundation fix and has been re-confirmed.)*
 
 **Disabled hover suppression.** Hovering over each disabled button produced no background change. The verbose per-variant `[disabled]:hover` overrides did their job.
 
@@ -78,6 +79,14 @@ At 320px viewport width:
 - Secondary's border remained visible against the dark surface
 - Destructive's red read correctly against the dark surface in both default and hover states
 - Loading spinner used `currentColor` and inherited per-variant correctly
+
+---
+
+## Focus-ring re-validation (7 June 2026)
+
+The focus-ring foundation referenced `--border-focus`, a token that was absent from the committed `tokens.css`, which silently invalidated the `outline` shorthand and removed the focus ring system-wide. This was caught during `methodology` testing and fixed in the foundation (`--border-focus: 2px` added to `tokens.css` §6; a `var(--border-focus, 2px)` fallback added to `focus-ring.css`). See `focus-ring/notes.md` for the full record.
+
+The "Focus ring visibility" observation above predates that fix. Re-tested 7 June 2026 with the fix in place: the focus ring renders correctly under keyboard focus on every variant (primary, secondary, ghost, destructive) at both default and small sizes, sitting cleanly outside each variant's border including the destructive red. **Pass.**
 
 ---
 

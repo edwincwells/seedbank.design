@@ -3,6 +3,7 @@
 Tested against the three criteria in `TESTING.md`.
 
 **Tested in:** Chrome on macOS by Edwin, 11 May 2026.
+**Amendment tested:** Chrome on macOS by Edwin, 7 June 2026 (see Foundation regression and fix below).
 
 ---
 
@@ -52,9 +53,32 @@ To be documented in `controls/radio` when that component is built — the arrow-
 
 ---
 
+## Foundation regression and fix (7 June 2026)
+
+A system-wide regression was caught during `methodology` component testing: **no focus ring rendered on any element**, even though focus was landing correctly (keyboard tabbing reached elements, activation worked, and `document.activeElement` returned the focused element).
+
+**Root cause.** `focus-ring.css` paints the ring with `outline: var(--border-focus) solid var(--focus)`, but `--border-focus` was **not defined** in the committed `tokens.css` — confirmed in the console, where the property resolved to an empty string. A `var()` reference to an undefined custom property with no fallback invalidates the whole declaration at computed-value time, so the `outline` shorthand was dropped silently, with no error. The ring never painted, on any focusable element in the system.
+
+Two things had masked this until now:
+1. macOS Chrome does not tab to non-form focusable elements unless "Keyboard navigation" is enabled in System Settings — so the elements that would most obviously show the gap (links, `summary`, `tabindex` elements) were being skipped in the tester's default configuration.
+2. methodology's `<summary>` was the first non-form, natively-focusable element to be keyboard-tested after the regression was present, which is what finally surfaced it.
+
+**Fix.**
+1. Added `--border-focus: 2px;` to `tokens.css` section 6 (the token the foundation already expected).
+2. Added a fallback in this foundation: `outline: var(--border-focus, 2px) solid var(--focus)` — so a fork that drops the token degrades gracefully instead of silently disabling every focus indicator. For a clone-and-own system this is the more important half of the fix: the failure mode was invisible, and the fallback removes the trap.
+
+**Re-test (7 June 2026, Chrome on macOS, keyboard navigation enabled).** All pass:
+- `summary` (methodology) — ring renders under keyboard focus.
+- A form control (button) and a link — ring renders.
+- `.table-wrap` and `pre[tabindex="0"]` (table) — ring renders. **This closes the previously parked focus-ring-on-non-form-focusable-elements investigation:** the root cause was the missing token, not the elements themselves.
+
+**Consequence recorded.** The focus-ring observations in the `button`, `checkbox`, and `radio` notes predated this fix (they passed under a token state that no longer matched the committed `tokens.css`). Each has been re-validated for focus rendering and annotated 7 June 2026.
+
+---
+
 ## Open questions for v0.2 and beyond
 
-- The 2px offset may need revisiting when `controls/checkbox` and `controls/radio` are built — depending on the styling we choose, the ring may need to sit closer to the visible mark.
+- The 2px offset may need revisiting when `controls/checkbox` and `controls/radio` are built — depending on the styling we choose, the ring may need to sit closer to the visible mark. *(Resolved in practice: checkbox and radio both tested with the ring sitting cleanly outside the mark.)*
 - If `display/code` introduces focusable code blocks (for copy buttons), test focus ring against the mono-typed background.
 - If a fork introduces an activity-coloured surface, document the focus colour override pattern at that point.
 - Engine coverage beyond Chromium (Firefox / Gecko, Safari / WebKit) not yet tested. Standards-compliant CSS used throughout, so no known engine-specific risks. Broaden coverage if a fork reports an issue.
