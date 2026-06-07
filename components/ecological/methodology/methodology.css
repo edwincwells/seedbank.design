@@ -1,0 +1,180 @@
+/* ==========================================================================
+   seedbank.design — methodology.css
+   --------------------------------------------------------------------------
+   The "how this was calculated" disclosure. A reusable affordance that puts
+   methodology one click away from any estimate — eco-stat, a carbon figure,
+   a provenance stage, a dashboard number.
+
+   Principle 02 (honest uncertainty over false precision) made operable:
+   methodology is always reachable, never buried in a footnote, and the
+   summary makes its existence visible even while the detail is collapsed.
+
+   Built on native <details>/<summary>. This is deliberate and load-bearing:
+     - No JavaScript. The toggle is native HTML — this component is the
+       layer's proof that an interactive disclosure needs no script at all,
+       which matters for static-site and no-JS deployments.
+     - Degrades with no CSS. Without this stylesheet the browser renders its
+       own disclosure triangle and the summary still toggles the body open.
+       Nothing here is required for the component to function — the CSS only
+       restyles a control that already works.
+
+   The summary reads as muted text plus a chevron, NOT as a link: a
+   disclosure is not navigation, and link colour would falsely imply it goes
+   somewhere. Interactivity is carried by the chevron, the pointer cursor,
+   the focus ring (from foundations/focus-ring — summary is covered there),
+   and the native expanded/collapsed announcement to assistive tech.
+
+   The chevron is drawn in pure CSS (a rotated border corner, currentColor)
+   rather than an SVG data-URI — so it escapes the hardcoded-hex exception
+   that the checkbox and select carry, the same way the radio dot does.
+
+   --------------------------------------------------------------------------
+   seedbank.design — licensed under MIT (code) and CC BY-SA 4.0
+   (documentation and design assets). This file is a design system asset —
+   it ships with every clone. Forks are encouraged to adapt it; adaptations
+   should be documented.
+   ========================================================================== */
+
+
+/* --------------------------------------------------------------------------
+   1. CONTAINER
+   --------------------------------------------------------------------------
+   No surface, no border. methodology sits inside whatever composes it,
+   usually as a sibling beneath an eco-stat. Editorial vocabulary: content,
+   not a control surface.
+   --------------------------------------------------------------------------  */
+
+.methodology {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  margin: 0;
+}
+
+
+/* --------------------------------------------------------------------------
+   2. SUMMARY — THE ALWAYS-VISIBLE TRIGGER
+   --------------------------------------------------------------------------
+   The summary is visible whether the body is open or closed, so the
+   availability of methodology is never hidden. Muted text + chevron.
+
+   Native marker is suppressed two ways for cross-browser coverage:
+     - changing display away from list-item drops the standard ::marker
+     - ::-webkit-details-marker handles Safari and older Chrome
+   If this stylesheet does not load, the native marker returns and the
+   control still works — the intended graceful degradation.
+
+   Focus is handled by foundations/focus-ring (summary is in its selector
+   set). This component does not touch focus styling.
+   --------------------------------------------------------------------------  */
+
+.methodology > summary {
+  list-style: none;  /* drop the default disclosure marker */
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  cursor: pointer;
+
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-regular);
+  color: var(--text-muted);
+
+  transition: color 0.12s ease;
+}
+
+.methodology > summary::-webkit-details-marker {
+  display: none;  /* Safari / older Chrome native marker */
+}
+
+.methodology > summary:hover {
+  color: var(--text);
+}
+
+
+/* --------------------------------------------------------------------------
+   3. CHEVRON — PURE CSS, NO DATA-URI
+   --------------------------------------------------------------------------
+   A small square with only its right and bottom borders drawn forms a
+   corner; rotated -45deg it points right (closed), rotated 45deg it points
+   down (open). currentColor means it inherits the summary's text colour in
+   both light and dark mode with no hardcoded value — escaping the SVG-hex
+   exception the checkbox and select carry.
+   --------------------------------------------------------------------------  */
+
+.methodology > summary::before {
+  content: "";
+  display: inline-block;
+  flex-shrink: 0;
+  width: 0.45em;
+  height: 0.45em;
+  border-right: var(--border-thick) solid currentColor;
+  border-bottom: var(--border-thick) solid currentColor;
+  transform: rotate(-45deg);  /* points right when closed */
+  transition: transform 0.15s ease;
+}
+
+.methodology[open] > summary::before {
+  transform: rotate(45deg);  /* points down when open */
+}
+
+/* Respect reduced-motion: the chevron still flips, just without animating. */
+@media (prefers-reduced-motion: reduce) {
+  .methodology > summary::before {
+    transition: none;
+  }
+}
+
+
+/* --------------------------------------------------------------------------
+   4. BODY — THE EXPANDED DETAIL
+   --------------------------------------------------------------------------
+   A free prose container, set off by a faint left-rule so it reads as the
+   expanded detail of the summary above it. The recommended shape — what is
+   measured, what is excluded, the method/standard, a source — is content,
+   not structure imposed here; write it as ordinary prose.
+   --------------------------------------------------------------------------  */
+
+.methodology-body {
+  margin-top: var(--space-3);
+  padding-left: var(--space-4);
+  border-left: var(--border-hairline) solid var(--border);
+  color: var(--text);
+}
+
+
+/* --------------------------------------------------------------------------
+   5. GAP MARKER — EXPLICIT UNKNOWNS
+   --------------------------------------------------------------------------
+   For the honest-uncertainty core: marking what is NOT covered (a stage not
+   disclosed, a scope excluded, a figure unavailable) in the subtle colour so
+   the gap reads as a gap rather than hiding.
+
+   This is a local affordance. The general, reusable data-gap treatment is
+   deferred to its own primitive later in the layer; when it lands, this may
+   be folded into it. Documented so the divergence is intentional.
+   --------------------------------------------------------------------------  */
+
+.methodology-gap {
+  color: var(--text-subtle);
+}
+
+
+/* --------------------------------------------------------------------------
+   6. PRINT RULES
+   --------------------------------------------------------------------------
+   On paper there is no toggle, and the calculation belongs on the printed
+   record — honest uncertainty does not disappear when a page is printed. So
+   the body is forced open regardless of state, and the chevron (a control
+   affordance with no meaning on paper) is suppressed. The left-rule stays;
+   it is editorial and prints cleanly.
+   --------------------------------------------------------------------------  */
+
+@media print {
+  .methodology .methodology-body {
+    display: block !important;  /* reveal even when collapsed on screen */
+  }
+
+  .methodology > summary::before {
+    display: none;  /* no interaction affordance on paper */
+  }
+}

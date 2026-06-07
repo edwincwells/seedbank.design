@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>methodology — seedbank.design</title>
+  <link rel="stylesheet" href="../../../tokens/tokens.css">
+  <link rel="stylesheet" href="../../foundations/prose/prose.css">
+  <link rel="stylesheet" href="../../foundations/links/links.css">
+  <link rel="stylesheet" href="../../foundations/focus-ring/focus-ring.css">
+  <link rel="stylesheet" href="../eco-stat/eco-stat.css">
+  <link rel="stylesheet" href="./methodology.css">
+  <style>
+    /* Reference-page-only styles. Not part of the component. */
+    body {
+      background: var(--surface);
+      margin: 0;
+      padding: var(--space-6) var(--space-5);
+      max-width: 720px;
+    }
+    .demo-row {
+      padding: var(--space-4) 0;
+      border-bottom: var(--border-hairline) solid var(--border);
+    }
+    .demo-row:last-child { border-bottom: none; }
+    .demo-meta {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      color: var(--text-subtle);
+      margin-bottom: var(--space-3);
+    }
+    .section-rule {
+      border: none;
+      border-top: var(--border-hairline) solid var(--border);
+      margin: var(--space-7) 0 var(--space-5);
+    }
+    /* A bare container standing in for the card/cell that will compose a
+       stat with its methodology. NOT the cards component — just a boundary
+       to show the sibling relationship. */
+    .demo-compose {
+      padding: var(--space-4);
+      border: var(--border-hairline) solid var(--border);
+      border-radius: var(--radius-lg);
+      background: var(--surface-raised);
+    }
+  </style>
+</head>
+<body>
+
+  <h1>methodology</h1>
+  <p>The "how this was calculated" disclosure. Built on native <code>&lt;details&gt;</code> — no JavaScript, and it still toggles with no CSS loaded. It puts methodology one click from any estimate without burying it. This page shows each state styled by <code>methodology.css</code>.</p>
+
+  <hr class="section-rule">
+
+  <!-- Closed by default -->
+  <div class="demo-row">
+    <p class="demo-meta">default · closed · summary visible, detail deferred</p>
+    <details class="methodology">
+      <summary>How this was calculated</summary>
+      <div class="methodology-body">
+        <p>Lifecycle estimate, cradle-to-gate. Covers raw material extraction, retting, spinning, and weaving. Scope 1 and 2 emissions only.</p>
+        <p><span class="methodology-gap">Transport between stages is excluded — distances were available but per-leg carbon factors were not.</span></p>
+        <p>Method follows the ISO 14040 lifecycle framework. Source: <a href="#" rel="external">supplier disclosure, 2024</a>.</p>
+      </div>
+    </details>
+  </div>
+
+  <!-- Open by default -->
+  <div class="demo-row">
+    <p class="demo-meta">open · foregrounded with the open attribute</p>
+    <details class="methodology" open>
+      <summary>How this was estimated</summary>
+      <div class="methodology-body">
+        <p>Reading taken from the shared roof array's inverter log, averaged over the last 24 hours.</p>
+        <p><span class="methodology-gap">Cloud-cover correction not applied — the array reports generation, not potential, so overcast days read low without flagging why.</span></p>
+        <p>Source: <a href="#" rel="external">inverter telemetry</a>, last synced this morning.</p>
+      </div>
+    </details>
+  </div>
+
+  <hr class="section-rule">
+
+  <!-- Composed with eco-stat: the canonical use -->
+  <div class="demo-row">
+    <p class="demo-meta">composition · eco-stat + methodology as siblings (the intended use)</p>
+    <div class="demo-compose">
+      <div class="eco-stat">
+        <p class="eco-stat-label">Carbon footprint — linen offcut</p>
+        <p class="eco-stat-value">
+          <data value="1.8">1.8</data>
+          <span class="eco-stat-unit">kg CO₂e</span>
+        </p>
+        <p class="eco-stat-range">estimated <data value="1.2">1.2</data>–<data value="2.4">2.4</data> kg CO₂e</p>
+        <div class="eco-stat-track" aria-hidden="true" style="--range-start: 30%; --range-end: 60%"></div>
+      </div>
+      <details class="methodology" style="margin-top: var(--space-3)">
+        <summary>How this was calculated</summary>
+        <div class="methodology-body">
+          <p>Lifecycle estimate, cradle-to-gate. Scope 1 and 2 only.</p>
+          <p><span class="methodology-gap">Transport excluded — data unavailable.</span></p>
+          <p>Source: <a href="#" rel="external">supplier disclosure, 2024</a>.</p>
+        </div>
+      </details>
+    </div>
+  </div>
+
+</body>
+</html>

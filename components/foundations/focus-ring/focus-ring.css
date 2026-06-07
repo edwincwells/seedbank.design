@@ -14,7 +14,7 @@
 
    Tokens used:
      --focus         colour (light/dark resolved by mode)
-     --border-focus  width (2px — added in tokens.css section 6)
+     --border-focus  width (2px; falls back to 2px if the token is absent)
 
    Forks: to change the focus appearance globally, remap --focus or
    --border-focus in tokens.css. To override for a specific element type,
@@ -53,7 +53,7 @@ select:focus-visible,
 textarea:focus-visible,
 summary:focus-visible,
 [tabindex]:not([tabindex="-1"]):focus-visible {
-  outline: var(--border-focus) solid var(--focus);
+  outline: var(--border-focus, 2px) solid var(--focus);
   outline-offset: 2px;
 }
 

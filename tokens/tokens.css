@@ -325,6 +325,7 @@
 :root {
   --border-hairline: 0.5px;  /* default dividers, list separators */
   --border-thick:    1.5px;  /* input focus, button outlines */
+  --border-focus:    2px;    /* focus ring width */
   --border-rule:     5px;    /* left-rule accent on status rows */
 }
 
