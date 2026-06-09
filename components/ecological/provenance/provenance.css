@@ -1,0 +1,207 @@
+/* ==========================================================================
+   seedbank.design — provenance.css
+   --------------------------------------------------------------------------
+   The stepped provenance chain: where a material, energy source, or other
+   resource came from, stage by stage, each carrying a location, a distance,
+   and a verification status. The fourth component in the ecological layer,
+   and the one that composes the others — verification-status per stage, and
+   optionally eco-stat for an uncertain per-stage quantity.
+
+   Principle alignment:
+     02 (honest uncertainty): each stage shows its verification status
+        (verified / self-reported / not-disclosed) via the verification-
+        status component; an undisclosed stage is shown as a stage, not
+        omitted — the gap is part of the chain.
+     01 (designed for the edges): the chain IS an ordered list. The markup
+        is <ol><li>, so with no CSS it degrades to a numbered list of stages
+        in sequence — fully readable. The timeline rail is pure enhancement.
+     03 (collective agency): provenance is the data; the action it supports
+        (request disclosure, find a closer source) lives at composition
+        level, not in this component.
+
+   The rail is NEUTRAL. The dots and connectors are sequence/geometry only,
+   in neutral border tokens — verification is carried entirely by the
+   composed badge (which has both colour and a text label). The rail is not
+   colour-coded by status: that would rest meaning on colour and double-code
+   a signal the badge already carries. The rail is built from ::before (dot)
+   and ::after (connector) pseudo-elements, so it is decorative, never
+   announced, and vanishes cleanly when CSS is absent.
+
+   No new tokens. No card chrome — provenance is bare content that a card or
+   dashboard composes; the header carries a single hairline to separate it
+   from the chain.
+
+   --------------------------------------------------------------------------
+   seedbank.design — licensed under MIT (code) and CC BY-SA 4.0
+   (documentation and design assets). This file is a design system asset —
+   it ships with every clone. Forks are encouraged to adapt it; adaptations
+   should be documented.
+   ========================================================================== */
+
+
+/* --------------------------------------------------------------------------
+   1. CONTAINER AND HEADER
+   --------------------------------------------------------------------------
+   No border, no background, no radius — provenance sits inside whatever
+   composes it. The header is optional: a title and an honest summary line
+   (e.g. "3 of 5 stages verified · 2,410 km total"). A single hairline
+   separates the header from the chain.
+   --------------------------------------------------------------------------  */
+
+.provenance {
+  font-family: var(--font-sans);
+}
+
+.provenance-header {
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-3);
+  border-bottom: var(--border-hairline) solid var(--border);
+}
+
+.provenance-title {
+  font-family: var(--font-sans);
+  font-size: var(--text-md);
+  font-weight: var(--weight-medium);
+  color: var(--text);
+  margin: 0;
+}
+
+.provenance-summary {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  color: var(--text-subtle);
+  margin: var(--space-1) 0 0;
+}
+
+
+/* --------------------------------------------------------------------------
+   2. THE CHAIN — AN ORDERED LIST
+   --------------------------------------------------------------------------
+   <ol> carries the sequence. list-style: none removes the default numbers
+   only when this CSS is loaded; with no CSS the numbers return and carry the
+   order, which is exactly the degradation we want.
+
+   Rail geometry is parameterised so the dot size and vertical offset can be
+   tuned in one place. The dot size is --space-2 (8px) — on the spacing scale,
+   not a hardcoded off-scale value. The offset aligns the dot with the first
+   line of the stage title.
+   --------------------------------------------------------------------------  */
+
+.provenance-chain {
+  --prov-dot: var(--space-2);   /* dot diameter (8px) */
+  --prov-offset: 0.45em;        /* dot top offset — aligns with the title's first line */
+
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+
+/* --------------------------------------------------------------------------
+   3. STAGES, DOTS, AND CONNECTORS
+   --------------------------------------------------------------------------
+   Each stage reserves a left gutter for the rail. The dot (::before) sits in
+   the gutter aligned to the title line. The connector (::after) runs from
+   this dot's bottom edge down to the next dot's top edge, bridging the inter-
+   stage gap; the last stage has no connector. Both are neutral and aria-
+   hidden by virtue of being pseudo-elements.
+   --------------------------------------------------------------------------  */
+
+.provenance-stage {
+  position: relative;
+  padding-left: var(--space-5);
+  padding-bottom: var(--space-4);
+}
+
+.provenance-stage:last-child {
+  padding-bottom: 0;
+}
+
+/* The dot — neutral, the prominent rail marker. */
+.provenance-stage::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: var(--prov-offset);
+  width: var(--prov-dot);
+  height: var(--prov-dot);
+  border-radius: 50%;
+  background: var(--border-strong);
+}
+
+/* The connector — a quiet hairline from this dot's bottom to the next dot's
+   top. Centred on the dot's axis. Removed on the last stage. */
+.provenance-stage::after {
+  content: "";
+  position: absolute;
+  left: calc(var(--prov-dot) / 2);
+  transform: translateX(-50%);
+  top: calc(var(--prov-offset) + var(--prov-dot));
+  bottom: calc(-1 * var(--prov-offset));
+  width: var(--border-hairline);
+  background: var(--border);
+}
+
+.provenance-stage:last-child::after {
+  content: none;
+}
+
+
+/* --------------------------------------------------------------------------
+   4. STAGE CONTENT
+   --------------------------------------------------------------------------
+   Title (stage + location) and distance share a row, baseline-aligned, with
+   the distance pushed to the right in mono (tokenised-metadata convention).
+   Detail is muted secondary text. The verification-status component and any
+   composed eco-stat follow, each on their own line.
+   --------------------------------------------------------------------------  */
+
+.provenance-stage-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-3);
+}
+
+.provenance-location {
+  font-size: var(--text-md);
+  font-weight: var(--weight-medium);
+  color: var(--text);
+}
+
+.provenance-distance {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--text-subtle);
+  white-space: nowrap;  /* "1,840 km" should not break across lines */
+}
+
+.provenance-detail {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  margin: var(--space-1) 0 var(--space-2);
+  max-width: none;
+}
+
+/* Composed children (verification-status, eco-stat) get a little breathing
+   room from the content above them. */
+.provenance-stage .verification,
+.provenance-stage .eco-stat {
+  margin-top: var(--space-2);
+}
+
+
+/* --------------------------------------------------------------------------
+   5. PRINT RULES
+   --------------------------------------------------------------------------
+   The rail is thin and neutral — it prints fine and costs little ink, so it
+   stays. The one print concern is keeping a stage from splitting across a
+   page boundary, which would orphan a dot from its content.
+   --------------------------------------------------------------------------  */
+
+@media print {
+  .provenance-stage {
+    break-inside: avoid;
+  }
+}

@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>provenance — seedbank.design</title>
+  <link rel="stylesheet" href="../../../tokens/tokens.css">
+  <link rel="stylesheet" href="../../foundations/prose/prose.css">
+  <link rel="stylesheet" href="../../foundations/links/links.css">
+  <link rel="stylesheet" href="../../foundations/focus-ring/focus-ring.css">
+  <link rel="stylesheet" href="../../display/badge/badge.css">
+  <link rel="stylesheet" href="../eco-stat/eco-stat.css">
+  <link rel="stylesheet" href="../verification-status/verification-status.css">
+  <link rel="stylesheet" href="./provenance.css">
+  <style>
+    /* Reference-page-only styles. Not part of the component. */
+    body {
+      background: var(--surface);
+      margin: 0;
+      padding: var(--space-6) var(--space-5);
+      max-width: 720px;
+    }
+    .demo-meta {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      color: var(--text-subtle);
+      margin-bottom: var(--space-4);
+    }
+    .section-rule {
+      border: none;
+      border-top: var(--border-hairline) solid var(--border);
+      margin: var(--space-7) 0 var(--space-5);
+    }
+    /* A bare card stand-in to show provenance composed inside chrome — NOT
+       part of the component; the cards pattern owns this. */
+    .demo-card {
+      padding: var(--space-4);
+      border: var(--border-hairline) solid var(--border);
+      border-radius: var(--radius-lg);
+      background: var(--surface-raised);
+    }
+  </style>
+</head>
+<body>
+
+  <h1>provenance</h1>
+  <p>The stepped chain showing where a resource came from — stage by stage, each with a location, a distance, and a verification status. Built on an <code>&lt;ol&gt;</code>, so with no CSS it degrades to a numbered list of stages in order. It composes <code>verification-status</code> per stage and <code>eco-stat</code> for an uncertain per-stage quantity. This page shows it styled by <code>provenance.css</code>.</p>
+
+  <hr class="section-rule">
+
+  <!-- The five-stage linen chain, composed inside a stand-in card -->
+  <div class="demo-meta">a material chain · five stages · composed inside a card stand-in</div>
+  <div class="demo-card">
+    <div class="provenance">
+      <div class="provenance-header">
+        <h3 class="provenance-title">Linen fabric — 2m offcut</h3>
+        <p class="provenance-summary">3 of 5 stages verified · 2,410 km total</p>
+      </div>
+
+      <ol class="provenance-chain">
+        <li class="provenance-stage">
+          <div class="provenance-stage-head">
+            <span class="provenance-location">Flax grown — Normandy, France</span>
+            <span class="provenance-distance">0 km</span>
+          </div>
+          <p class="provenance-detail">Rainfed. No synthetic inputs. Organic certification, 2023.</p>
+          <span class="verification" data-verification="verified">
+            <span class="badge">Verified</span>
+            <a href="#" rel="external">organic cert</a>
+          </span>
+        </li>
+
+        <li class="provenance-stage">
+          <div class="provenance-stage-head">
+            <span class="provenance-location">Retting &amp; spinning — Belgium</span>
+            <span class="provenance-distance">320 km</span>
+          </div>
+          <p class="provenance-detail">Water retting. Mechanically spun. Mill audit on file.</p>
+          <span class="verification" data-verification="verified">
+            <span class="badge">Verified</span>
+            <a href="#" rel="external">mill audit</a>
+          </span>
+        </li>
+
+        <li class="provenance-stage">
+          <div class="provenance-stage-head">
+            <span class="provenance-location">Weaving — Lithuania</span>
+            <span class="provenance-distance">1,840 km</span>
+          </div>
+          <p class="provenance-detail">Supplier self-reported. No third-party audit. Energy mix unknown.</p>
+          <span class="verification" data-verification="self-reported">
+            <span class="badge">Self-reported</span>
+            <a href="#" rel="external">supplier statement</a>
+          </span>
+          <div class="eco-stat eco-stat-compact">
+            <p class="eco-stat-label">Carbon, this leg</p>
+            <p class="eco-stat-value">
+              <data value="0.4">0.4</data>
+              <span class="eco-stat-unit">kg CO₂e</span>
+            </p>
+            <p class="eco-stat-range">estimated <data value="0.2">0.2</data>–<data value="0.7">0.7</data> kg CO₂e</p>
+          </div>
+        </li>
+
+        <li class="provenance-stage">
+          <div class="provenance-stage-head">
+            <span class="provenance-location">Finishing — undisclosed</span>
+            <span class="provenance-distance">—</span>
+          </div>
+          <p class="provenance-detail">Stage not disclosed by the distributor.</p>
+          <span class="verification" data-verification="not-disclosed">
+            <span class="badge">Not disclosed</span>
+          </span>
+        </li>
+
+        <li class="provenance-stage">
+          <div class="provenance-stage-head">
+            <span class="provenance-location">Retail — Dorset, UK</span>
+            <span class="provenance-distance">2,410 km total</span>
+          </div>
+          <p class="provenance-detail">Purchased locally. Receipt on file.</p>
+          <span class="verification" data-verification="verified">
+            <span class="badge">Verified</span>
+            <a href="#" rel="external">receipt</a>
+          </span>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <hr class="section-rule">
+
+  <!-- A short bare chain, no card, to show the component without chrome -->
+  <div class="demo-meta">a short chain · bare (no card) · how the component ships</div>
+  <div class="provenance">
+    <ol class="provenance-chain">
+      <li class="provenance-stage">
+        <div class="provenance-stage-head">
+          <span class="provenance-location">Timber — community woodland</span>
+          <span class="provenance-distance">3 km</span>
+        </div>
+        <p class="provenance-detail">Coppiced on site. Felling logged in the woodland record.</p>
+        <span class="verification" data-verification="verified">
+          <span class="badge">Verified</span>
+          <a href="#" rel="external">woodland log</a>
+        </span>
+      </li>
+      <li class="provenance-stage">
+        <div class="provenance-stage-head">
+          <span class="provenance-location">Milling — shared workshop</span>
+          <span class="provenance-distance">3 km total</span>
+        </div>
+        <p class="provenance-detail">Milled by members on the shared bandsaw.</p>
+        <span class="verification" data-verification="self-reported">
+          <span class="badge">Self-reported</span>
+        </span>
+      </li>
+    </ol>
+  </div>
+
+</body>
+</html>
