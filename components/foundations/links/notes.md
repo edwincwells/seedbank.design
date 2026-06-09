@@ -56,4 +56,20 @@ Tested via Chrome's print preview (Cmd+P). URLs expanded after link text in body
 
 ---
 
+## Token-fallback fix (9 June 2026)
+
+A foundation-level issue surfaced during `verification-status` testing: rationale links rendered near-black and illegible in dark mode when placed outside a prose element (links inside `<p>` were fine).
+
+**Root cause.** `--link` and `--link-visited` were absent from the committed `tokens.css`, and `links.css` referenced them with no fallback (`color: var(--link)`). The undefined custom property invalidated the colour declaration, so links inherited their container's text colour — light `--text` inside prose (legible), but the body's near-black default in a bare container (illegible on the dark surface). The third instance of the `--border-focus` class of silent-token failure.
+
+**Fix.**
+1. `tokens.css` — defined `--link` / `--link-visited` with light/dark pairs (`--link` = the `--info` blue family; `--link-visited` a distinct indigo).
+2. `links.css` — added fallbacks: `color: var(--link, var(--info))` on the base link and `color: var(--link-visited, var(--make))` on visited, per the "Foundation token references carry fallbacks" convention.
+
+**Re-test (Edwin, Chrome on macOS, 9 June 2026).** Links read legibly in both light and dark mode. Confirmed across a prose link, a bare (non-prose) link, and a visited link — so the fix holds system-wide, not just in the component where it surfaced.
+
+**Open:** the `--link-visited` indigo values were committed as candidates flagged for contrast verification — confirm they pass AA and read distinct from `--link` (blue) and `--make` (purple).
+
+---
+
 *Tested against TESTING.md criteria. Receipt only — the spec is in TESTING.md.*
