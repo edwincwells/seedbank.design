@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>verification-status — seedbank.design</title>
+  <link rel="stylesheet" href="../../../tokens/tokens.css">
+  <link rel="stylesheet" href="../../foundations/prose/prose.css">
+  <link rel="stylesheet" href="../../foundations/links/links.css">
+  <link rel="stylesheet" href="../../foundations/focus-ring/focus-ring.css">
+  <link rel="stylesheet" href="../../display/badge/badge.css">
+  <link rel="stylesheet" href="../eco-stat/eco-stat.css">
+  <link rel="stylesheet" href="./verification-status.css">
+  <style>
+    /* Reference-page-only styles. Not part of the component. */
+    body {
+      background: var(--surface);
+      margin: 0;
+      padding: var(--space-6) var(--space-5);
+      max-width: 720px;
+    }
+    .demo-row {
+      padding: var(--space-4) 0;
+      border-bottom: var(--border-hairline) solid var(--border);
+    }
+    .demo-row:last-child { border-bottom: none; }
+    .demo-meta {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      color: var(--text-subtle);
+      margin-bottom: var(--space-3);
+    }
+    .demo-stack { display: flex; flex-direction: column; gap: var(--space-3); align-items: flex-start; }
+    .section-rule {
+      border: none;
+      border-top: var(--border-hairline) solid var(--border);
+      margin: var(--space-7) 0 var(--space-5);
+    }
+    .demo-avoid {
+      border-left: var(--border-rule) solid var(--warning);
+      padding-left: var(--space-3);
+    }
+    .demo-avoid-label {
+      font-size: var(--text-xs);
+      font-weight: var(--weight-medium);
+      color: var(--warning);
+      margin-bottom: var(--space-2);
+    }
+  </style>
+</head>
+<body>
+
+  <h1>verification-status</h1>
+  <p>How trustworthy a claim is — verified, self-reported, or not disclosed. Composes the <code>badge</code> component. The green on "verified" is self-policing: it appears only when a rationale link is present. This page shows each state styled by <code>verification-status.css</code>.</p>
+
+  <hr class="section-rule">
+
+  <!-- The three conforming states -->
+  <div class="demo-row">
+    <p class="demo-meta">the three states · conforming</p>
+    <div class="demo-stack">
+      <span class="verification" data-verification="verified">
+        <span class="badge">Verified</span>
+        <a href="#" rel="external">audit</a>
+      </span>
+
+      <span class="verification" data-verification="self-reported">
+        <span class="badge">Self-reported</span>
+        <a href="#" rel="external">source</a>
+      </span>
+
+      <span class="verification" data-verification="not-disclosed">
+        <span class="badge">Not disclosed</span>
+      </span>
+    </div>
+  </div>
+
+  <!-- Verified, varied rationale links -->
+  <div class="demo-row">
+    <p class="demo-meta">verified · the rationale link is author-supplied (audit, certificate, methodology…)</p>
+    <div class="demo-stack">
+      <span class="verification" data-verification="verified">
+        <span class="badge">Verified</span>
+        <a href="#" rel="external">organic certificate</a>
+      </span>
+      <span class="verification" data-verification="verified">
+        <span class="badge">Verified</span>
+        <a href="#" rel="external">third-party audit, 2024</a>
+      </span>
+    </div>
+  </div>
+
+  <!-- Self-reported with and without a source link -->
+  <div class="demo-row">
+    <p class="demo-meta">self-reported · amber regardless of link — only verified gates colour on the link</p>
+    <div class="demo-stack">
+      <span class="verification" data-verification="self-reported">
+        <span class="badge">Self-reported</span>
+        <a href="#" rel="external">supplier statement</a>
+      </span>
+      <span class="verification" data-verification="self-reported">
+        <span class="badge">Self-reported</span>
+      </span>
+    </div>
+  </div>
+
+  <hr class="section-rule">
+
+  <!-- Avoid: verified without a rationale link -->
+  <div class="demo-row">
+    <p class="demo-meta">avoid · verified with no rationale link</p>
+    <div class="demo-avoid">
+      <p class="demo-avoid-label">Non-conforming — the system withholds the green</p>
+      <div class="demo-stack">
+        <span class="verification" data-verification="verified">
+          <span class="badge">Verified</span>
+        </span>
+      </div>
+      <p>A "verified" claim with no linked evidence renders as the neutral badge above, not green. This is intentional: a green verified badge without a rationale link is non-conforming under principle 02, and the CSS refuses to grant the green. Either add the rationale link, or use <code>self-reported</code> if the claim genuinely is unverified.</p>
+    </div>
+  </div>
+
+  <hr class="section-rule">
+
+  <!-- Composition preview: alongside an eco-stat -->
+  <div class="demo-row">
+    <p class="demo-meta">composition preview · verification beside a value (how provenance will use it)</p>
+    <div class="eco-stat">
+      <p class="eco-stat-label">Flax — grown in Normandy</p>
+      <p class="eco-stat-value">
+        <data value="0">0</data>
+        <span class="eco-stat-unit">km to mill</span>
+      </p>
+    </div>
+    <p style="margin-top: var(--space-2)">
+      <span class="verification" data-verification="verified">
+        <span class="badge">Verified</span>
+        <a href="#" rel="external">organic cert, 2023</a>
+      </span>
+    </p>
+  </div>
+
+</body>
+</html>

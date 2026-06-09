@@ -28,6 +28,14 @@
       Explicit attribution aligns with how the rest of the system treats
       state as named, not inferred.
 
+   Token references here carry fallbacks (var(--link, var(--info)) and
+   var(--link-visited, var(--make))). This is deliberate: --link and
+   --link-visited were once missing from the committed tokens.css, which
+   — with no fallback — invalidated the colour declaration and dropped the
+   link colour entirely, so links inherited their container's text colour
+   and went illegible in dark mode outside prose. The fallback turns that
+   silent failure into graceful degradation. See BUILD_CONVENTIONS.md.
+
    --------------------------------------------------------------------------
    seedbank.design — licensed under MIT (code) and CC BY-SA 4.0
    (documentation and design assets). This file is a design system asset —
@@ -48,7 +56,7 @@
    --------------------------------------------------------------------------  */
 
 a[href] {
-  color: var(--link);
+  color: var(--link, var(--info));  /* fallback keeps links legible if --link is dropped */
   text-decoration: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 2px;
@@ -81,7 +89,7 @@ a[href]:hover {
    --------------------------------------------------------------------------  */
 
 a[href]:visited {
-  color: var(--link-visited);
+  color: var(--link-visited, var(--make));  /* fallback to --make keeps a "visited" signal if the token is dropped */
 }
 
 

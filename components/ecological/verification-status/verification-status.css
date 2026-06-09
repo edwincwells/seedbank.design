@@ -1,0 +1,136 @@
+/* ==========================================================================
+   seedbank.design — verification-status.css
+   --------------------------------------------------------------------------
+   How trustworthy a piece of data is: verified, self-reported, or not
+   disclosed. The honest-uncertainty mechanic that labels the provenance of a
+   claim. Composes the `badge` display component for the pill chrome and adds
+   the state mapping plus one piece of enforcement.
+
+   Principle 02 (honest uncertainty over false precision), specifically "no
+   green badges without linked rationale", made STRUCTURAL rather than
+   documented:
+
+     A "verified" badge turns green ONLY when the element actually contains a
+     rationale link (:has(a)). A verified claim with no linked evidence stays
+     the neutral badge — the system withholds the green it has not earned.
+     This is why verification-status is a thin component and not a markdown
+     pattern: the rule is enforced in CSS, not left to the author.
+
+   Degradation runs in the SAFE direction. Without :has() support, or with no
+   CSS at all, a verified-with-link renders as the neutral badge — under-
+   claiming, never showing an unearned green. The label text always carries
+   the meaning regardless.
+
+   State is attribute-driven: data-verification="verified|self-reported|
+   not-disclosed" on the wrapper. The colour comes from the attribute, not
+   from the author choosing a badge variant class — so the mapping cannot be
+   got wrong by forgetting a class.
+
+   No new tokens. The two tinted states re-derive badge's functional-variant
+   treatment (15% tint light / 22% dark, functional-token text); badge.css is
+   the source of truth for that formula, mirrored here so the tint can be
+   bound to the attribute and to :has().
+
+   --------------------------------------------------------------------------
+   seedbank.design — licensed under MIT (code) and CC BY-SA 4.0
+   (documentation and design assets). This file is a design system asset —
+   it ships with every clone. Forks are encouraged to adapt it; adaptations
+   should be documented.
+   ========================================================================== */
+
+
+/* --------------------------------------------------------------------------
+   1. WRAPPER
+   --------------------------------------------------------------------------
+   Holds the badge-styled label and the optional rationale link on a shared
+   baseline. The link is styled by the links foundation (colour, underline,
+   and the rel="external" indicator); the wrapper only sets the compact size
+   and the gap.
+   --------------------------------------------------------------------------  */
+
+.verification {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+}
+
+
+/* --------------------------------------------------------------------------
+   2. SELF-REPORTED — UNCONDITIONAL WARNING TINT
+   --------------------------------------------------------------------------
+   A claim made by the source with no third-party check. Amber, always. Links
+   are allowed (a "source" link) but do not change the colour — only verified
+   gates its colour on the link.
+   --------------------------------------------------------------------------  */
+
+.verification[data-verification="self-reported"] .badge {
+  background: color-mix(in srgb, var(--warning) 15%, var(--surface));
+  color: var(--warning);
+  border-color: transparent;
+}
+
+
+/* --------------------------------------------------------------------------
+   3. VERIFIED — SELF-POLICING GREEN
+   --------------------------------------------------------------------------
+   The success tint applies ONLY when the wrapper contains a rationale link.
+   A verified badge without a linked methodology/audit/certificate stays the
+   neutral badge — see the header for why this is the point of the component.
+   --------------------------------------------------------------------------  */
+
+.verification[data-verification="verified"]:has(a) .badge {
+  background: color-mix(in srgb, var(--success) 15%, var(--surface));
+  color: var(--success);
+  border-color: transparent;
+}
+
+
+/* --------------------------------------------------------------------------
+   4. NOT-DISCLOSED — DELIBERATELY NO COLOUR RULE
+   --------------------------------------------------------------------------
+   not-disclosed has no rule here by design: it stays the plain neutral badge
+   (with badge's own hairline border and neutral text). The ABSENCE of a
+   verification colour is the signal — no endorsement, unknown — consistent
+   with how the rest of the ecological layer treats gaps. The label "Not
+   disclosed" carries the meaning. Leaving badge's neutral text untouched
+   also keeps it safely within contrast on the neutral pill.
+   --------------------------------------------------------------------------  */
+
+
+/* --------------------------------------------------------------------------
+   5. DARK MODE — TINT PERCENTAGE ONLY
+   --------------------------------------------------------------------------
+   The functional tokens (--success, --warning) already re-resolve to their
+   dark values via tokens.css; only the tint percentage changes (15% → 22%),
+   matching badge.
+   --------------------------------------------------------------------------  */
+
+@media (prefers-color-scheme: dark) {
+  .verification[data-verification="self-reported"] .badge {
+    background: color-mix(in srgb, var(--warning) 22%, var(--surface));
+  }
+
+  .verification[data-verification="verified"]:has(a) .badge {
+    background: color-mix(in srgb, var(--success) 22%, var(--surface));
+  }
+}
+
+
+/* --------------------------------------------------------------------------
+   6. PRINT RULES
+   --------------------------------------------------------------------------
+   Suppress the tints to save ink. The labels differentiate the states on
+   their own and the rationale link remains, so no information is lost —
+   the principle-01 graceful behaviour, and consistent with the badge/control
+   print convention (transparent fill, --text border and text).
+   --------------------------------------------------------------------------  */
+
+@media print {
+  .verification[data-verification] .badge {
+    background: transparent !important;
+    border-color: var(--text) !important;
+    color: var(--text) !important;
+  }
+}

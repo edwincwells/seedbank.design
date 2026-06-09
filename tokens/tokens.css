@@ -32,7 +32,8 @@
    --------------------------------------------------------------------------
    Four categorical colours for status-bearing content. Used as:
      - 5px left-rule on cards and list items where the row carries a state
-     - Text colour and tint-mix base for status badges (see display/badge)
+     - Text colour in em-dash badges (— Available, — Under repair)
+     - Background of pill badges where a higher-contrast badge is needed
      - Accent colour on focus states, links, and highlighted numbers
 
    These are NOT functional tokens. --grow is not "success", --repair is
@@ -160,7 +161,7 @@
 
   /* Functional state tokens.
      These follow web conventions (green success, amber warning, blue info,
-     red error) so users from any background recognise them on sight. They
+     red error) so users from any background recognise them. They
      are independent of the activity tokens — see the section preamble for
      why this matters under remapping.
 
@@ -195,6 +196,28 @@
   --focus-light:    #1f5fa8;
   --focus-dark:     #6cb0ee;
   --focus:          var(--focus-light);
+
+  /* Content semantic tokens — link colours. These name what a piece of
+     CONTENT is (a link, a visited link), not what the interface is
+     reporting — the same axis as the activity colours, but applied to
+     content elements rather than status-bearing rows. In the default
+     palette --link resolves to the same blue family as --info and --focus;
+     all three remap independently.
+
+     Found MISSING from the committed file in June 2026: links.css
+     referenced --link / --link-visited with no fallback, so the colour
+     declaration was invalid and every link outside a prose element fell
+     back to inherited (often near-black) colour in dark mode. Added here
+     as light/dark pairs; links.css now also carries fallbacks so a fork
+     dropping these degrades gracefully rather than silently. */
+  --link-light:          #1f5fa8;  /* same blue family as --info; 6.1:1 on surface */
+  --link-dark:           #6cb0ee;
+  --link:                var(--link-light);
+
+  --link-visited-light:  #4a3a99;  /* indigo, kept distinct from --make purple;
+                                      ~6.5:1 on surface — VERIFY and adjust hue to taste */
+  --link-visited-dark:   #a99ce6;  /* ~7:1 on dark surface — VERIFY */
+  --link-visited:        var(--link-visited-light);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -219,6 +242,9 @@
     --info:    var(--info-dark);
     --error:   var(--error-dark);
     --focus:   var(--focus-dark);
+
+    --link:         var(--link-dark);
+    --link-visited: var(--link-visited-dark);
   }
 }
 
@@ -316,10 +342,10 @@
 /* --------------------------------------------------------------------------
    6. BORDER WIDTH TOKENS
    --------------------------------------------------------------------------
-   Three weights. The 0.5px hairline is the system's default for dividers;
-   the 1.5px weight is for input focus and emphasised borders; the 5px
-   weight is reserved for the activity-coloured left-rule on status-
-   bearing rows and cards.
+   Four weights. The 0.5px hairline is the system's default for dividers;
+   the 1.5px weight is for emphasised borders; the 2px weight is the focus
+   ring width; the 5px weight is reserved for the activity-coloured left-
+   rule on status-bearing rows and cards.
    --------------------------------------------------------------------------  */
 
 :root {
@@ -347,6 +373,10 @@
      terracotta should still keep --success green so a "form submitted"
      toast is recognisable. The two sets are independent on purpose.
 
+   - Link colours (--link, --link-visited): --link defaults to the --info
+     blue family; --link-visited is a distinct indigo. Remap freely. To
+     suppress visited styling, map --link-visited to var(--link).
+
    - Type: change --font-sans and --font-mono to your preferred families.
      The size scale is a six-step ladder; you can change the values but
      keep the count and the names.
@@ -365,6 +395,13 @@
      the other token, not --error.
    - The two-weight rule (400 and 500 only). This is a low-fidelity
      constraint, not a stylistic choice. See PRINCIPLES.md #01.
+
+   A note on token references in foundation CSS: a foundation that paints a
+   property from a token should supply a fallback — var(--token, default) —
+   so that dropping a token degrades gracefully instead of invalidating the
+   whole declaration silently. The missing --border-focus and --link tokens
+   each disabled an accessibility feature with no error before this was
+   adopted. See BUILD_CONVENTIONS.md.
 
    --------------------------------------------------------------------------
    seedbank.design — licensed under MIT (code) and CC BY-SA 4.0
