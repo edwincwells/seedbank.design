@@ -54,10 +54,12 @@ The default size has a `min-height: 36px` which meets WCAG touch target guidance
 | Hover | `:hover` | Background lift per variant |
 | Active | `:active` | `filter: brightness(0.92)` — tactile feedback |
 | Focus | `:focus-visible` | Handled by the `focus-ring` foundation |
-| Disabled | `disabled` attribute | Opacity 0.5, `cursor: not-allowed`, no hover |
+| Disabled | `disabled` attribute (or `<fieldset disabled>`) | Opacity 0.5, `cursor: not-allowed`, no hover |
 | Loading | `aria-busy="true"` | Spinner appears, pointer events disabled |
 
 **Both disabled and loading use HTML attributes, not classes.** The project convention is that state is inferred from attributes — `disabled`, `aria-busy`, `aria-invalid`, `aria-current` — never from class names like `.btn-disabled` or `.btn-loading`. Using attributes keeps the markup honest about what the control's state actually is, and makes the styling consistent with assistive technology behaviour.
+
+Disabled styling keys off the `:disabled` pseudo-class, not the `[disabled]` attribute selector. This means a button inside a `<fieldset disabled>` is styled disabled too — the browser marks it `:disabled` without adding a `disabled` attribute, so an attribute selector would miss it. An `<a class="btn">` can't be natively disabled (only form-associated elements can be); disable it with `aria-disabled="true"` plus JS click-blocking, which the CSS also styles.
 
 ---
 

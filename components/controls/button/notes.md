@@ -4,6 +4,7 @@ Tested against the three criteria in `TESTING.md`.
 
 **Tested in:** Chrome on macOS by Edwin, 12 May 2026.
 **Focus-ring re-validated:** Chrome on macOS by Edwin, 7 June 2026 (see Focus-ring re-validation below).
+**Disabled-selector migration:** button.css migrated `[disabled]` → `:disabled` on 10 June 2026; re-tested by Edwin (Chrome on macOS, 10 June 2026) — Pass (see Disabled-selector migration below).
 
 ---
 
@@ -62,7 +63,7 @@ At 320px viewport width:
 
 **Focus ring visibility.** The focus ring was clearly visible on every variant. On the destructive variant, the blue focus outline sat outside the red border without visual clash — the `outline` (rather than `box-shadow`) approach in the focus-ring foundation gives the ring its own visual space. *(See the Focus-ring re-validation section below — this observation predated the foundation fix and has been re-confirmed.)*
 
-**Disabled hover suppression.** Hovering over each disabled button produced no background change. The verbose per-variant `[disabled]:hover` overrides did their job.
+**Disabled hover suppression.** Hovering over each disabled button produced no background change. The verbose per-variant disabled-hover overrides did their job. *(This observation covered directly-disabled buttons; the selectors have since migrated `[disabled]` → `:disabled` so the suppression also reaches fieldset-disabled buttons — see the Disabled-selector migration section below.)*
 
 **Loading spinner alignment.** Spinner was vertically centred against the label text on every variant and size. The 1em sizing matched the label's effective height correctly via `inline-flex` alignment.
 
@@ -87,6 +88,25 @@ At 320px viewport width:
 The focus-ring foundation referenced `--border-focus`, a token that was absent from the committed `tokens.css`, which silently invalidated the `outline` shorthand and removed the focus ring system-wide. This was caught during `methodology` testing and fixed in the foundation (`--border-focus: 2px` added to `tokens.css` §6; a `var(--border-focus, 2px)` fallback added to `focus-ring.css`). See `focus-ring/notes.md` for the full record.
 
 The "Focus ring visibility" observation above predates that fix. Re-tested 7 June 2026 with the fix in place: the focus ring renders correctly under keyboard focus on every variant (primary, secondary, ghost, destructive) at both default and small sizes, sitting cleanly outside each variant's border including the destructive red. **Pass.**
+
+---
+
+## Disabled-selector migration ([disabled] → :disabled) (10 June 2026)
+
+A docs-phase review of `button.css` found that button keyed its disabled styling off the `[disabled]` attribute selector, not the `:disabled` pseudo-class. Button was the one interactive control the radio-triggered `:disabled` pass (checkbox, select, radio) had missed. Per the system convention, a control inside `<fieldset disabled>` is marked `:disabled` by the browser but receives no `disabled` content attribute — so the attribute selector skipped it, and a fieldset-disabled button would be functionally disabled by the browser while still rendering as active, hover lift included.
+
+**Change.** All five disabled selector blocks — the main disabled rule (§8) and the four per-variant hover-suppression rules — migrated from `[disabled]` to `:disabled`. `[aria-disabled="true"]` is retained on every rule for the `<a class="btn">` case: an anchor is not form-associated and cannot be natively disabled, so ARIA stays its mechanism. The `[aria-busy="true"]` loading state (§9) is unrelated and untouched. The header state summary and the §8 comment were updated to document the convention.
+
+**Unchanged behaviour.** For a directly-disabled control (`<button disabled>`), `:disabled` matches exactly where `[disabled]` did, so the directly-disabled receipts above — UA disabled state with no CSS, disabled hover suppression, dark mode — remain valid as recorded.
+
+**Re-tested by Edwin (Chrome on macOS, 10 June 2026; keyboard navigation enabled for focus checks per `testing-lowfi.md`) — all four Pass:**
+
+- **Pass.** A `<button>` inside `<fieldset disabled>` renders the disabled treatment (opacity 0.5, `not-allowed` cursor) and suppresses the hover lift, across all four variants.
+- **Pass.** An `<a class="btn">` inside `<fieldset disabled>` is correctly NOT affected by `:disabled` (anchors aren't form-associated); it reads disabled only once `aria-disabled="true"` is set.
+- **Pass.** Regression check: the invalid markup `<a class="btn" disabled>` (anchors don't support `disabled`) is no longer styled disabled, and no reference-page demo relies on it.
+- **Pass.** No regression to directly-disabled buttons or the loading state — `<button disabled>` and `<button aria-busy="true">` render as before.
+
+**Verdict: Pass.** All four checks confirmed by Edwin on 10 June 2026 (Chrome on macOS).
 
 ---
 

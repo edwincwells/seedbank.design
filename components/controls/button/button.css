@@ -26,7 +26,7 @@
      :hover                    background lift per variant
      :active                   filter: brightness for tactile feedback
      :focus-visible            handled by foundations/focus-ring
-     [disabled]                opacity, cursor, no hover
+     :disabled                 opacity, cursor, no hover (incl. fieldset-disabled)
      [aria-busy="true"]        loading spinner; non-interactive
 
    Modifiers:
@@ -231,20 +231,32 @@ input[type="reset"]:active,
 /* --------------------------------------------------------------------------
    8. DISABLED
    --------------------------------------------------------------------------
-   The standard `disabled` attribute drives styling. NOT a .btn-disabled
-   class — state from attribute, per project convention.
+   Disabled styling is driven by the :disabled PSEUDO-CLASS, not the
+   [disabled] attribute selector. This matters and is the system-wide
+   convention: a control inside <fieldset disabled> is marked :disabled by
+   the browser but does NOT receive a `disabled` content attribute, so an
+   attribute selector ([disabled]) would miss it — the button would look and
+   hover as if active while the browser has already disabled it. :disabled
+   catches both the directly-disabled control and the fieldset-disabled
+   descendant.
 
-   Disabled buttons are not focusable by default (browser behaviour). Forks
-   needing focusable-disabled for screen reader discoverability should use
-   aria-disabled="true" plus JS click-blocking — that's a fork concern, not
-   a foundation default.
+   <a class="btn"> cannot be natively disabled (only form-associated
+   elements can be), so the anchor case is carried by aria-disabled="true"
+   plus the fork's own JS click-blocking — that's a fork concern, not a
+   foundation default. This is why each rule below pairs :disabled with
+   [aria-disabled="true"].
+
+   Still NOT a .btn-disabled class — state from the browser's disabled state
+   or ARIA, never a class, per project convention.
+
+   Disabled buttons are not focusable by default (browser behaviour).
    --------------------------------------------------------------------------  */
 
-button[disabled],
-input[type="submit"][disabled],
-input[type="button"][disabled],
-input[type="reset"][disabled],
-.btn[disabled],
+button:disabled,
+input[type="submit"]:disabled,
+input[type="button"]:disabled,
+input[type="reset"]:disabled,
+.btn:disabled,
 .btn[aria-disabled="true"] {
   opacity: 0.5;
   cursor: not-allowed;
@@ -253,32 +265,32 @@ input[type="reset"][disabled],
 
 /* Disabled buttons must not react to hover. The selector list is verbose
    because we need to override every variant's hover. */
-button[disabled]:hover,
-input[type="submit"][disabled]:hover,
-input[type="button"][disabled]:hover,
-input[type="reset"][disabled]:hover,
-.btn[disabled]:hover,
+button:disabled:hover,
+input[type="submit"]:disabled:hover,
+input[type="button"]:disabled:hover,
+input[type="reset"]:disabled:hover,
+.btn:disabled:hover,
 .btn[aria-disabled="true"]:hover {
   background: var(--action);
   color: var(--surface);
   border-color: var(--action);
 }
 
-.btn-secondary[disabled]:hover,
+.btn-secondary:disabled:hover,
 .btn-secondary[aria-disabled="true"]:hover {
   background: transparent;
   color: var(--text);
   border-color: var(--border-strong);
 }
 
-.btn-ghost[disabled]:hover,
+.btn-ghost:disabled:hover,
 .btn-ghost[aria-disabled="true"]:hover {
   background: transparent;
   color: var(--text);
   border-color: transparent;
 }
 
-.btn-destructive[disabled]:hover,
+.btn-destructive:disabled:hover,
 .btn-destructive[aria-disabled="true"]:hover {
   background: transparent;
   color: var(--error);
