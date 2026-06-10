@@ -214,9 +214,10 @@
   --link-dark:           #6cb0ee;
   --link:                var(--link-light);
 
-  --link-visited-light:  #4a3a99;  /* indigo, kept distinct from --make purple;
-                                      ~6.5:1 on surface — VERIFY and adjust hue to taste */
-  --link-visited-dark:   #a99ce6;  /* ~7:1 on dark surface — VERIFY */
+  --link-visited-light:  #4a3a99;  /* indigo, separable from --make purple though
+                                      close in family — see links/notes.md;
+                                      8.52:1 on surface (verified 10 Jun 2026, AAA) */
+  --link-visited-dark:   #a99ce6;  /* 7.12:1 on dark surface (verified, AAA) */
   --link-visited:        var(--link-visited-light);
 }
 
