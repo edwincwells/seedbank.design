@@ -1,0 +1,235 @@
+/* ==========================================================================
+   seedbank.design — resource-bar.css
+   --------------------------------------------------------------------------
+   The segmented shared-capacity bar: a collective resource (energy budget,
+   shared water, a fund) shown as parts of a whole, plus a target/progress
+   variant for "X of Y" toward a goal. The fifth and final component of the
+   ecological layer.
+
+   Principle alignment:
+     03 (collective agency): this is SHARED capacity, not individual usage.
+        The available remainder is shown explicitly — what the community has
+        left, not what an individual consumed. The action it supports (shift
+        load, request, ration) lives at composition, not here.
+     01 (designed for the edges): a bar is the most colour-dependent thing in
+        the layer, so the LEGEND is canonical and the bar is decoration. The
+        legend is a <ul> of swatch + label + share that reads as a breakdown
+        with no CSS; the track is an aria-hidden visual that mirrors it.
+     02 (honest uncertainty): the remainder is named, not implied; the target
+        marker's meaning lives in the canonical text, not in a colour.
+
+   How segments are told apart — the load-bearing decision:
+     Used segments are coloured from the ACTIVITY PALETTE (--grow, --repair,
+     --share, --make) — distinct HUES, assigned per segment via
+     --resource-fill, with a matching swatch in the legend as the join key.
+     Hue is the correct encoding for categorical data: the segments are
+     different KINDS, not a sequence, so distinct hues say "different
+     categories" without implying the order or magnitude a light-to-dark
+     ramp would falsely imply.
+
+     Colour is decoration, not the load-bearing channel. Principle 01 forbids
+     meaning resting on colour ALONE — and it doesn't here: the legend's
+     label + share is the canonical text channel underneath, so the breakdown
+     survives grayscale, e-ink, print, colour-blind reading, and no-CSS. The
+     swatch joins a legend row to its block when colour is available; the text
+     carries it when colour isn't.
+
+     The available remainder is NOT coloured — it's the unfilled track
+     (--surface-sunken), and its legend swatch is the sunken colour with a
+     hairline border. So "used categories" (coloured) read distinctly from
+     "available" (neutral, empty).
+
+     Reusing the activity palette means zero new tokens and four AA-tested,
+     light/dark-paired, visually distinct hues — which also sets the natural
+     ceiling: beyond ~4 series, use a table. The caveat is that it overloads
+     the activity colours (a grow-coloured segment is not a grow-status); the
+     legend and the obvious chart context mitigate it. A fork that wants a
+     dedicated categorical chart palette should add one and reassign
+     --resource-fill — see the README.
+
+   Everything the cut list kills is absent: no slider, no live dot, no width
+   animation, no "Live" framing, no sentiment-coloured values. The bar is
+   static. No chrome — it's bare content a card composes.
+
+   Author-set custom properties (presentational, not design tokens):
+     --portion       per segment, its width as a percentage
+     --resource-fill per segment AND its matching legend swatch — an activity
+                     token (--grow, --repair, --share, --make) for a used
+                     segment, or --surface-sunken for the available swatch
+     --seg-gap       the cut between used segments (defaults to --border-thick)
+     --at            the target marker's position as a percentage
+
+   --------------------------------------------------------------------------
+   seedbank.design — licensed under MIT (code) and CC BY-SA 4.0
+   (documentation and design assets). This file is a design system asset —
+   it ships with every clone. Forks are encouraged to adapt it; adaptations
+   should be documented.
+   ========================================================================== */
+
+
+/* --------------------------------------------------------------------------
+   1. CONTAINER AND HEADER
+   --------------------------------------------------------------------------
+   No border, background, or radius — resource-bar sits inside whatever
+   composes it. The header is optional: a title and an honest summary line
+   ("68% used · 6.2 kWh capacity", "£3,200 of £5,000 goal").
+   --------------------------------------------------------------------------  */
+
+.resource-bar {
+  font-family: var(--font-sans);
+}
+
+.resource-bar-header {
+  margin-bottom: var(--space-3);
+}
+
+.resource-bar-title {
+  font-family: var(--font-sans);
+  font-size: var(--text-md);
+  font-weight: var(--weight-medium);
+  color: var(--text);
+  margin: 0;
+}
+
+.resource-bar-summary {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  color: var(--text-subtle);
+  margin: var(--space-1) 0 0;
+  max-width: none;
+}
+
+
+/* --------------------------------------------------------------------------
+   2. THE TRACK — AN ARIA-HIDDEN VISUAL
+   --------------------------------------------------------------------------
+   A flex row of used segments. Their flex-basis is their share; the leftover
+   flex space is the unfilled tail — the available remainder, shown as the
+   track's own (sunken) background. The track is marked up aria-hidden,
+   because the legend is the canonical content; with no CSS the segment divs
+   (empty, text-free) collapse and only the legend remains.
+
+   position: relative so the target marker can be positioned against it.
+   overflow: hidden so the rounded ends clip the segments cleanly.
+   --------------------------------------------------------------------------  */
+
+.resource-bar-track {
+  position: relative;
+  display: flex;
+  gap: var(--seg-gap, var(--border-thick));
+  height: var(--space-2);
+  background: var(--surface-sunken);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+/* A used segment. Width comes from --portion; fill is an activity-palette hue
+   the author sets per segment (--resource-fill), defaulting to --grow.
+   min-width: 0 so a tiny share can't force a minimum that throws off the
+   proportions. */
+.resource-bar-segment {
+  flex: 0 0 var(--portion, 0%);
+  min-width: 0;
+  background: var(--resource-fill, var(--grow));
+}
+
+
+/* --------------------------------------------------------------------------
+   3. TARGET / PROGRESS VARIANT
+   --------------------------------------------------------------------------
+   The progress case is the degenerate segmented bar: a single used segment
+   (the progress) plus the remainder (distance to the goal). The canonical
+   text states "X of Y"; the optional marker shows an intermediate threshold
+   (a cap, a warning line, a stretch goal). The marker is aria-hidden — its
+   meaning is in the text, never in its position or colour alone.
+   --------------------------------------------------------------------------  */
+
+.resource-bar-marker {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--at, 100%);
+  width: var(--border-thick);
+  background: var(--text);
+  transform: translateX(-50%);
+}
+
+
+/* --------------------------------------------------------------------------
+   4. THE LEGEND — CANONICAL CONTENT
+   --------------------------------------------------------------------------
+   A <ul> of swatch + label + share. This is the source of truth: it reads as
+   a breakdown with no CSS and carries every meaning the bar shows. The swatch
+   is the join key back to the bar — it echoes the segment's hue, so a reader
+   can match a legend row to its block. The swatch is aria-hidden and
+   decorative; the label is the segment's name, and the share its value, so
+   the row is complete in text alone if swatches drop (no CSS, print) or if
+   the reader can't distinguish the hues (colour-blind, grayscale).
+   --------------------------------------------------------------------------  */
+
+.resource-bar-legend {
+  list-style: none;
+  margin: var(--space-3) 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-4);
+}
+
+.resource-bar-legend-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+
+/* The swatch echoes the segment's hue (same --resource-fill). A hairline
+   border delineates it against the surface behind the legend — necessary for
+   the "Available" swatch, whose fill is the sunken track colour, and
+   harmless on the coloured ones. */
+.resource-bar-swatch {
+  flex-shrink: 0;
+  width: var(--space-3);
+  height: var(--space-3);
+  border-radius: var(--radius-sm);
+  background: var(--resource-fill, var(--surface-sunken));
+  border: var(--border-hairline) solid var(--border);
+}
+
+.resource-bar-share {
+  font-family: var(--font-mono);
+  color: var(--text);
+}
+
+
+/* --------------------------------------------------------------------------
+   5. SOURCE / META LINE
+   --------------------------------------------------------------------------
+   Optional static metadata in mono (tokenised-metadata convention): where
+   the figure came from, when it was last read. Static text — NOT a live
+   updating value (see the cut list).
+   --------------------------------------------------------------------------  */
+
+.resource-bar-source {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-subtle);
+  margin: var(--space-2) 0 0;
+}
+
+
+/* --------------------------------------------------------------------------
+   6. PRINT RULES
+   --------------------------------------------------------------------------
+   The legend is canonical, so the page-as-printed is complete even if the
+   browser drops the track and swatch backgrounds (most do, to save ink) —
+   the breakdown survives as swatch-bordered rows of label + share. The one
+   rule is keeping the component from splitting across a page break.
+   --------------------------------------------------------------------------  */
+
+@media print {
+  .resource-bar {
+    break-inside: avoid;
+  }
+}

@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>resource-bar — seedbank.design</title>
+  <link rel="stylesheet" href="../../../tokens/tokens.css">
+  <link rel="stylesheet" href="../../foundations/prose/prose.css">
+  <link rel="stylesheet" href="./resource-bar.css">
+  <style>
+    /* Reference-page-only styles. Not part of the component. */
+    body {
+      background: var(--surface);
+      margin: 0;
+      padding: var(--space-6) var(--space-5);
+      max-width: 720px;
+    }
+    .demo-meta {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      color: var(--text-subtle);
+      margin-bottom: var(--space-4);
+    }
+    .section-rule {
+      border: none;
+      border-top: var(--border-hairline) solid var(--border);
+      margin: var(--space-7) 0 var(--space-5);
+    }
+    /* A bare card stand-in to show resource-bar composed inside chrome — NOT
+       part of the component; the cards pattern owns this. */
+    .demo-card {
+      padding: var(--space-4);
+      border: var(--border-hairline) solid var(--border);
+      border-radius: var(--radius-lg);
+      background: var(--surface-raised);
+    }
+  </style>
+</head>
+<body>
+
+  <h1>resource-bar</h1>
+  <p>A segmented shared-capacity bar — a collective resource shown as parts of a whole, with the available remainder named explicitly. The <code>&lt;ul&gt;</code> legend is canonical, so with no CSS it reads as a breakdown; the track is an aria-hidden visual that mirrors it. Segments are told apart by a neutral luminance ramp (not hue), with a matching legend swatch as the join key — so it works in grayscale, on e-ink, and in print. A target/progress variant folds in for "X of Y" toward a goal. This page shows it styled by <code>resource-bar.css</code>.</p>
+
+  <hr class="section-rule">
+
+  <!-- Segmented shared-capacity bar -->
+  <div class="demo-meta">segmented shared capacity · activity-palette hues + swatches · composed inside a card stand-in</div>
+  <div class="demo-card">
+    <div class="resource-bar">
+      <div class="resource-bar-header">
+        <h3 class="resource-bar-title">Today's energy budget</h3>
+        <p class="resource-bar-summary">68% used · 6.2 kWh solar capacity</p>
+      </div>
+
+      <div class="resource-bar-track" aria-hidden="true">
+        <div class="resource-bar-segment" style="--portion: 38%; --resource-fill: var(--grow)"></div>
+        <div class="resource-bar-segment" style="--portion: 18%; --resource-fill: var(--repair)"></div>
+        <div class="resource-bar-segment" style="--portion: 12%; --resource-fill: var(--share)"></div>
+      </div>
+
+      <ul class="resource-bar-legend">
+        <li class="resource-bar-legend-item">
+          <span class="resource-bar-swatch" style="--resource-fill: var(--grow)" aria-hidden="true"></span>
+          <span class="resource-bar-label">Heating</span> <span class="resource-bar-share">38%</span>
+        </li>
+        <li class="resource-bar-legend-item">
+          <span class="resource-bar-swatch" style="--resource-fill: var(--repair)" aria-hidden="true"></span>
+          <span class="resource-bar-label">Workshop</span> <span class="resource-bar-share">18%</span>
+        </li>
+        <li class="resource-bar-legend-item">
+          <span class="resource-bar-swatch" style="--resource-fill: var(--share)" aria-hidden="true"></span>
+          <span class="resource-bar-label">Comms</span> <span class="resource-bar-share">12%</span>
+        </li>
+        <li class="resource-bar-legend-item">
+          <span class="resource-bar-swatch" style="--resource-fill: var(--surface-sunken)" aria-hidden="true"></span>
+          <span class="resource-bar-label">Available</span> <span class="resource-bar-share">32%</span>
+        </li>
+      </ul>
+
+      <p class="resource-bar-source">Source: roof array · last read 4 minutes ago</p>
+    </div>
+  </div>
+
+  <hr class="section-rule">
+
+  <!-- Target / progress variant, with a threshold marker -->
+  <div class="demo-meta">target / progress variant · single fill + remainder + threshold marker</div>
+  <div class="demo-card">
+    <div class="resource-bar">
+      <div class="resource-bar-header">
+        <h3 class="resource-bar-title">Solar budget used today</h3>
+        <p class="resource-bar-summary">63% used · load-shedding threshold at 90%</p>
+      </div>
+
+      <div class="resource-bar-track" aria-hidden="true">
+        <div class="resource-bar-segment" style="--portion: 63%; --resource-fill: var(--grow)"></div>
+        <span class="resource-bar-marker" style="--at: 90%"></span>
+      </div>
+
+      <ul class="resource-bar-legend">
+        <li class="resource-bar-legend-item">
+          <span class="resource-bar-swatch" style="--resource-fill: var(--grow)" aria-hidden="true"></span>
+          <span class="resource-bar-label">Used</span> <span class="resource-bar-share">63%</span>
+        </li>
+        <li class="resource-bar-legend-item">
+          <span class="resource-bar-swatch" style="--resource-fill: var(--surface-sunken)" aria-hidden="true"></span>
+          <span class="resource-bar-label">Available before threshold</span> <span class="resource-bar-share">27%</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <hr class="section-rule">
+
+  <!-- Bare progress, no card, no marker — a fund toward a goal -->
+  <div class="demo-meta">progress toward a goal · bare (no card) · how the component ships</div>
+  <div class="resource-bar">
+    <div class="resource-bar-header">
+      <h3 class="resource-bar-title">Roof repair fund</h3>
+      <p class="resource-bar-summary">£3,200 of £5,000 goal</p>
+    </div>
+
+    <div class="resource-bar-track" aria-hidden="true">
+      <div class="resource-bar-segment" style="--portion: 64%; --resource-fill: var(--grow)"></div>
+    </div>
+
+    <ul class="resource-bar-legend">
+      <li class="resource-bar-legend-item">
+        <span class="resource-bar-swatch" style="--resource-fill: var(--grow)" aria-hidden="true"></span>
+        <span class="resource-bar-label">Raised</span> <span class="resource-bar-share">£3,200</span>
+      </li>
+      <li class="resource-bar-legend-item">
+        <span class="resource-bar-swatch" style="--resource-fill: var(--surface-sunken)" aria-hidden="true"></span>
+        <span class="resource-bar-label">Remaining</span> <span class="resource-bar-share">£1,800</span>
+      </li>
+    </ul>
+  </div>
+
+</body>
+</html>
