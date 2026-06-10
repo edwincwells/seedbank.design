@@ -102,11 +102,17 @@ The "Focus ring on radios" observation above predates that fix. Re-tested 7 June
 
 ---
 
+## Required-asterisk standardisation (10 June 2026)
+
+Janitorial pass (backlog item g). The required asterisks in the "Are you attending the AGM?" and "Cast your vote" legends previously used inline `style="color: var(--error)"`. Both swapped to the canonical `<span class="required" aria-hidden="true">*</span>` markup (inside the `<legend>`, per the radio convention), matching `select` and the `form-field` pattern. The reference page's demo `<style>` now carries a `.required { color: var(--error); }` rule (a system class, styled here because `form-field` ships no CSS). The asterisks still render red — the criterion receipts above stand; this is a markup-consistency change, not a behavioural one.
+
+---
+
 ## Open questions for v0.2 and beyond
 
 - **A `--control-size-sm` token** (still tracked across selects, inputs, checkbox, radio). Radio adds nothing new to this question but is another instance of the pattern.
 - **Toggle/switch component.** If ever added, it would face the same pseudo-element-vs-SVG decision radio just made. Pseudo-element wins again (a switch is a circle that slides), so the trade-off generalises to switches. Worth a sentence in the docs when that work begins.
-- **Required-asterisk styling consistency.** Reference page currently uses inline `style="color: var(--error)"` (matching checkbox's pattern); select uses a `.required` class. Worth deciding which is canonical before `form-field` lands.
+- **Required-asterisk styling consistency** — resolved (10 June 2026, see the standardisation note above). The `.required` class is canonical (matching select and form-field); checkbox and radio reference pages were standardised onto it.
 - **The `.error-message` convention is now load-bearing for three controls.** When `form-field` is built, this convention should be codified explicitly — error messages live inside the field's wrapping container (label/fieldset/wrapper div) and carry the `.error-message` class. Forks that fork this convention should know the CSS rules depend on it.
 - Print preview check, as flagged for prior components — still optional, still worth adding to the standing checklist if a habit forms.
 

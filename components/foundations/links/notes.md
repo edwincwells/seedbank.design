@@ -68,7 +68,13 @@ A foundation-level issue surfaced during `verification-status` testing: rational
 
 **Re-test (Edwin, Chrome on macOS, 9 June 2026).** Links read legibly in both light and dark mode. Confirmed across a prose link, a bare (non-prose) link, and a visited link — so the fix holds system-wide, not just in the component where it surfaced.
 
-**Open:** the `--link-visited` indigo values were committed as candidates flagged for contrast verification — confirm they pass AA and read distinct from `--link` (blue) and `--make` (purple).
+**Contrast verification (computed, 10 June 2026).** The candidate `--link-visited` values were checked against both surfaces and against the neighbouring tokens:
+
+- AA: `#4a3a99` on `#fafaf7` = **8.52:1**; `#a99ce6` on `#1a1a1a` = **7.12:1**. Both pass AA (and AAA) for link-size text.
+- Distinct from `--link` (blue): ΔE76 ≈ 27.6 (light) / 24.8 (dark) — clearly separable.
+- Distinct from `--make` (purple): ΔE76 ≈ 9.2 (light) / 8.1 (dark) — **marginal**. They pass contrast and won't be mistaken for the blue link, but visited-link and a `--make`-coloured element sit close in the same purple family. This read clean in the 11 May visual test (links and purple content rarely sit adjacent); if hard categorical separation matters, nudge the indigo bluer — raising ΔE from `--make` while staying clear of `--link`.
+
+Backlog item (m) is resolved on the AA question (pass). The `--make` proximity is a judgement call, not a blocker.
 
 ---
 

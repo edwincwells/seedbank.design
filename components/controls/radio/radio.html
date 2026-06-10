@@ -74,6 +74,13 @@
       color: var(--error);
       margin-top: var(--space-1);
     }
+
+    /* Canonical required-asterisk class (a system class, not demo-only).
+       form-field ships no CSS, so the reference page provides the colour a
+       fork or form-field would otherwise supply. */
+    .required {
+      color: var(--error);
+    }
     .wrong {
       border-left: var(--border-rule) solid var(--error);
       padding: var(--space-3) var(--space-4);
@@ -191,7 +198,7 @@
   <div class="demo-region">
     <fieldset class="demo-fieldset">
       <legend>
-        Are you attending the AGM? <span style="color: var(--error)" aria-hidden="true">*</span>
+        Are you attending the AGM? <span class="required" aria-hidden="true">*</span>
       </legend>
       <label class="demo-radio">
         <input type="radio" name="agm" value="yes" required>
@@ -213,7 +220,7 @@
   <div class="demo-region">
     <fieldset class="demo-fieldset" aria-describedby="vote-error">
       <legend>
-        Cast your vote <span style="color: var(--error)" aria-hidden="true">*</span>
+        Cast your vote <span class="required" aria-hidden="true">*</span>
       </legend>
       <label class="demo-radio">
         <input type="radio" name="vote" value="for" required aria-invalid="true">

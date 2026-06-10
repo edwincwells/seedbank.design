@@ -143,6 +143,12 @@ The three "Focus ring" observations above predate that fix. Re-tested 7 June 202
 
 ---
 
+## Required-asterisk standardisation (10 June 2026)
+
+Janitorial pass (backlog item g). The required asterisk on the "I agree to the community guidelines" checkbox previously used inline `style="color: var(--error)"`. Swapped to the canonical `<span class="required" aria-hidden="true">*</span>` markup, matching `select` and the `form-field` pattern. The reference page's demo `<style>` now carries a `.required { color: var(--error); }` rule (a system class, styled here because `form-field` ships no CSS). The asterisk still renders red — outcome identical — so the criterion receipts above stand; this is a markup-consistency change, not a behavioural one.
+
+---
+
 ## Open questions for v0.2 and beyond
 
 - **SVG checkmark colour in heavily-remapped forks.** The hardcoded `#fafaf7` works for the default palette because `--action` resolves to colours dark enough for a light checkmark to read against them. A fork that remaps `--action` to a lighter colour (pale yellow, for instance) would lose checkmark contrast. The README documents the re-encoding requirement; v0.2 might add a contrast-checking note to the adapting guide.

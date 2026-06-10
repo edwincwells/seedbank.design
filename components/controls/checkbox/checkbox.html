@@ -88,6 +88,13 @@
       color: var(--error);
       margin-top: var(--space-1);
     }
+
+    /* Canonical required-asterisk class (a system class, not demo-only).
+       form-field ships no CSS, so the reference page provides the colour a
+       fork or form-field would otherwise supply. */
+    .required {
+      color: var(--error);
+    }
     .wrong {
       border-left: var(--border-rule) solid var(--error);
       padding: var(--space-3) var(--space-4);
@@ -152,7 +159,7 @@
   <div class="demo-region">
     <label class="demo-checkbox">
       <input type="checkbox" required aria-invalid="true" aria-describedby="terms-error">
-      <span>I agree to the community guidelines <span style="color: var(--error)" aria-hidden="true">*</span></span>
+      <span>I agree to the community guidelines <span class="required" aria-hidden="true">*</span></span>
     </label>
     <p class="demo-error error-message" id="terms-error">You must agree to the community guidelines before joining.</p>
   </div>
