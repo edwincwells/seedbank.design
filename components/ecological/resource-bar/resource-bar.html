@@ -39,7 +39,7 @@
 <body>
 
   <h1>resource-bar</h1>
-  <p>A segmented shared-capacity bar — a collective resource shown as parts of a whole, with the available remainder named explicitly. The <code>&lt;ul&gt;</code> legend is canonical, so with no CSS it reads as a breakdown; the track is an aria-hidden visual that mirrors it. Segments are told apart by a neutral luminance ramp (not hue), with a matching legend swatch as the join key — so it works in grayscale, on e-ink, and in print. A target/progress variant folds in for "X of Y" toward a goal. This page shows it styled by <code>resource-bar.css</code>.</p>
+  <p>A segmented shared-capacity bar — a collective resource shown as parts of a whole, with the available remainder named explicitly. The <code>&lt;ul&gt;</code> legend is canonical, so with no CSS it reads as a breakdown; the track is an aria-hidden visual that mirrors it. Segments are told apart by distinct activity-palette hues — the correct encoding for categorical data, which says "different kinds" without implying the ranking a luminance ramp would — with a matching legend swatch as the join key. Colour is decoration, not the load-bearing channel: the legend's label and share carry the breakdown in text, so it survives grayscale, e-ink, print, and no-CSS. A target/progress variant folds in for "X of Y" toward a goal. This page shows it styled by <code>resource-bar.css</code>.</p>
 
   <hr class="section-rule">
 
