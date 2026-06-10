@@ -10,7 +10,7 @@ Built to be cloned, adapted, and owned entirely by the people who use it. There 
 
 Any group building something together outside mainstream institutions — housing cooperatives, community land trusts, repair cafés, mutual aid networks, local food systems, countercultural collectives, grassroots campaigns, post-capitalist projects of all kinds.
 
-You don't need a design team. You don't need developers. You need a starting point that reflects your values, not a corporation's.
+This is a starting point that reflects your values, not a corporation's.
 
 ---
 
